@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F5B8826BBF07300141D38 /* TopView.swift */; };
 		0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DA26B8260400C4803A /* Date_UpApp.swift */; };
 		0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DC26B8260400C4803A /* ContentView.swift */; };
 		0A8E68DF26B8260500C4803A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A8E68DE26B8260500C4803A /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A2F5B8826BBF07300141D38 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
 		0A8E68D726B8260400C4803A /* Date-Up.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Date-Up.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A8E68DA26B8260400C4803A /* Date_UpApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date_UpApp.swift; sourceTree = "<group>"; };
 		0A8E68DC26B8260400C4803A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -93,6 +95,7 @@
 				0A8E68EC26B82A7A00C4803A /* LoginView.swift */,
 				0A8E68EE26B82A8800C4803A /* RegisterView.swift */,
 				0A8E68F726B830B100C4803A /* LoggedUserView.swift */,
+				0A2F5B8826BBF07300141D38 /* TopView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				0A8E68F426B82CCB00C4803A /* User.swift in Sources */,
 				0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */,
 				0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */,
+				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A8E68ED26B82A7A00C4803A /* LoginView.swift in Sources */,
 				0A8E68F626B82F7900C4803A /* UserViewModel.swift in Sources */,
 				0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */,
