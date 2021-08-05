@@ -20,43 +20,46 @@ struct StartView: View {
             if switchToRegisterView {
                 RegisterView()
             } else {
-                if switchToLoginView {
-                    LoginView()
-                }
-                VStack {
+                VStack (spacing: screenHeight * -0.3) {
                     TopView()
-                    
-                    Spacer()
+                        .frame(width: screenWidth, height: screenHeight)
                     
                     VStack (spacing: screenHeight * 0.03) {
                         if !hideButtons {
                             Button(action: {
-                                hideButtons.toggle()
-                                switchToLoginView.toggle()
+                                withAnimation {
+                                    hideButtons.toggle()
+                                    switchToLoginView.toggle()
+                                }
                             }, label: {
                                 Text("Login")
-                                    .font(.system(size: screenHeight * 0.035))
-                                    .background(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                                                    .foregroundColor(.yellow)
-                                                    .frame(width: screenWidth * 0.4, height: screenHeight * 0.065))
+                                    .font(.system(size: screenHeight * 0.026))
+                                                .foregroundColor(.white)
+                                                .padding()
+                                    .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                                .background(Color.green)
+                                                .cornerRadius(15.0)
                             })
-                            
                             
                             Button(action: {
                                 switchToRegisterView.toggle()
                             }, label: {
                                 Text("Register")
-                                    .font(.system(size: screenHeight * 0.035))
-                                    .background(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                                                    .foregroundColor(.yellow)
-                                                    .frame(width: screenWidth * 0.4, height: screenHeight * 0.065))
+                                                .font(.system(size: screenHeight * 0.026))
+                                                .foregroundColor(.white)
+                                                .padding()
+                                                .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                                .background(Color.green)
+                                                .cornerRadius(15.0)
                             })
+                        } else {
+                            LoginView()
+                                .frame(width: screenWidth, height: screenHeight)
                         }
                     }
                     .padding(.bottom, screenHeight * 0.1)
                     
                 }
-                .frame(width: screenWidth, height: screenHeight)
             }
         }
     }

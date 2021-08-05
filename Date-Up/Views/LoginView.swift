@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
+    private let textFieldColor = Color("TextFieldsColor")
     
     var body: some View {
         GeometryReader { geometry in
@@ -17,15 +18,31 @@ struct LoginView: View {
             let screenHeight = geometry.size.height
             
             VStack {
-                VStack {
-                    TextField("e-mail", text: $email)
-                    SecureField("password", text: $password)
-                }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.horizontal, screenWidth * 0.05)
-                .padding(.top, screenHeight * 0.6)
+                TextField("e-mail", text: $email)
+                    .padding()
+                    .background(textFieldColor)
+                    .cornerRadius(5.0)
+                    .padding(.bottom, screenHeight * 0.02)
+                
+                SecureField("password", text: $password)
+                    .padding()
+                    .background(textFieldColor)
+                    .cornerRadius(5.0)
+                    .padding(.bottom, screenHeight * 0.02)
+                
+                Button(action: {
+                }, label: {
+                    Text("Login")
+                        .font(.system(size: screenHeight * 0.026))
+                                    .foregroundColor(.white)
+                                    .padding()
+                        .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
+                                    .background(Color.green)
+                                    .cornerRadius(15.0)
+                })
             }
-            .frame(width: screenWidth, height: screenHeight, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+            .padding(.horizontal, screenWidth * 0.05)
+            .frame(width: screenWidth)
         }
     }
 }

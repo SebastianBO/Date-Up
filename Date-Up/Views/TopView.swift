@@ -13,13 +13,14 @@ struct TopView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            Text("Date-Up!")
-                .padding(.top, screenHeight * 0.05)
-                .font(.system(size: screenHeight * 0.07))
-                .background(Rectangle()
-                                .foregroundColor(.red)
-                                .frame(width: screenWidth))
-                .frame(width: screenWidth)
+            VStack () {
+                Text("Date-Up!")
+                    .padding()
+                    .font(.system(size: screenHeight * 0.06))
+                    .background(Color.red
+                                    .frame(width: screenWidth))
+            }
+            .frame(width: screenWidth)
         }
     }
 }
