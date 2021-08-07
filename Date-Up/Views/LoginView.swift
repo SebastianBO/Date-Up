@@ -11,38 +11,68 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     private let textFieldColor = Color("TextFieldsColor")
+    @State private var switchToRegisterView = false
     
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            VStack {
-                TextField("e-mail", text: $email)
-                    .padding()
-                    .background(textFieldColor)
-                    .cornerRadius(5.0)
-                    .padding(.bottom, screenHeight * 0.02)
+            if switchToRegisterView {
+                withAnimation {
+                    RegisterView()
+                }
+            } else {
+                VStack (spacing: screenHeight * -0.4) {
+                    TopView()
+                        .frame(width: screenWidth, height: screenHeight)
                 
-                SecureField("password", text: $password)
-                    .padding()
-                    .background(textFieldColor)
-                    .cornerRadius(5.0)
-                    .padding(.bottom, screenHeight * 0.02)
-                
-                Button(action: {
-                }, label: {
-                    Text("Login")
-                        .font(.system(size: screenHeight * 0.026))
-                                    .foregroundColor(.white)
-                                    .padding()
-                        .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
-                                    .background(Color.green)
-                                    .cornerRadius(15.0)
-                })
+                    VStack {
+                        Group {
+                            TextField("e-mail", text: $email)
+                            
+                            SecureField("password", text: $password)
+                        }
+                        .padding()
+                        .background(textFieldColor)
+                        .cornerRadius(5.0)
+                        .padding(.bottom, screenHeight * 0.02)
+                        
+                        VStack {
+                            Button(action: {
+                                withAnimation {
+                                    
+                                }
+                            }, label: {
+                                Text("Login")
+                                    .font(.system(size: screenHeight * 0.026))
+                                                .foregroundColor(.white)
+                                                .padding()
+                                    .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
+                                                .background(Color.green)
+                                                .cornerRadius(15.0)
+                            })
+                            
+                            Button(action: {
+                                withAnimation {
+                                    switchToRegisterView.toggle()
+                                }
+                            }, label: {
+                                Text("Register")
+                                                .font(.system(size: screenHeight * 0.026))
+                                                .foregroundColor(.white)
+                                                .padding()
+                                                .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                                .background(Color.green)
+                                                .cornerRadius(15.0)
+                            })
+                        }
+                        
+                    }
+                    .padding(.horizontal, screenWidth * 0.05)
+                    .frame(width: screenWidth)
+                }
             }
-            .padding(.horizontal, screenWidth * 0.05)
-            .frame(width: screenWidth)
         }
     }
 }

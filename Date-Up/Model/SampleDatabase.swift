@@ -7,9 +7,13 @@
 
 import Foundation
 
-struct SampleDatabase {
-    private var users: [User]?
+class SampleDatabase: ObservableObject {
+    static let shared = SampleDatabase()
+    var users: [User] = []
     
-    private init() {
+    private init() { }
+    
+    func addUserToDatabase(user: User) {
+        users.append(user)
     }
 }

@@ -8,27 +8,30 @@
 import SwiftUI
 
 struct StartView: View {
-    @State private var switchToLoginView = false
+    @State private var switchToLoginView  = false
     @State private var switchToRegisterView = false
-    @State private var hideButtons = false
     
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            if switchToRegisterView {
-                RegisterView()
+            if switchToLoginView {
+                withAnimation {
+                    LoginView()
+                }
+            } else if switchToRegisterView {
+                withAnimation {
+                    RegisterView()
+                }
             } else {
                 VStack (spacing: screenHeight * -0.3) {
                     TopView()
                         .frame(width: screenWidth, height: screenHeight)
                     
-                    VStack (spacing: screenHeight * 0.03) {
-                        if !hideButtons {
+                    VStack (spacing: screenHeight * 0.01) {
                             Button(action: {
                                 withAnimation {
-                                    hideButtons.toggle()
                                     switchToLoginView.toggle()
                                 }
                             }, label: {
@@ -42,7 +45,9 @@ struct StartView: View {
                             })
                             
                             Button(action: {
-                                switchToRegisterView.toggle()
+                                withAnimation {
+                                    switchToRegisterView.toggle()
+                                }
                             }, label: {
                                 Text("Register")
                                                 .font(.system(size: screenHeight * 0.026))
@@ -52,10 +57,6 @@ struct StartView: View {
                                                 .background(Color.green)
                                                 .cornerRadius(15.0)
                             })
-                        } else {
-                            LoginView()
-                                .frame(width: screenWidth, height: screenHeight)
-                        }
                     }
                     .padding(.bottom, screenHeight * 0.1)
                     
