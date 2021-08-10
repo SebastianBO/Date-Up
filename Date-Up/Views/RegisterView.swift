@@ -17,7 +17,8 @@ struct RegisterView: View {
     @State private var email = ""
     @State private var password = ""
     private let textFieldColor = Color("TextFieldsColor")
-    @State private var switchToStartView = false
+    @State private var switchToLoginView = false
+    @ObservedObject var sessionStore = SessionStore()
     
     private let dateRange: ClosedRange<Date> = {
         let calendar = Calendar.current
@@ -33,8 +34,8 @@ struct RegisterView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            if switchToStartView {
-                StartView()
+            if switchToLoginView {
+                LoginView()
             } else {
                 TopView()
                 
@@ -66,12 +67,13 @@ struct RegisterView: View {
                         }
                     }
                     .pickerStyle(SegmentedPickerStyle())
-                    .padding(.bottom, screenHeight * 0.1)
+                    .padding(.bottom, screenHeight * 0.05)
                     
                     VStack (spacing: screenHeight * 0.01) {
                         Button(action: {
                             withAnimation {
-                                
+                                sessionStore.signUp(email: email, password: password)
+                                switchToLoginView.toggle()
                             }
                         }, label: {
                             Text("Register")
@@ -85,7 +87,7 @@ struct RegisterView: View {
                         
                         Button(action: {
                             withAnimation {
-                                switchToStartView.toggle()
+                                switchToLoginView.toggle()
                             }
                         }, label: {
                             Text("Back")

@@ -12,6 +12,7 @@ struct LoginView: View {
     @State private var password = ""
     private let textFieldColor = Color("TextFieldsColor")
     @State private var switchToRegisterView = false
+    @ObservedObject var sessionStore = SessionStore()
     
     var body: some View {
         GeometryReader { geometry in
@@ -41,7 +42,7 @@ struct LoginView: View {
                         VStack {
                             Button(action: {
                                 withAnimation {
-                                    
+                                    sessionStore.signIn(email: email, password: password)
                                 }
                             }, label: {
                                 Text("Login")
