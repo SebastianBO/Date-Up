@@ -12,6 +12,7 @@ struct LoginView: View {
     @State private var password = ""
     private let textFieldColor = Color("TextFieldsColor")
     @State private var switchToRegisterView = false
+    @State private var showWrongDataError = false
     @ObservedObject var sessionStore = SessionStore()
     
     var body: some View {
@@ -39,19 +40,31 @@ struct LoginView: View {
                         .cornerRadius(5.0)
                         .padding(.bottom, screenHeight * 0.02)
                         
+                        if showWrongDataError {
+                            Text("Wrong email or password!")
+                                .foregroundColor(.red)
+                        }
+                        
+                        Spacer()
+                        
                         VStack {
                             Button(action: {
                                 withAnimation {
+                                    print(sessionStore.isAnonymous)
                                     sessionStore.signIn(email: email, password: password)
+                                    print(sessionStore.isAnonymous)
+                                    if sessionStore.isAnonymous {
+                                        showWrongDataError = true
+                                    }
                                 }
                             }, label: {
                                 Text("Login")
                                     .font(.system(size: screenHeight * 0.026))
-                                                .foregroundColor(.white)
-                                                .padding()
+                                    .foregroundColor(.white)
+                                    .padding()
                                     .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
-                                                .background(Color.green)
-                                                .cornerRadius(15.0)
+                                    .background(Color.green)
+                                    .cornerRadius(15.0)
                             })
                             
                             Button(action: {
@@ -60,12 +73,12 @@ struct LoginView: View {
                                 }
                             }, label: {
                                 Text("Register")
-                                                .font(.system(size: screenHeight * 0.026))
-                                                .foregroundColor(.white)
-                                                .padding()
-                                                .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
-                                                .background(Color.green)
-                                                .cornerRadius(15.0)
+                                    .font(.system(size: screenHeight * 0.026))
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                    .background(Color.green)
+                                    .cornerRadius(15.0)
                             })
                         }
                         

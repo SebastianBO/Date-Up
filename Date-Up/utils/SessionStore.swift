@@ -15,13 +15,13 @@ struct User {
 
 class SessionStore: ObservableObject {
     @Published var session: User?
-    @Published var isAnonymous = false
+    @Published var isAnonymous = true
     
     var handle: AuthStateDidChangeListenerHandle?
     let authRef = Auth.auth()
     
     func listen() {
-        handle = authRef.addStateDidChangeListener({(auth, user) in
+        handle = authRef.addStateDidChangeListener({ (auth, user) in
             if let user = user {
                 self.isAnonymous = false
                 self.session = User(uid: user.uid, email: user.email!)
@@ -33,18 +33,35 @@ class SessionStore: ObservableObject {
     }
     
     func signIn(email: String, password: String) {
-        authRef.signIn(withEmail: email, password: password)
+        authRef.signIn(withEmail: email, password: password) { (result, error) in
+            if let error = error {
+                print(error)
+            }
+        }
     }
     
-    func signUp(email: String, password: String) {
-        authRef.createUser(withEmail: email, password: password)
+    func signUp(firstName: String, lastName: String, birthDate: Date, email: String, password: String, preference: String) {
+        authRef.createUser(withEmail: email, password: password) { (result, error) in
+            if let error = error {
+                print(error)
+            } else {
+                let db = Firestore.firestore()
+                let age = yearsBetweenDate(startDate: birthDate, endDate: Date())
+                db.collection("profiles").addDocument(data: ["id":result!.user.uid, "firstName":firstName, "lastName":lastName, "birthDate":birthDate, "age":age, "email": email, "password":password, "preference":preference]) { (error) in
+                    
+                    if let error = error {
+                        print(error)
+                    }
+                }
+            }
+        }
     }
     
     func signOut() -> Bool {
         do {
-            try authRef.signOut()
             self.session = nil
             self.isAnonymous = true
+            try authRef.signOut()
             return true
         } catch {
             return false
@@ -57,10 +74,3 @@ class SessionStore: ObservableObject {
         }
     }
 }
-
-private func yearsBetweenDate(startDate: Date, endDate: Date) -> Int {
-    let calendar = Calendar.current
-    let components = calendar.dateComponents([.year], from: startDate, to: endDate)
-    return components.year!
-}
-

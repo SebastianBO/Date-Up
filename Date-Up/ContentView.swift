@@ -15,10 +15,12 @@ struct ContentView: View {
     }
     
     var body: some View {
-        StartView()
+        LoggedUserView()
             .fullScreenCover(isPresented: $sessionStore.isAnonymous, content: {
                 LoginView()
+                    .preferredColorScheme(.light)
             })
+            .preferredColorScheme(.light)
     }
 }
 

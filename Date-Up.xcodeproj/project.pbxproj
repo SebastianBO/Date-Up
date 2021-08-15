@@ -10,6 +10,7 @@
 		0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2302ED26C115E8000A7BC7 /* Message.swift */; };
 		0A2302F126C1182C000A7BC7 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2302F026C1182C000A7BC7 /* SessionStore.swift */; };
 		0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F5B8826BBF07300141D38 /* TopView.swift */; };
+		0A3A5C2A26C2D81E000CBA0A /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A5C2926C2D81E000CBA0A /* Profile.swift */; };
 		0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */; };
 		0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DA26B8260400C4803A /* Date_UpApp.swift */; };
 		0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DC26B8260400C4803A /* ContentView.swift */; };
@@ -18,7 +19,7 @@
 		0A8E68EB26B826D000C4803A /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68EA26B826D000C4803A /* StartView.swift */; };
 		0A8E68ED26B82A7A00C4803A /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68EC26B82A7A00C4803A /* LoginView.swift */; };
 		0A8E68EF26B82A8800C4803A /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68EE26B82A8800C4803A /* RegisterView.swift */; };
-		0A8E68F626B82F7900C4803A /* UserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68F526B82F7900C4803A /* UserViewModel.swift */; };
+		0A8E68F626B82F7900C4803A /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */; };
 		0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68F726B830B100C4803A /* LoggedUserView.swift */; };
 		9CEBF832BB7F7ED6D2C5AB67 /* Pods_Date_Up.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D68BDCE35DD26E70D85A47 /* Pods_Date_Up.framework */; };
 /* End PBXBuildFile section */
@@ -27,6 +28,7 @@
 		0A2302ED26C115E8000A7BC7 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		0A2302F026C1182C000A7BC7 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
 		0A2F5B8826BBF07300141D38 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
+		0A3A5C2926C2D81E000CBA0A /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0A8E68D726B8260400C4803A /* Date-Up.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Date-Up.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A8E68DA26B8260400C4803A /* Date_UpApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date_UpApp.swift; sourceTree = "<group>"; };
@@ -37,7 +39,7 @@
 		0A8E68EA26B826D000C4803A /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		0A8E68EC26B82A7A00C4803A /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		0A8E68EE26B82A8800C4803A /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
-		0A8E68F526B82F7900C4803A /* UserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewModel.swift; sourceTree = "<group>"; };
+		0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		0A8E68F726B830B100C4803A /* LoggedUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedUserView.swift; sourceTree = "<group>"; };
 		0F0C9E5C3EB59950CE88938C /* Pods-Date-Up.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Date-Up.debug.xcconfig"; path = "Target Support Files/Pods-Date-Up/Pods-Date-Up.debug.xcconfig"; sourceTree = "<group>"; };
 		39D68BDCE35DD26E70D85A47 /* Pods_Date_Up.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Date_Up.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -124,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				0A2302ED26C115E8000A7BC7 /* Message.swift */,
+				0A3A5C2926C2D81E000CBA0A /* Profile.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -131,7 +134,7 @@
 		0A8E68F126B82CA700C4803A /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				0A8E68F526B82F7900C4803A /* UserViewModel.swift */,
+				0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -276,7 +279,8 @@
 				0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */,
 				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A8E68ED26B82A7A00C4803A /* LoginView.swift in Sources */,
-				0A8E68F626B82F7900C4803A /* UserViewModel.swift in Sources */,
+				0A3A5C2A26C2D81E000CBA0A /* Profile.swift in Sources */,
+				0A8E68F626B82F7900C4803A /* ProfileViewModel.swift in Sources */,
 				0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
