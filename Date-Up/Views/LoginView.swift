@@ -50,9 +50,7 @@ struct LoginView: View {
                         VStack {
                             Button(action: {
                                 withAnimation {
-                                    print(sessionStore.isAnonymous)
                                     sessionStore.signIn(email: email, password: password)
-                                    print(sessionStore.isAnonymous)
                                     if sessionStore.isAnonymous {
                                         showWrongDataError = true
                                     }

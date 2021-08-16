@@ -23,7 +23,7 @@ struct RegisterView: View {
     @State private var showPasswordError = false
     @ObservedObject var sessionStore = SessionStore()
     private var newProfile = ProfileViewModel()
-    private var correctData = false
+    @State private var correctData = false
     
     private let dateRange: ClosedRange<Date> = {
         let calendar = Calendar.current
@@ -92,20 +92,26 @@ struct RegisterView: View {
                             withAnimation {
                                 if !checkFieldsNotEmpty(firstName: firstName, lastName: lastName, preference: preference) {
                                     showDataError = true
+                                    correctData = false
                                 } else {
                                     showDataError = false
+                                    correctData = true
                                 }
                                 
                                 if !checkEmail(email: email) {
                                     showEmailError = true
+                                    correctData = false
                                 } else {
                                     showEmailError = false
+                                    correctData = true
                                 }
                                     
                                 if !checkPassword(password: password) {
                                     showPasswordError = true
+                                    correctData = false
                                 } else {
                                     showPasswordError = false
+                                    correctData = true
                                 }
                                     
                                 if correctData {

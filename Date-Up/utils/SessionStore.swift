@@ -47,8 +47,17 @@ class SessionStore: ObservableObject {
             } else {
                 let db = Firestore.firestore()
                 let age = yearsBetweenDate(startDate: birthDate, endDate: Date())
-                db.collection("profiles").addDocument(data: ["id":result!.user.uid, "firstName":firstName, "lastName":lastName, "birthDate":birthDate, "age":age, "email": email, "password":password, "preference":preference]) { (error) in
-                    
+                let documentData: [String: Any] = [
+                    "id": result!.user.uid,
+                    "firstName": firstName,
+                    "lastName": lastName,
+                    "birthDate": birthDate,
+                    "age": age,
+                    "email": email,
+                    "password": password,
+                    "preference": preference
+                ]
+                db.collection("profiles").document(result!.user.uid).setData(documentData) { (error) in
                     if let error = error {
                         print(error)
                     }
