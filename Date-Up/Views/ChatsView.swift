@@ -8,13 +8,25 @@
 import SwiftUI
 
 struct ChatsView: View {
+    @ObservedObject private var profileViewModel: ProfileViewModel
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+            
+            Text("ChatView")
+        }
     }
 }
 
 struct ChatsView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatsView()
+        let profileViewModel = ProfileViewModel()
+        ChatsView(profile: profileViewModel)
     }
 }

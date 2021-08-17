@@ -11,87 +11,75 @@ struct LoggedUserView: View {
     @ObservedObject var profileViewModel = ProfileViewModel()
     @ObservedObject var sessionStore = SessionStore()
     @State private var switchToContentView = false
-    @State private var showNotifications = false
     @State private var showHome = false
     @State private var showChats = false
     @State private var showSettings = false
+    @State private var selectedTab = 0
+    
+    let tabBarImagesNames = ["house", "bubble.left.and.bubble.right", "person"]
     
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            if switchToContentView {
-                ContentView()
-            } else if showNotifications {
-                NotificationsView()
-            } else if showHome {
-                HomeView()
-            } else if showChats {
-                ChatsView()
-            } else if showSettings {
-                SettingsView()
-            } else {
-//                if profileViewModel.profile != nil {
-                if true { //!!!!!!!
-                    NavigationView {
-                        VStack {
+//            if profileViewModel.profile != nil {
+            if true { //!!!!!!!
+                VStack {
+                    ZStack {
+                        switch selectedTab {
+                        case 0:
+                            HomeView(profile: profileViewModel)
                             
-                        }
-//                        .navigationTitle("Hello, \(profileViewModel.profile!.firstName)")
-                        .navigationTitle("Hello, world!") //!!!!!!
-                        .toolbar {
-                            ToolbarItemGroup(placement: .bottomBar) {
-                                NavigationLink(destination: HomeView(), isActive: $showHome) {
-                                    Button {
-                                        withAnimation {
-                                            showHome = true
-                                        }
-                                    } label: {
-                                        Label("Home", systemImage: "house")
-                                    }
-                                }
-                                
-                                Spacer()
-                                
-                                Button {
-                                    withAnimation {
-                                        showChats = true
-                                    }
-                                } label: {
-                                    Label("Chats", systemImage: "bubble.left.and.bubble.right")
-                                }
-                                
-                                Spacer()
-                                
-                                Button {
-//                                    if sessionStore.signOut() {
-//                                        withAnimation {
-//                                            switchToContentView = true
-//                                        }
-//                                    }
-                                    withAnimation {
-                                        showSettings = true
-                                    }
-                                } label: {
-                                    Label("Settings", systemImage: "gearshape")
-                                }
-                            }
+                        case 1:
+                            ChatsView(profile: profileViewModel)
                             
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button {
-                                    withAnimation {
-                                        showNotifications = true
-                                    }
-                                } label: {
-                                    Label("Notifications", systemImage: "bell")
-                                }
-                            }
+                        case 2:
+                            ProfileView(profile: profileViewModel, sessionStore: sessionStore)
+                            
+                        default:
+                            Text("ERROR!")
                         }
                     }
-                    .onAppear() {
-                        profileViewModel.getUserInfo()
+                    
+                    Spacer()
+                    
+                    HStack {
+                        ForEach(0..<3) { number in
+                            Spacer()
+                            
+                            Button(action: {
+                                selectedTab = number
+                            }, label: {
+                                Image(systemName: tabBarImagesNames[number])
+                            })
+                            
+                            Spacer()
+                        }
+
+//
+//                        Spacer()
+//
+//                        Button(action: {
+////                            if sessionStore.signOut() {
+////                                withAnimation {
+////                                    switchToContentView = true
+////                                }
+////                            }
+//                            withAnimation {
+//                                showSettings = true
+//                            }
+//                        }, label: {
+//                            Image(systemName: "person")
+//                        })
+//
+//                        Spacer()
                     }
+                    .foregroundColor(.black)
+                    .font(.system(size: screenHeight * 0.03))
+                }
+                .onAppear() {
+                    profileViewModel.getUserInfo()
                 }
             }
         }

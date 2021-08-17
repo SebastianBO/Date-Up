@@ -8,13 +8,47 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var showNotifications = false
+    @ObservedObject private var profileViewModel: ProfileViewModel
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+            
+            VStack(spacing: screenHeight * -0.887) {
+                TopView()
+                    .frame(width: screenWidth, height: screenHeight)
+                
+                NavigationView {
+                    Text("sample")
+//                            .navigationTitle("Hello, \(profileViewModel.profile!.firstName)")
+                        .navigationTitle("Hello, world!") //!!!!!!
+                        .toolbar(content: {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button(action: {
+                                    withAnimation {
+                                        showNotifications = true
+                                    }
+                                }, label: {
+                                    Image(systemName: "bell")
+                                })
+                            }
+                        })
+                }
+                .accentColor(.black)
+            }
+        }
     }
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        let profileViewModel = ProfileViewModel()
+        HomeView(profile: profileViewModel)
     }
 }
