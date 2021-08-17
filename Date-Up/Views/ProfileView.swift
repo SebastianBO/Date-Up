@@ -22,22 +22,14 @@ struct ProfileView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            if switchToContentView {
-                ContentView()
-            } else {
-                VStack {
-                    Text("ProfileView")
-                    
-                    Button(action: {
-                        if sessionStore.signOut() {
-                            withAnimation {
-                                switchToContentView = true
-                            }
-                        }
-                    }, label: {
-                        Text("Logout")
-                    })
-                }
+            VStack {
+                Text("ProfileView")
+                
+                Button(action: {
+                    sessionStore.signOut()
+                }, label: {
+                    Text("Logout")
+                })
             }
         }
     }

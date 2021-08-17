@@ -25,20 +25,35 @@ struct HomeView: View {
                     .frame(width: screenWidth, height: screenHeight)
                 
                 NavigationView {
-                    Text("sample")
-//                            .navigationTitle("Hello, \(profileViewModel.profile!.firstName)")
-                        .navigationTitle("Hello, world!") //!!!!!!
-                        .toolbar(content: {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button(action: {
-                                    withAnimation {
-                                        showNotifications = true
-                                    }
-                                }, label: {
-                                    Image(systemName: "bell")
-                                })
-                            }
-                        })
+                    if profileViewModel.profile != nil {
+                        Text("sample")
+                            .navigationTitle("Hello, \(profileViewModel.profile!.firstName)")
+                            .toolbar(content: {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button(action: {
+                                        withAnimation {
+                                            showNotifications = true
+                                        }
+                                    }, label: {
+                                        Image(systemName: "bell")
+                                    })
+                                }
+                            })
+                    } else {
+                        Text("sample")
+                            .navigationTitle("Hello, world!")
+                            .toolbar(content: {
+                                ToolbarItem(placement: .navigationBarTrailing) {
+                                    Button(action: {
+                                        withAnimation {
+                                            showNotifications = true
+                                        }
+                                    }, label: {
+                                        Image(systemName: "bell")
+                                    })
+                                }
+                            })
+                    }
                 }
                 .accentColor(.black)
             }
