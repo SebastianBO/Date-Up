@@ -12,6 +12,7 @@ class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
     private let dataBase = Firestore.firestore()
     private let user = Auth.auth().currentUser
+    public let session = SessionStore()
     
     init() {
         self.getUserInfo()
@@ -27,9 +28,10 @@ class ProfileViewModel: ObservableObject {
                     let birthDate = document.get("birthDate") as? Date ?? Date()
                     let age = document.get("age") as? Int ?? 0
                     let preference = document.get("preference") as? String ?? ""
+                    let bio = document.get("bio") as? String ?? ""
                     let email = self.user!.email
                     
-                    self.profile = Profile(id: id, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, preference: preference, email: email!)
+                    self.profile = Profile(id: id, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, preference: preference, bio: bio, email: email!)
                 }
             }
         }

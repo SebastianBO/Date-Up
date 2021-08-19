@@ -12,7 +12,6 @@ struct LoginView: View {
     @State private var password = ""
     private let textFieldColor = Color("TextFieldsColor")
     @State private var switchToRegisterView = false
-    @State private var showWrongDataError = false
     @ObservedObject var sessionStore = SessionStore()
     
     var body: some View {
@@ -40,20 +39,12 @@ struct LoginView: View {
                         .cornerRadius(5.0)
                         .padding(.bottom, screenHeight * 0.02)
                         
-                        if showWrongDataError {
-                            Text("Wrong email or password!")
-                                .foregroundColor(.red)
-                        }
-                        
                         Spacer()
                         
                         VStack {
                             Button(action: {
                                 withAnimation {
                                     sessionStore.signIn(email: email, password: password)
-                                    if sessionStore.isAnonymous {
-                                        showWrongDataError = true
-                                    }
                                 }
                             }, label: {
                                 Text("Login")

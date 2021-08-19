@@ -9,7 +9,6 @@ import SwiftUI
 
 struct LoggedUserView: View {
     @ObservedObject var profileViewModel = ProfileViewModel()
-    @ObservedObject var sessionStore = SessionStore()
     @State private var switchToContentView = false
     @State private var showHome = false
     @State private var showChats = false
@@ -34,7 +33,7 @@ struct LoggedUserView: View {
                         ChatsView(profile: profileViewModel)
                         
                     case 2:
-                        ProfileView(profile: profileViewModel, sessionStore: sessionStore)
+                        ProfileView(profile: profileViewModel)
                         
                     default:
                         Text("ERROR!")

@@ -16,6 +16,7 @@ struct User {
 class SessionStore: ObservableObject {
     @Published var session: User?
     @Published var isAnonymous = true
+    let db = Firestore.firestore()
     
     var handle: AuthStateDidChangeListenerHandle?
     let authRef = Auth.auth()
@@ -34,8 +35,8 @@ class SessionStore: ObservableObject {
     
     func signIn(email: String, password: String) {
         authRef.signIn(withEmail: email, password: password) { (result, error) in
-            if let error = error {
-                print(error)
+            if error != nil {
+                print(error!)
             }
         }
     }
@@ -45,7 +46,6 @@ class SessionStore: ObservableObject {
             if let error = error {
                 print(error)
             } else {
-                let db = Firestore.firestore()
                 let age = yearsBetweenDate(startDate: birthDate, endDate: Date())
                 let documentData: [String: Any] = [
                     "id": result!.user.uid,
@@ -55,9 +55,10 @@ class SessionStore: ObservableObject {
                     "age": age,
                     "email": email,
                     "password": password,
-                    "preference": preference
+                    "preference": preference,
+                    "bio": ""
                 ]
-                db.collection("profiles").document(result!.user.uid).setData(documentData) { (error) in
+                self.db.collection("profiles").document(result!.user.uid).setData(documentData) { (error) in
                     if let error = error {
                         print(error)
                     }
@@ -66,20 +67,34 @@ class SessionStore: ObservableObject {
         }
     }
     
-    func signOut() -> Bool {
+    func signOut() {
         do {
             self.session = nil
             self.isAnonymous = true
             try authRef.signOut()
-            return true
         } catch {
-            return false
         }
     }
     
     func unbind() {
         if let handle = handle {
             authRef.removeStateDidChangeListener(handle)
+        }
+    }
+    
+    func editUserInfoInDatabase(firstName: String, lastName: String, bio: String, preference: String) {
+        let user = Auth.auth().currentUser
+        
+        let documentData: [String: Any] = [
+            "firstName": firstName,
+            "lastName": lastName,
+            "preference": preference,
+            "bio": bio
+        ]
+        self.db.collection("profiles").document(user!.uid).updateData(documentData) { (error) in
+            if let error = error {
+                print(error)
+            }
         }
     }
 }

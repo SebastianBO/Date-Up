@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A03EB4426CEAF78002BAB44 /* blank-profile-hi.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A03EB4326CEAF78002BAB44 /* blank-profile-hi.png */; };
 		0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2302ED26C115E8000A7BC7 /* Message.swift */; };
 		0A2302F126C1182C000A7BC7 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2302F026C1182C000A7BC7 /* SessionStore.swift */; };
-		0A2C29C726CAD4280093A944 /* DatabaseAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2C29C626CAD4280093A944 /* DatabaseAssistant.swift */; };
 		0A2C29C926CADA600093A944 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2C29C826CADA600093A944 /* NotificationsView.swift */; };
 		0A2C29CB26CADA6B0093A944 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2C29CA26CADA6B0093A944 /* HomeView.swift */; };
 		0A2C29CD26CADA780093A944 /* ChatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2C29CC26CADA780093A944 /* ChatsView.swift */; };
@@ -30,9 +30,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A03EB4326CEAF78002BAB44 /* blank-profile-hi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blank-profile-hi.png"; sourceTree = "<group>"; };
 		0A2302ED26C115E8000A7BC7 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		0A2302F026C1182C000A7BC7 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
-		0A2C29C626CAD4280093A944 /* DatabaseAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseAssistant.swift; sourceTree = "<group>"; };
 		0A2C29C826CADA600093A944 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
 		0A2C29CA26CADA6B0093A944 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		0A2C29CC26CADA780093A944 /* ChatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatsView.swift; sourceTree = "<group>"; };
@@ -73,7 +73,6 @@
 			isa = PBXGroup;
 			children = (
 				0A2302F026C1182C000A7BC7 /* SessionStore.swift */,
-				0A2C29C626CAD4280093A944 /* DatabaseAssistant.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -107,6 +106,7 @@
 				0A8E68DA26B8260400C4803A /* Date_UpApp.swift */,
 				0A8E68DC26B8260400C4803A /* ContentView.swift */,
 				0A8E68DE26B8260500C4803A /* Assets.xcassets */,
+				0A03EB4326CEAF78002BAB44 /* blank-profile-hi.png */,
 				0A8E68E326B8260500C4803A /* Info.plist */,
 				0A8E68E026B8260500C4803A /* Preview Content */,
 			);
@@ -234,6 +234,7 @@
 				0A8E68E226B8260500C4803A /* Preview Assets.xcassets in Resources */,
 				0A8E68DF26B8260500C4803A /* Assets.xcassets in Resources */,
 				0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */,
+				0A03EB4426CEAF78002BAB44 /* blank-profile-hi.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,7 +293,6 @@
 				0A8E68EF26B82A8800C4803A /* RegisterView.swift in Sources */,
 				0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */,
 				0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */,
-				0A2C29C726CAD4280093A944 /* DatabaseAssistant.swift in Sources */,
 				0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */,
 				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A2C29CF26CADA840093A944 /* ProfileView.swift in Sources */,
@@ -440,6 +440,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "ljaniszewski.Date-Up";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -463,6 +464,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "ljaniszewski.Date-Up";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
