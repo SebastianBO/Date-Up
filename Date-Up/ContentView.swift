@@ -19,8 +19,10 @@ struct ContentView: View {
             .fullScreenCover(isPresented: $sessionStore.isAnonymous, content: {
                 LoginView()
                     .preferredColorScheme(.light)
+                    .ignoresSafeArea(.keyboard)
             })
             .preferredColorScheme(.light)
+            .ignoresSafeArea(.keyboard)
     }
 }
 
