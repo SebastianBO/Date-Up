@@ -56,7 +56,7 @@ class SessionStore: ObservableObject {
                     "email": email,
                     "password": password,
                     "preference": preference,
-                    "bio": ""
+                    "bio": "Hi, I'm \(firstName)!"
                 ]
                 self.db.collection("profiles").document(result!.user.uid).setData(documentData) { (error) in
                     if let error = error {
@@ -82,15 +82,41 @@ class SessionStore: ObservableObject {
         }
     }
     
-    func editUserInfoInDatabase(firstName: String, lastName: String, bio: String, preference: String) {
-        let user = Auth.auth().currentUser
-        
+    func editUserFirstNameInDatabase(firstName: String) {
         let documentData: [String: Any] = [
-            "firstName": firstName,
-            "lastName": lastName,
-            "preference": preference,
+            "firstName": firstName
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
+    func editUserLastNameInDatabase(lastName: String) {
+        let documentData: [String: Any] = [
+            "lastName": lastName
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
+    func editUserBioInDatabase(bio: String) {
+        let documentData: [String: Any] = [
             "bio": bio
         ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
+    func editUserPreferenceInDatabase(preference: String) {
+        let documentData: [String: Any] = [
+            "preference": preference
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
+    private func updateUserData(documentData: [String: Any]) {
+        let user = Auth.auth().currentUser
+        
         self.db.collection("profiles").document(user!.uid).updateData(documentData) { (error) in
             if let error = error {
                 print(error)

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
-    @State private var switchToContentView = false
     private let textFieldColor = Color("TextFieldsColor")
     @State private var firstName = ""
     @State private var lastName = ""
@@ -20,10 +19,6 @@ struct ProfileView: View {
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
-        self.firstName = profile.profile!.firstName
-        self.lastName = profile.profile!.lastName
-        self.bio = profile.profile!.bio
-        self.preference = profile.profile!.preference
     }
     
     var body: some View {
@@ -56,8 +51,19 @@ struct ProfileView: View {
                     
                     Button(action: {
                         withAnimation {
-                            if changeWasMade() {
-                                profileViewModel.session.editUserInfoInDatabase(firstName: firstName, lastName: lastName, bio: bio, preference: preference)
+                            if editMode {
+                                if profileViewModel.firstNameChange(firstName: firstName) {
+                                    profileViewModel.session.editUserFirstNameInDatabase(firstName: firstName)
+                                }
+                                if profileViewModel.lastNameChange(lastName: lastName) {
+                                    profileViewModel.session.editUserLastNameInDatabase(lastName: lastName)
+                                }
+                                if profileViewModel.bioChange(bio: bio) {
+                                    profileViewModel.session.editUserBioInDatabase(bio: bio)
+                                }
+                                if profileViewModel.preferenceChange(preference: preference) {
+                                    profileViewModel.session.editUserPreferenceInDatabase(preference: preference)
+                                }
                             }
                             
                             profileViewModel.getUserInfo()
@@ -75,10 +81,10 @@ struct ProfileView: View {
                     if profileViewModel.profile != nil {
                         Group {
                             TextField(profileViewModel.profile!.firstName, text: $firstName)
-                            
+
                             TextField(profileViewModel.profile!.lastName, text: $lastName)
-                            
-                            TextField(profileViewModel.profile!.firstName, text: $bio)
+
+                            TextField(profileViewModel.profile!.bio, text: $bio)
                                 .padding(.bottom, screenHeight * 0.1)
                         }
                         .padding()
@@ -86,7 +92,7 @@ struct ProfileView: View {
                         .cornerRadius(5.0)
                         .lineLimit(0)
                         .disabled(editMode ? false : true)
-                        
+
                         Text("Preference:")
                             .padding(.trailing, screenWidth * 0.65)
                             .padding(.top, screenHeight * 0.05)
@@ -104,18 +110,6 @@ struct ProfileView: View {
                     }
                 }
             }
-        }
-    }
-    
-    private func changeWasMade() -> Bool {
-        if profileViewModel.profile != nil {
-            if profileViewModel.profile!.firstName != firstName || profileViewModel.profile!.lastName != lastName || profileViewModel.profile!.firstName != firstName {
-                return true
-            } else {
-                return false
-            }
-        } else {
-            return false
         }
     }
 }

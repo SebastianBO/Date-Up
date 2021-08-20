@@ -36,6 +36,54 @@ class ProfileViewModel: ObservableObject {
             }
         }
     }
+    
+    func firstNameChange(firstName: String) -> Bool {
+        if profile != nil {
+            if profile!.firstName != firstName && !firstName.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    func lastNameChange(lastName: String) -> Bool {
+        if profile != nil {
+            if profile!.lastName != lastName && !lastName.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    func bioChange(bio: String) -> Bool {
+        if profile != nil {
+            if profile!.bio != bio && !bio.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    func preferenceChange(preference: String) -> Bool {
+        if profile != nil {
+            if profile!.preference != preference && !preference.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
 }
 
 public func yearsBetweenDate(startDate: Date, endDate: Date) -> Int {
