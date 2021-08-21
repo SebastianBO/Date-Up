@@ -17,6 +17,11 @@ struct ProfileView: View {
     private var preferenceValues = ["Men", "Women", "Both"]
     @State private var editMode = false
     
+    @State private var image: Image? = Image("blank-profile-hi")
+    @State private var shouldPresentImagePicker = false
+    @State private var shouldPresentActionScheet = false
+    @State private var shouldPresentCamera = false
+    
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
     }
@@ -43,12 +48,24 @@ struct ProfileView: View {
                     .font(.system(size: screenHeight * 0.03))
                     
                     VStack {
-                        Image("blank-profile-hi")
+                        image!
                             .resizable()
                             .frame(width: screenWidth * 0.6, height: screenHeight * 0.3)
                             .clipShape(Circle())
                             .shadow(radius: 10)
                             .overlay(Circle().stroke(Color.black, lineWidth: 1))
+                            .onTapGesture { self.shouldPresentActionScheet = true }
+                            .sheet(isPresented: $shouldPresentImagePicker) {
+                                SUImagePickerView(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, image: self.$image, isPresented: self.$shouldPresentImagePicker)
+                            }.actionSheet(isPresented: $shouldPresentActionScheet) { () -> ActionSheet in
+                                ActionSheet(title: Text("Choose mode"), message: Text("Set your new profile picture by taking new one by Camera or uploading it from Photo Library"), buttons: [ActionSheet.Button.default(Text("Camera"), action: {
+                                    self.shouldPresentImagePicker = true
+                                    self.shouldPresentCamera = true
+                                }), ActionSheet.Button.default(Text("Photo Library"), action: {
+                                    self.shouldPresentImagePicker = true
+                                    self.shouldPresentCamera = false
+                                }), ActionSheet.Button.cancel()])
+                            }
                         
                         Button(action: {
                             withAnimation {
