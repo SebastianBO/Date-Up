@@ -16,7 +16,9 @@ struct ProfileView: View {
     @State private var preference = ""
     private var preferenceValues = ["Men", "Women", "Both"]
     @State private var editMode = false
+    @State private var isActivePhoto = false
     
+    @State private var images: [Image]? = [Image("blank-profile-hi"), Image("blank-profile-hi"), Image("blank-profile-hi")]
     @State private var image: Image? = Image("blank-profile-hi")
     @State private var shouldPresentImagePicker = false
     @State private var shouldPresentActionScheet = false
@@ -48,24 +50,75 @@ struct ProfileView: View {
                     .font(.system(size: screenHeight * 0.03))
                     
                     VStack {
-                        image!
-                            .resizable()
-                            .frame(width: screenWidth * 0.6, height: screenHeight * 0.3)
-                            .clipShape(Circle())
-                            .shadow(radius: 10)
-                            .overlay(Circle().stroke(Color.black, lineWidth: 1))
-                            .onTapGesture { self.shouldPresentActionScheet = true }
-                            .sheet(isPresented: $shouldPresentImagePicker) {
-                                SUImagePickerView(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, image: self.$image, isPresented: self.$shouldPresentImagePicker)
-                            }.actionSheet(isPresented: $shouldPresentActionScheet) { () -> ActionSheet in
-                                ActionSheet(title: Text("Choose mode"), message: Text("Set your new profile picture by taking new one by Camera or uploading it from Photo Library"), buttons: [ActionSheet.Button.default(Text("Camera"), action: {
-                                    self.shouldPresentImagePicker = true
-                                    self.shouldPresentCamera = true
-                                }), ActionSheet.Button.default(Text("Photo Library"), action: {
-                                    self.shouldPresentImagePicker = true
-                                    self.shouldPresentCamera = false
-                                }), ActionSheet.Button.cancel()])
+                        if !isActivePhoto {
+                            ScrollView(.horizontal) {
+                                HStack {
+                                    ForEach(0..<images!.count, id: \.self) { imageIndex in
+                                        images![imageIndex]
+                                            .resizable()
+                                            .clipShape(Circle())
+                                            .overlay(Circle().stroke(Color.black, lineWidth: 1))
+                                            .frame(width: isActivePhoto ? screenWidth * 0.6 : screenWidth * 0.2, height: isActivePhoto ? screenHeight * 0.3 : screenHeight * 0.1)
+                                            .shadow(radius: isActivePhoto ? 10 : 0)
+                                            .onTapGesture {
+                                                withAnimation {
+                                                    self.shouldPresentActionScheet = true
+                                                    self.isActivePhoto.toggle()
+                                                }
+                                            }
+        //                                    .sheet(isPresented: $shouldPresentImagePicker) {
+        //                                        SUImagePickerView(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, image: $images![0], isPresented: self.$shouldPresentImagePicker)
+        //                                    }
+        //                                    .actionSheet(isPresented: $shouldPresentActionScheet) {
+        //                                        ActionSheet(title: Text("Add a new profile picture"), message: nil,
+        //                                            buttons: [ActionSheet.Button.default(Text("Camera"), action: {
+        //                                                self.shouldPresentImagePicker = true
+        //                                                self.shouldPresentCamera = true
+        //                                            }), ActionSheet.Button.default(Text("Photo Library"), action: {
+        //                                                self.shouldPresentImagePicker = true
+        //                                                self.shouldPresentCamera = false
+        //                                            }), ActionSheet.Button.cancel()])
+        //
+        //                                    }
+                                    }
+                                }
+                                .frame(width: screenWidth, height: screenHeight * 0.12)
                             }
+                        } else {
+                            TabView {
+                                ForEach(0..<images!.count, id: \.self) { imageIndex in
+                                    images![imageIndex]
+                                        .resizable()
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.black, lineWidth: 1))
+                                        .frame(width: isActivePhoto ? screenWidth * 0.6 : screenWidth * 0.2, height: isActivePhoto ? screenHeight * 0.3 : screenHeight * 0.1)
+                                        .shadow(radius: isActivePhoto ? 10 : 0)
+                                        .onTapGesture {
+                                            withAnimation {
+                                                self.shouldPresentActionScheet = true
+                                                self.isActivePhoto.toggle()
+                                            }
+                                        }
+    //                                    .sheet(isPresented: $shouldPresentImagePicker) {
+    //                                        SUImagePickerView(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, image: $images![0], isPresented: self.$shouldPresentImagePicker)
+    //                                    }
+    //                                    .actionSheet(isPresented: $shouldPresentActionScheet) {
+    //                                        ActionSheet(title: Text("Add a new profile picture"), message: nil,
+    //                                            buttons: [ActionSheet.Button.default(Text("Camera"), action: {
+    //                                                self.shouldPresentImagePicker = true
+    //                                                self.shouldPresentCamera = true
+    //                                            }), ActionSheet.Button.default(Text("Photo Library"), action: {
+    //                                                self.shouldPresentImagePicker = true
+    //                                                self.shouldPresentCamera = false
+    //                                            }), ActionSheet.Button.cancel()])
+    //
+    //                                    }
+                                }
+                            }
+                            .tabViewStyle(PageTabViewStyle())
+                            .frame(width: screenWidth, height: screenHeight * 0.35)
+                        }
+                        
                         
                         Button(action: {
                             withAnimation {
@@ -136,6 +189,8 @@ struct ProfileView: View {
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         let profileViewModel = ProfileViewModel()
-        ProfileView(profile: profileViewModel)
+        Group {
+            ProfileView(profile: profileViewModel)
+        }
     }
 }

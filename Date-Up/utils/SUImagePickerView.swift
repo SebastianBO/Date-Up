@@ -20,14 +20,13 @@ struct SUImagePickerView: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let pickerController = UIImagePickerController()
+        pickerController.allowsEditing = true
         pickerController.sourceType = sourceType
         pickerController.delegate = context.coordinator
         return pickerController
     }
 
-    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {
-        // Nothing to update here
-    }
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
 
 }
 
@@ -42,10 +41,12 @@ class ImagePickerViewCoordinator: NSObject, UINavigationControllerDelegate, UIIm
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+        if let image = info[.editedImage] as? UIImage {
+            self.image = Image(uiImage: image)
+        } else if let image = info[.originalImage] as? UIImage {
             self.image = Image(uiImage: image)
         }
-        self.isPresented = false
+        self.isPresented = false 
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
