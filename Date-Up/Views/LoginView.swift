@@ -24,7 +24,7 @@ struct LoginView: View {
                     RegisterView()
                 }
             } else {
-                VStack (spacing: screenHeight * -0.4) {
+                VStack (spacing: screenHeight * -0.8) {
                     TopView()
                         .frame(width: screenWidth, height: screenHeight)
                 
@@ -37,9 +37,7 @@ struct LoginView: View {
                         .padding()
                         .background(textFieldColor)
                         .cornerRadius(5.0)
-                        .padding(.bottom, screenHeight * 0.02)
                         
-                        Spacer()
                         
                         VStack {
                             Button(action: {
@@ -70,10 +68,12 @@ struct LoginView: View {
                                     .cornerRadius(15.0)
                             })
                         }
+                        .padding(.top, screenHeight * 0.04)
                         
                     }
                     .padding(.horizontal, screenWidth * 0.05)
                     .frame(width: screenWidth)
+                    
                 }
             }
         }

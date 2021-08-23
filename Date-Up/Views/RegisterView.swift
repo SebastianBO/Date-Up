@@ -39,117 +39,123 @@ struct RegisterView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            ScrollView(.vertical) {
-                VStack(spacing: screenHeight * -0.98) {
-                    TopView()
-                        .frame(width: screenWidth, height: screenHeight)
-                
-                    VStack {
-                        
-                        Group {
-                            TextField("first name", text: $firstName)
+            if switchToLoginView {
+                withAnimation {
+                    ContentView()
+                }
+            } else {
+                ScrollView(.vertical) {
+                    VStack(spacing: screenHeight * -0.98) {
+                        TopView()
+                            .frame(width: screenWidth, height: screenHeight)
+                    
+                        VStack {
                             
-                            TextField("last name", text: $lastName)
-                            
-                            DatePicker("birth date", selection: $birthDate, in: dateRange, displayedComponents: [.date])
-                                .padding(.trailing, screenWidth * 0.28)
-                            
-                            TextField("e-mail", text: $email)
-                            
-                            SecureField("password", text: $password)
-                        }
-                        .padding()
-                        .background(textFieldColor)
-                        .cornerRadius(5.0)
-                        .padding(.bottom, screenHeight * 0.02)
-                        
-                        Text("Preference:")
-                            .padding(.trailing, screenWidth * 0.65)
-                            .padding(.top, screenHeight * 0.05)
-                        Picker("preference", selection: $preference) {
-                            ForEach(preferenceValues, id: \.self) {
-                                Text($0)
+                            Group {
+                                TextField("first name", text: $firstName)
+                                
+                                TextField("last name", text: $lastName)
+                                
+                                DatePicker("birth date", selection: $birthDate, in: dateRange, displayedComponents: [.date])
+                                    .padding(.trailing, screenWidth * 0.28)
+                                
+                                TextField("e-mail", text: $email)
+                                
+                                SecureField("password", text: $password)
                             }
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .padding(.bottom, screenHeight * 0.05)
-                        
-                        VStack (spacing: screenHeight * 0.01) {
-                            if showDataError {
-                                Text("Please fill in all data!")
-                                    .foregroundColor(.red)
-                                    .lineLimit(0)
-                            }
+                            .padding()
+                            .background(textFieldColor)
+                            .cornerRadius(5.0)
+                            .padding(.bottom, screenHeight * 0.02)
                             
-                            if showEmailError {
-                                Text("Please, write correct email!")
-                                    .foregroundColor(.red)
-                                    .lineLimit(0)
-                            }
-                            if showPasswordError {
-                                Text("Make sure your password is 8 characters long, contains at least one number and one special character!")
-                                    .foregroundColor(.red)
-                                    .lineLimit(0)
-                            }
-                            Button(action: {
-                                withAnimation {
-                                    if !checkFieldsNotEmpty(firstName: firstName, lastName: lastName, preference: preference) {
-                                        showDataError = true
-                                        correctData = false
-                                    } else {
-                                        showDataError = false
-                                        correctData = true
-                                    }
-                                    
-                                    if !checkEmail(email: email) {
-                                        showEmailError = true
-                                        correctData = false
-                                    } else {
-                                        showEmailError = false
-                                        correctData = true
-                                    }
-                                        
-                                    if !checkPassword(password: password) {
-                                        showPasswordError = true
-                                        correctData = false
-                                    } else {
-                                        showPasswordError = false
-                                        correctData = true
-                                    }
-                                        
-                                    if correctData {
-                                        sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, email: email, password: password, preference: preference)
-                                    }
+                            Text("Preference:")
+                                .padding(.trailing, screenWidth * 0.65)
+                                .padding(.top, screenHeight * 0.05)
+                            Picker("preference", selection: $preference) {
+                                ForEach(preferenceValues, id: \.self) {
+                                    Text($0)
                                 }
-                            }, label: {
-                                Text("Register")
-                                    .font(.system(size: screenHeight * 0.026))
-                                                .foregroundColor(.white)
-                                                .padding()
-                                    .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
-                                                .background(Color.green)
-                                                .cornerRadius(15.0)
-                            })
+                            }
+                            .pickerStyle(SegmentedPickerStyle())
+                            .padding(.bottom, screenHeight * 0.05)
                             
-                            Button(action: {
-                                withAnimation {
-                                    switchToLoginView.toggle()
+                            VStack (spacing: screenHeight * 0.01) {
+                                if showDataError {
+                                    Text("Please fill in all data!")
+                                        .foregroundColor(.red)
+                                        .lineLimit(0)
                                 }
-                            }, label: {
-                                Text("Back")
-                                    .font(.system(size: screenHeight * 0.026))
-                                                .foregroundColor(.white)
-                                                .padding()
-                                    .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
-                                                .background(Color.green)
-                                                .cornerRadius(15.0)
-                            })
+                                
+                                if showEmailError {
+                                    Text("Please, write correct email!")
+                                        .foregroundColor(.red)
+                                        .lineLimit(0)
+                                }
+                                if showPasswordError {
+                                    Text("Make sure your password is 8 characters long, contains at least one number and one special character!")
+                                        .foregroundColor(.red)
+                                        .lineLimit(0)
+                                }
+                                Button(action: {
+                                    withAnimation {
+                                        if !checkFieldsNotEmpty(firstName: firstName, lastName: lastName, preference: preference) {
+                                            showDataError = true
+                                            correctData = false
+                                        } else {
+                                            showDataError = false
+                                            correctData = true
+                                        }
+                                        
+                                        if !checkEmail(email: email) {
+                                            showEmailError = true
+                                            correctData = false
+                                        } else {
+                                            showEmailError = false
+                                            correctData = true
+                                        }
+                                            
+                                        if !checkPassword(password: password) {
+                                            showPasswordError = true
+                                            correctData = false
+                                        } else {
+                                            showPasswordError = false
+                                            correctData = true
+                                        }
+                                            
+                                        if correctData {
+                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, email: email, password: password, preference: preference)
+                                        }
+                                    }
+                                }, label: {
+                                    Text("Register")
+                                        .font(.system(size: screenHeight * 0.026))
+                                                    .foregroundColor(.white)
+                                                    .padding()
+                                        .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
+                                                    .background(Color.green)
+                                                    .cornerRadius(15.0)
+                                })
+                                
+                                Button(action: {
+                                    withAnimation {
+                                        switchToLoginView.toggle()
+                                    }
+                                }, label: {
+                                    Text("Back")
+                                        .font(.system(size: screenHeight * 0.026))
+                                                    .foregroundColor(.white)
+                                                    .padding()
+                                        .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
+                                                    .background(Color.green)
+                                                    .cornerRadius(15.0)
+                                })
+                            }
+                            
                         }
-                        
+                        .padding(.horizontal, screenWidth * 0.05)
+                        .padding(.top, screenHeight * 0.15)
+                        .frame(width: screenWidth)
                     }
-                    .padding(.horizontal, screenWidth * 0.05)
-                    .padding(.top, screenHeight * 0.15)
-                    .frame(width: screenWidth)
                 }
             }
         }
