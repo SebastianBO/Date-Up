@@ -18,10 +18,11 @@ struct ProfileView: View {
     @State private var editMode = false
     @State private var isActivePhoto = false
     
-    @State private var images: [Image]? = [Image("blank-profile-hi"), Image("blank-profile-hi"), Image("blank-profile-hi")]
-    @State private var image: Image? = Image("blank-profile-hi")
+    @State private var images = [UIImage(named: "blank-profile-hi"), UIImage(named: "blank-profile-hi"), UIImage(named: "blank-profile-hi")]
+    @State private var image = UIImage()
+    @State private var shouldPresentAddActionSheet = false
+    @State private var shouldPresentEditActionSheet = false
     @State private var shouldPresentImagePicker = false
-    @State private var shouldPresentActionScheet = false
     @State private var shouldPresentCamera = false
     
     init(profile: ProfileViewModel) {
@@ -36,6 +37,14 @@ struct ProfileView: View {
             ScrollView(.vertical) {
                 VStack {
                     HStack {
+                        Button(action: {
+                            self.shouldPresentAddActionSheet = true
+                        }, label: {
+                            Image(systemName: "plus.circle")
+                        })
+                        .padding(.leading, screenWidth * 0.05)
+                        .padding(.top, screenHeight * 0.03)
+                        
                         Spacer()
                         
                         Button(action: {
@@ -45,80 +54,63 @@ struct ProfileView: View {
                         })
                         .padding(.trailing, screenWidth * 0.1)
                         .padding(.top, screenHeight * 0.03)
+    
                     }
                     .foregroundColor(.black)
                     .font(.system(size: screenHeight * 0.03))
+                    .sheet(isPresented: $shouldPresentImagePicker) {
+                        ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
+                            .onDisappear {
+                                images.append(image)
+                            }
+                    }
+                    .actionSheet(isPresented: $shouldPresentAddActionSheet) {
+                        ActionSheet(title: Text("Add a new photo"), message: nil, buttons: [
+                            .default(Text("Take a new photo"), action: {
+                                 self.shouldPresentImagePicker = true
+                                 self.shouldPresentCamera = true
+                             }),
+                            .default(Text("Upload a new photo"), action: {
+                                 self.shouldPresentImagePicker = true
+                                 self.shouldPresentCamera = false
+                             }),
+                            ActionSheet.Button.cancel()
+                        ])
+                    }
                     
                     VStack {
-                        if !isActivePhoto {
-                            ScrollView(.horizontal) {
-                                HStack {
-                                    ForEach(0..<images!.count, id: \.self) { imageIndex in
-                                        images![imageIndex]
-                                            .resizable()
-                                            .clipShape(Circle())
-                                            .overlay(Circle().stroke(Color.black, lineWidth: 1))
-                                            .frame(width: isActivePhoto ? screenWidth * 0.6 : screenWidth * 0.2, height: isActivePhoto ? screenHeight * 0.3 : screenHeight * 0.1)
-                                            .shadow(radius: isActivePhoto ? 10 : 0)
-                                            .onTapGesture {
-                                                withAnimation {
-                                                    self.shouldPresentActionScheet = true
-                                                    self.isActivePhoto.toggle()
-                                                }
-                                            }
-        //                                    .sheet(isPresented: $shouldPresentImagePicker) {
-        //                                        SUImagePickerView(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, image: $images![0], isPresented: self.$shouldPresentImagePicker)
-        //                                    }
-        //                                    .actionSheet(isPresented: $shouldPresentActionScheet) {
-        //                                        ActionSheet(title: Text("Add a new profile picture"), message: nil,
-        //                                            buttons: [ActionSheet.Button.default(Text("Camera"), action: {
-        //                                                self.shouldPresentImagePicker = true
-        //                                                self.shouldPresentCamera = true
-        //                                            }), ActionSheet.Button.default(Text("Photo Library"), action: {
-        //                                                self.shouldPresentImagePicker = true
-        //                                                self.shouldPresentCamera = false
-        //                                            }), ActionSheet.Button.cancel()])
-        //
-        //                                    }
-                                    }
-                                }
-                                .frame(width: screenWidth, height: screenHeight * 0.12)
-                            }
-                        } else {
-                            TabView {
-                                ForEach(0..<images!.count, id: \.self) { imageIndex in
-                                    images![imageIndex]
-                                        .resizable()
-                                        .clipShape(Circle())
-                                        .overlay(Circle().stroke(Color.black, lineWidth: 1))
-                                        .frame(width: isActivePhoto ? screenWidth * 0.6 : screenWidth * 0.2, height: isActivePhoto ? screenHeight * 0.3 : screenHeight * 0.1)
-                                        .shadow(radius: isActivePhoto ? 10 : 0)
-                                        .onTapGesture {
-                                            withAnimation {
-                                                self.shouldPresentActionScheet = true
-                                                self.isActivePhoto.toggle()
-                                            }
+                        TabView {
+                            ForEach(0..<images.count, id: \.self) { imageIndex in
+                                Image(uiImage: images[imageIndex]!)
+                                    .resizable()
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.black, lineWidth: 0.5))
+                                    .frame(width: isActivePhoto ? screenWidth * 0.9 : screenWidth * 0.5, height: isActivePhoto ? screenHeight * 0.45 : screenHeight * 0.25)
+                                    .shadow(radius: isActivePhoto ? 10 : 0)
+                                    .onTapGesture {
+                                        withAnimation {
+                                            self.isActivePhoto.toggle()
                                         }
-    //                                    .sheet(isPresented: $shouldPresentImagePicker) {
-    //                                        SUImagePickerView(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, image: $images![0], isPresented: self.$shouldPresentImagePicker)
-    //                                    }
-    //                                    .actionSheet(isPresented: $shouldPresentActionScheet) {
-    //                                        ActionSheet(title: Text("Add a new profile picture"), message: nil,
-    //                                            buttons: [ActionSheet.Button.default(Text("Camera"), action: {
-    //                                                self.shouldPresentImagePicker = true
-    //                                                self.shouldPresentCamera = true
-    //                                            }), ActionSheet.Button.default(Text("Photo Library"), action: {
-    //                                                self.shouldPresentImagePicker = true
-    //                                                self.shouldPresentCamera = false
-    //                                            }), ActionSheet.Button.cancel()])
-    //
-    //                                    }
-                                }
+                                    }
+                                    .onLongPressGesture {
+                                        withAnimation {
+                                            self.shouldPresentEditActionSheet = true
+                                        }
+                                    }
+                                    .actionSheet(isPresented: $shouldPresentEditActionSheet) {
+                                        ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
+                                            .destructive(Text("Delete this photo"), action: {
+                                                withAnimation {
+                                                    self.images.remove(at: imageIndex)
+                                                }
+                                            }),
+                                            .cancel()
+                                        ])
+                                    }
                             }
-                            .tabViewStyle(PageTabViewStyle())
-                            .frame(width: screenWidth, height: screenHeight * 0.35)
                         }
-                        
+                        .tabViewStyle(PageTabViewStyle())
+                        .frame(width: screenWidth, height: isActivePhoto ? screenHeight * 0.55 : screenHeight * 0.27)
                         
                         Button(action: {
                             withAnimation {
