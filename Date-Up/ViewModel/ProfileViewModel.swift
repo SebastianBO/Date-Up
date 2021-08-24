@@ -28,12 +28,13 @@ class ProfileViewModel: ObservableObject {
                     let birthDate = document.get("birthDate") as? Date ?? Date()
                     let age = document.get("age") as? Int ?? 0
                     let country = document.get("country") as? String ?? ""
+                    let city = document.get("city") as? String ?? ""
                     let language = document.get("language") as? String ?? ""
                     let preference = document.get("preference") as? String ?? ""
                     let bio = document.get("bio") as? String ?? ""
                     let email = self.user!.email
                     
-                    self.profile = Profile(id: id, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, language: language, preference: preference, bio: bio, email: email!)
+                    self.profile = Profile(id: id, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: email!)
                 }
             }
         }

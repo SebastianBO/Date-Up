@@ -41,7 +41,7 @@ class SessionStore: ObservableObject {
         }
     }
     
-    func signUp(firstName: String, lastName: String, birthDate: Date, country: String, language: String, email: String, password: String, preference: String) {
+    func signUp(firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, password: String, preference: String) {
         authRef.createUser(withEmail: email, password: password) { (result, error) in
             if let error = error {
                 print(error)
@@ -54,6 +54,7 @@ class SessionStore: ObservableObject {
                     "birthDate": birthDate,
                     "age": age,
                     "country": country,
+                    "city": city,
                     "language": language,
                     "email": email,
                     "password": password,
@@ -76,6 +77,18 @@ class SessionStore: ObservableObject {
             try authRef.signOut()
         } catch {
         }
+    }
+    
+    func sendRecoveryEmail(_ email: String) {
+        authRef.sendPasswordReset(withEmail: email) { (error) in
+            if let error = error {
+                print("Error sending recovery e-mail: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func deleteUser() {
+        
     }
     
     func unbind() {

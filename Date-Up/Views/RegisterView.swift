@@ -17,6 +17,7 @@ struct RegisterView: View {
     @State private var email = ""
     @State private var password = ""
     @State var country: Country = .poland
+    @State var city: City = .łódź
     @State var language: Language = .polish
     private let textFieldColor = Color("TextFieldsColor")
     @State private var switchToLoginView = false
@@ -34,16 +35,31 @@ struct RegisterView: View {
     }()
     
     enum Country: String, CaseIterable, Identifiable {
-            case poland
+        case poland
         
-            var id: String { self.rawValue }
+        var id: String { self.rawValue }
+    }
+    
+    enum City: String, CaseIterable, Identifiable {
+        case łódź
+        case warszawa
+        case krakow
+        case wroclaw
+        case lublin
+        case gdansk
+        case gdynia
+        case warka
+        case żywiec
+        case sopot
+        
+        var id: String { self.rawValue }
     }
     
     enum Language: String, CaseIterable, Identifiable {
-            case english
-            case polish
+        case english
+        case polish
         
-            var id: String { self.rawValue }
+        var id: String { self.rawValue }
     }
     
     var body: some View {
@@ -75,6 +91,12 @@ struct RegisterView: View {
                                     Picker("Country", selection: $country) {
                                         ForEach(Country.allCases) { country in
                                             Text(country.rawValue.capitalized).tag(country)
+                                        }
+                                    }
+                                    
+                                    Picker("City", selection: $city) {
+                                        ForEach(City.allCases) { city in
+                                            Text(city.rawValue.capitalized).tag(city)
                                         }
                                     }
                                     
@@ -111,7 +133,7 @@ struct RegisterView: View {
                                         signUpButtonClicked = true
                                             
                                         if checkDataIsCorrect() {
-                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, country: country.rawValue, language: language.rawValue, email: email, password: password, preference: preference)
+                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, country: country.rawValue, city: city.rawValue, language: language.rawValue, email: email, password: password, preference: preference)
                                         }
                                     }
                                 }, label: {
