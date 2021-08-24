@@ -31,12 +31,14 @@ struct LoginView: View {
                     NavigationView {
                         VStack {
                             Form {
-                                Section {
+                                Section(header: Text("Login Form")) {
                                     TextField("E-mail", text: $email)
                                     
                                     SecureField("Password", text: $password)
                                 }
                             }
+                            .padding(.top, screenHeight * 0.52)
+                            .frame(width: screenWidth, height: screenHeight * 0.8)
                                 
                             HStack {
                                 Button(action: {
@@ -65,10 +67,8 @@ struct LoginView: View {
                                         .foregroundColor(.white)
                                         .padding()
                         }
-                        .ignoresSafeArea(.keyboard)
-                        .frame(width: screenWidth, height: screenHeight * 0.83)
+                        .navigationBarHidden(true)
                     }
-                    
                 }
             }
         }

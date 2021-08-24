@@ -61,12 +61,14 @@ struct RegisterView: View {
                         .frame(width: screenWidth, height: screenHeight)
                 
                     NavigationView {
-                        VStack {
-                            Form(content: {
+                        ScrollView(.vertical) {
+                            Form {
                                 Section(header: Text("Personal Information"), footer: signUpButtonClicked ? displayPersonalInformationAndPreferenceErrors() : nil) {
                                     TextField("First Name", text: $firstName)
+                                        .multilineTextAlignment(/*@START_MENU_TOKEN@*/.trailing/*@END_MENU_TOKEN@*/)
                                     
                                     TextField("Last Name", text: $lastName)
+                                        .multilineTextAlignment(/*@START_MENU_TOKEN@*/.trailing/*@END_MENU_TOKEN@*/)
                                     
                                     DatePicker("Birth Date", selection: $birthDate, in: dateRange, displayedComponents: [.date])
                                     
@@ -97,8 +99,12 @@ struct RegisterView: View {
                                     }
                                     .pickerStyle(SegmentedPickerStyle())
                                 }
-                            })
+                            }
+                            .padding(.top, screenHeight * 0.1)
+                            .frame(width: screenWidth, height: screenHeight * 0.8)
                                
+                            Spacer()
+                            
                             HStack {
                                 Button(action: {
                                     withAnimation {
@@ -130,8 +136,7 @@ struct RegisterView: View {
                                         .foregroundColor(.white)
                                         .padding()
                         }
-                        .ignoresSafeArea(.keyboard)
-                        .frame(width: screenWidth, height: screenHeight * 0.83)
+                        .navigationBarHidden(true)
                     }
                 }
             }
@@ -149,7 +154,7 @@ struct RegisterView: View {
     
     private func displayCredentialsErrors() -> Text {
         let emailError = String("Please make sure the email is correct.\n")
-        let passwordError = String("Please make sure your password is at least 8 characters long, has number and special sign in it.\n")
+        let passwordError = String("Please make sure your password is at least 8 characters long and contains a number.\n")
         
         if !checkEmail() && !checkPassword() {
             return Text(emailError + passwordError).foregroundColor(.red)
