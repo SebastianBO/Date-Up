@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NotificationsView: View {
+    @AppStorage("isDarkMode") private var darkMode = false
+    
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
@@ -15,6 +17,8 @@ struct NotificationsView: View {
         
             Text("Notifications View")
         }
+        .preferredColorScheme(darkMode ? .dark : .light)
+        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 

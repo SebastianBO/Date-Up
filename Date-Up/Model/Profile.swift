@@ -13,6 +13,8 @@ struct Profile: Codable, Identifiable {
     var lastName: String
     var birthDate: Date
     var age: Int
+    var country: String
+    var language: String
     var preference: String
     var bio: String
     var email: String 

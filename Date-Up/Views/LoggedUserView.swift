@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LoggedUserView: View {
     @ObservedObject var profileViewModel = ProfileViewModel()
+    @AppStorage("isDarkMode") private var darkMode = false
     @State private var switchToContentView = false
     @State private var showHome = false
     @State private var showChats = false
@@ -55,9 +56,11 @@ struct LoggedUserView: View {
                         Spacer()
                     }
                 }
-                .foregroundColor(.black)
+                .foregroundColor(darkMode ? .white : .black)
                 .font(.system(size: screenHeight * 0.03))
             }
+            .preferredColorScheme(darkMode ? .dark : .light)
+            .environment(\.colorScheme, darkMode ? .dark : .light)
             .onAppear() {
                 profileViewModel.getUserInfo()
             }
@@ -67,6 +70,8 @@ struct LoggedUserView: View {
 
 struct LoggedUserView_Previews: PreviewProvider {
     static var previews: some View {
-        LoggedUserView()
+        ForEach(ColorScheme.allCases, id: \.self) {
+            LoggedUserView().preferredColorScheme($0)
+        }
     }
 }

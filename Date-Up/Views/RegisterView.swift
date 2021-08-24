@@ -16,13 +16,12 @@ struct RegisterView: View {
     @State private var preference = ""
     @State private var email = ""
     @State private var password = ""
+    @State var country: Country = .poland
+    @State var language: Language = .polish
     private let textFieldColor = Color("TextFieldsColor")
     @State private var switchToLoginView = false
-    @State private var showDataError = false
-    @State private var showEmailError = false
-    @State private var showPasswordError = false
+    @State private var signUpButtonClicked = false
     @ObservedObject var sessionStore = SessionStore()
-    private var newProfile = ProfileViewModel()
     @State private var correctData = false
     
     private let dateRange: ClosedRange<Date> = {
@@ -34,6 +33,19 @@ struct RegisterView: View {
             calendar.date(from:endComponents)!
     }()
     
+    enum Country: String, CaseIterable, Identifiable {
+            case poland
+        
+            var id: String { self.rawValue }
+    }
+    
+    enum Language: String, CaseIterable, Identifiable {
+            case english
+            case polish
+        
+            var id: String { self.rawValue }
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
@@ -41,100 +53,67 @@ struct RegisterView: View {
             
             if switchToLoginView {
                 withAnimation {
-                    ContentView()
+                    LoginView()
                 }
             } else {
-                ScrollView(.vertical) {
-                    VStack(spacing: screenHeight * -0.98) {
-                        TopView()
-                            .frame(width: screenWidth, height: screenHeight)
-                    
+                VStack(spacing: screenHeight * -0.89) {
+                    TopView()
+                        .frame(width: screenWidth, height: screenHeight)
+                
+                    NavigationView {
                         VStack {
-                            
-                            Group {
-                                TextField("first name", text: $firstName)
-                                
-                                TextField("last name", text: $lastName)
-                                
-                                DatePicker("birth date", selection: $birthDate, in: dateRange, displayedComponents: [.date])
-                                    .padding(.trailing, screenWidth * 0.28)
-                                
-                                TextField("e-mail", text: $email)
-                                
-                                SecureField("password", text: $password)
-                            }
-                            .padding()
-                            .background(textFieldColor)
-                            .cornerRadius(5.0)
-                            .padding(.bottom, screenHeight * 0.02)
-                            
-                            Text("Preference:")
-                                .padding(.trailing, screenWidth * 0.65)
-                                .padding(.top, screenHeight * 0.05)
-                            Picker("preference", selection: $preference) {
-                                ForEach(preferenceValues, id: \.self) {
-                                    Text($0)
-                                }
-                            }
-                            .pickerStyle(SegmentedPickerStyle())
-                            .padding(.bottom, screenHeight * 0.05)
-                            
-                            VStack (spacing: screenHeight * 0.01) {
-                                if showDataError {
-                                    Text("Please fill in all data!")
-                                        .foregroundColor(.red)
-                                        .lineLimit(0)
+                            Form(content: {
+                                Section(header: Text("Personal Information"), footer: signUpButtonClicked ? displayPersonalInformationAndPreferenceErrors() : nil) {
+                                    TextField("First Name", text: $firstName)
+                                    
+                                    TextField("Last Name", text: $lastName)
+                                    
+                                    DatePicker("Birth Date", selection: $birthDate, in: dateRange, displayedComponents: [.date])
+                                    
+                                    Picker("Country", selection: $country) {
+                                        ForEach(Country.allCases) { country in
+                                            Text(country.rawValue.capitalized).tag(country)
+                                        }
+                                    }
+                                    
+                                    Picker("Language", selection: $language) {
+                                        ForEach(Language.allCases) { language in
+                                            Text(language.rawValue.capitalized).tag(language)
+                                        }
+                                    }
                                 }
                                 
-                                if showEmailError {
-                                    Text("Please, write correct email!")
-                                        .foregroundColor(.red)
-                                        .lineLimit(0)
+                                Section(header: Text("Account Credentials"), footer: signUpButtonClicked ? displayCredentialsErrors() : nil) {
+                                    TextField("E-mail", text: $email)
+                                    
+                                    SecureField("Password", text: $password)
                                 }
-                                if showPasswordError {
-                                    Text("Make sure your password is 8 characters long, contains at least one number and one special character!")
-                                        .foregroundColor(.red)
-                                        .lineLimit(0)
+                                
+                                Section(header: Text("Preference"), footer: Text("The preference option is used to show you only the people of gender of your preference")) {
+                                    Picker("preference", selection: $preference) {
+                                        ForEach(preferenceValues, id: \.self) {
+                                            Text($0)
+                                        }
+                                    }
+                                    .pickerStyle(SegmentedPickerStyle())
                                 }
+                            })
+                               
+                            HStack {
                                 Button(action: {
                                     withAnimation {
-                                        if !checkFieldsNotEmpty(firstName: firstName, lastName: lastName, preference: preference) {
-                                            showDataError = true
-                                            correctData = false
-                                        } else {
-                                            showDataError = false
-                                            correctData = true
-                                        }
-                                        
-                                        if !checkEmail(email: email) {
-                                            showEmailError = true
-                                            correctData = false
-                                        } else {
-                                            showEmailError = false
-                                            correctData = true
-                                        }
+                                        signUpButtonClicked = true
                                             
-                                        if !checkPassword(password: password) {
-                                            showPasswordError = true
-                                            correctData = false
-                                        } else {
-                                            showPasswordError = false
-                                            correctData = true
-                                        }
-                                            
-                                        if correctData {
-                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, email: email, password: password, preference: preference)
+                                        if checkDataIsCorrect() {
+                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, country: country.rawValue, language: language.rawValue, email: email, password: password, preference: preference)
                                         }
                                     }
                                 }, label: {
                                     Text("Register")
-                                        .font(.system(size: screenHeight * 0.026))
-                                                    .foregroundColor(.white)
-                                                    .padding()
-                                        .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
-                                                    .background(Color.green)
-                                                    .cornerRadius(15.0)
                                 })
+                                .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                            .background(Color.green)
+                                            .cornerRadius(15.0)
                                 
                                 Button(action: {
                                     withAnimation {
@@ -142,46 +121,80 @@ struct RegisterView: View {
                                     }
                                 }, label: {
                                     Text("Back")
-                                        .font(.system(size: screenHeight * 0.026))
-                                                    .foregroundColor(.white)
-                                                    .padding()
-                                        .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
-                                                    .background(Color.green)
-                                                    .cornerRadius(15.0)
                                 })
+                                .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                            .background(Color.green)
+                                            .cornerRadius(15.0)
                             }
-                            
+                            .font(.system(size: screenHeight * 0.026))
+                                        .foregroundColor(.white)
+                                        .padding()
                         }
-                        .padding(.horizontal, screenWidth * 0.05)
-                        .padding(.top, screenHeight * 0.15)
-                        .frame(width: screenWidth)
+                        .ignoresSafeArea(.keyboard)
+                        .frame(width: screenWidth, height: screenHeight * 0.83)
                     }
                 }
             }
+        }
+        .ignoresSafeArea(.keyboard)
+    }
+    
+    private func displayPersonalInformationAndPreferenceErrors() -> Text {
+        if !checkFieldsNotEmpty() {
+            return Text("Please fill in all data including your preference").foregroundColor(.red)
+        } else {
+            return Text("")
+        }
+    }
+    
+    private func displayCredentialsErrors() -> Text {
+        let emailError = String("Please make sure the email is correct.\n")
+        let passwordError = String("Please make sure your password is at least 8 characters long, has number and special sign in it.\n")
+        
+        if !checkEmail() && !checkPassword() {
+            return Text(emailError + passwordError).foregroundColor(.red)
+        } else if !checkEmail() {
+            return Text(emailError).foregroundColor(.red)
+        } else if !checkPassword() {
+            return Text(passwordError).foregroundColor(.red)
+        } else {
+            return Text("")
+        }
+    }
+    
+    private func checkFieldsNotEmpty() -> Bool {
+        if firstName.isEmpty || lastName.isEmpty || preference.isEmpty {
+            return false
+        } else {
+            return true
+        }
+    }
+    
+    private func checkEmail() -> Bool {
+        let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        return NSPredicate(format:"SELF MATCHES %@", emailRegEx).evaluate(with: email)
+    }
+
+    private func checkPassword() -> Bool {
+        let passwordRegex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*()\\-_=+{}|?>.<,:;~`’]{8,}$"
+        return NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password)
+    }
+    
+    private func checkDataIsCorrect() -> Bool {
+        if checkFieldsNotEmpty() && checkEmail() && checkPassword() {
+            return true
+        } else {
+            return false
         }
     }
 }
 
 struct RegisterView_Previews: PreviewProvider {
     static var previews: some View {
-        RegisterView()
+        ForEach(ColorScheme.allCases, id: \.self) {
+             RegisterView().preferredColorScheme($0)
+        }
     }
 }
 
-func checkFieldsNotEmpty(firstName: String, lastName: String, preference: String) -> Bool {
-    if firstName.isEmpty || lastName.isEmpty || preference.isEmpty {
-        return false
-    } else {
-        return true
-    }
-}
 
-func checkEmail(email: String) -> Bool {
-    let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-    return NSPredicate(format:"SELF MATCHES %@", emailRegEx).evaluate(with: email)
-}
-
-func checkPassword(password: String) -> Bool {
-    let passwordRegex = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*()\\-_=+{}|?>.<,:;~`’]{8,}$"
-    return NSPredicate(format: "SELF MATCHES %@", passwordRegex).evaluate(with: password)
-}

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ChatsView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
+    @AppStorage("isDarkMode") private var darkMode = false
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
@@ -21,6 +22,8 @@ struct ChatsView: View {
             
             Text("ChatView")
         }
+        .preferredColorScheme(darkMode ? .dark : .light)
+        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 

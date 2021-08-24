@@ -27,6 +27,8 @@ struct ProfileView: View {
     @State private var shouldPresentImagePicker = false
     @State private var shouldPresentCamera = false
     
+    @AppStorage("isDarkMode") private var darkMode = false
+    
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
     }
@@ -63,7 +65,7 @@ struct ProfileView: View {
                             .padding(.top, screenHeight * 0.03)
         
                         }
-                        .foregroundColor(.black)
+                        .foregroundColor(darkMode ? .white : .black)
                         .font(.system(size: screenHeight * 0.03))
                         .sheet(isPresented: $shouldPresentImagePicker) {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
@@ -142,7 +144,7 @@ struct ProfileView: View {
                                 Image(systemName: editMode ? "pencil.circle.fill" : "pencil.circle")
                             })
                             .padding(.top, screenHeight * 0.03)
-                            .foregroundColor(.black)
+                            .foregroundColor(darkMode ? .white : .black)
                             .font(.system(size: screenHeight * 0.03))
                             
                             Spacer()
@@ -183,12 +185,15 @@ struct ProfileView: View {
                 }
             }
         }
+        .preferredColorScheme(darkMode ? .dark : .light)
+        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 
 
 struct SettingsView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
+    @AppStorage("isDarkMode") private var darkMode = false
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
@@ -198,7 +203,7 @@ struct SettingsView: View {
         NavigationView {
             Form {
                 Section(header: Text("Display")) {
-                    Toggle(isOn: .constant(false), label: {
+                    Toggle(isOn: $darkMode, label: {
                         Text("Dark mode")
                     })
                 }
@@ -232,6 +237,8 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
         }
+        .preferredColorScheme(darkMode ? .dark : .light)
+        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 

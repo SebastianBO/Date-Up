@@ -41,7 +41,7 @@ class SessionStore: ObservableObject {
         }
     }
     
-    func signUp(firstName: String, lastName: String, birthDate: Date, email: String, password: String, preference: String) {
+    func signUp(firstName: String, lastName: String, birthDate: Date, country: String, language: String, email: String, password: String, preference: String) {
         authRef.createUser(withEmail: email, password: password) { (result, error) in
             if let error = error {
                 print(error)
@@ -53,6 +53,8 @@ class SessionStore: ObservableObject {
                     "lastName": lastName,
                     "birthDate": birthDate,
                     "age": age,
+                    "country": country,
+                    "language": language,
                     "email": email,
                     "password": password,
                     "preference": preference,

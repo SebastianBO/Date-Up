@@ -10,6 +10,7 @@ import SwiftUI
 struct HomeView: View {
     @State private var showNotifications = false
     @ObservedObject private var profileViewModel: ProfileViewModel
+    @AppStorage("isDarkMode") private var darkMode = false
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
@@ -55,9 +56,11 @@ struct HomeView: View {
                             })
                     }
                 }
-                .accentColor(.black)
+                .accentColor(darkMode ? .white : .black)
             }
         }
+        .preferredColorScheme(darkMode ? .dark : .light)
+        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 

@@ -24,55 +24,49 @@ struct LoginView: View {
                     RegisterView()
                 }
             } else {
-                VStack (spacing: screenHeight * -0.8) {
+                VStack(spacing: screenHeight * -0.89) {
                     TopView()
                         .frame(width: screenWidth, height: screenHeight)
                 
-                    VStack {
-                        Group {
-                            TextField("e-mail", text: $email)
-                            
-                            SecureField("password", text: $password)
-                        }
-                        .padding()
-                        .background(textFieldColor)
-                        .cornerRadius(5.0)
-                        
-                        
+                    NavigationView {
                         VStack {
-                            Button(action: {
-                                withAnimation {
-                                    sessionStore.signIn(email: email, password: password)
+                            Form {
+                                Section {
+                                    TextField("E-mail", text: $email)
+                                    
+                                    SecureField("Password", text: $password)
                                 }
-                            }, label: {
-                                Text("Login")
-                                    .font(.system(size: screenHeight * 0.026))
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .frame(minWidth: screenWidth * 0.4, maxHeight: screenHeight * 0.08)
-                                    .background(Color.green)
-                                    .cornerRadius(15.0)
-                            })
-                            
-                            Button(action: {
-                                withAnimation {
-                                    switchToRegisterView.toggle()
-                                }
-                            }, label: {
-                                Text("Register")
-                                    .font(.system(size: screenHeight * 0.026))
-                                    .foregroundColor(.white)
-                                    .padding()
-                                    .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
-                                    .background(Color.green)
-                                    .cornerRadius(15.0)
-                            })
+                            }
+                                
+                            HStack {
+                                Button(action: {
+                                    withAnimation {
+                                        sessionStore.signIn(email: email, password: password)
+                                    }
+                                }, label: {
+                                    Text("Login")
+                                })
+                                .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                            .background(Color.green)
+                                            .cornerRadius(15.0)
+                                
+                                Button(action: {
+                                    withAnimation {
+                                        switchToRegisterView.toggle()
+                                    }
+                                }, label: {
+                                    Text("Register")
+                                })
+                                .frame(width: screenWidth * 0.4, height: screenHeight * 0.08)
+                                            .background(Color.green)
+                                            .cornerRadius(15.0)
+                            }
+                            .font(.system(size: screenHeight * 0.026))
+                                        .foregroundColor(.white)
+                                        .padding()
                         }
-                        .padding(.top, screenHeight * 0.04)
-                        
+                        .frame(width: screenWidth, height: screenHeight * 0.83)
                     }
-                    .padding(.horizontal, screenWidth * 0.05)
-                    .frame(width: screenWidth)
                     
                 }
             }
@@ -82,6 +76,8 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        LoginView()
+        ForEach(ColorScheme.allCases, id: \.self) {
+             LoginView().preferredColorScheme($0)
+        }
     }
 }
