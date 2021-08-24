@@ -27,8 +27,6 @@ struct ProfileView: View {
     @State private var shouldPresentImagePicker = false
     @State private var shouldPresentCamera = false
     
-    @AppStorage("isDarkMode") private var darkMode = false
-    
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
     }
@@ -65,7 +63,6 @@ struct ProfileView: View {
                             .padding(.top, screenHeight * 0.03)
         
                         }
-                        .foregroundColor(darkMode ? .white : .black)
                         .font(.system(size: screenHeight * 0.03))
                         .sheet(isPresented: $shouldPresentImagePicker) {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
@@ -144,7 +141,6 @@ struct ProfileView: View {
                                 Image(systemName: editMode ? "pencil.circle.fill" : "pencil.circle")
                             })
                             .padding(.top, screenHeight * 0.03)
-                            .foregroundColor(darkMode ? .white : .black)
                             .font(.system(size: screenHeight * 0.03))
                             
                             Spacer()
@@ -185,8 +181,6 @@ struct ProfileView: View {
                 }
             }
         }
-        .preferredColorScheme(darkMode ? .dark : .light)
-        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 
@@ -195,50 +189,130 @@ struct SettingsView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
     @AppStorage("isDarkMode") private var darkMode = false
     
+    @State private var shouldPresentActionSheet = false
+    @State private var shouldPresentLogoutSheet = false
+    
+    @State private var deleteUserWasPrompted = false
+    
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
     }
     
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Display")) {
-                    Toggle(isOn: $darkMode, label: {
-                        Text("Dark mode")
-                    })
-                }
-                
-                Section(header: Text("Chats")) {
-                    Toggle(isOn: .constant(false), label: {
-                        Text("Hide my activity status")
-                    })
-                }
-                
-                Section(header: Text("Account")) {
-                    Button(action: {
-                        profileViewModel.session.signOut()
-                    }, label: {
-                        Text("Logout")
-                            .foregroundColor(.red)
-                    })
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+
+            NavigationView {
+                Form {
+                    Section(header: Text("Display")) {
+                        Toggle(isOn: $darkMode, label: {
+                            Text("Dark mode")
+                        })
+                    }
                     
-                    Button(action: {
+                    Section(header: Text("Chats")) {
+                        Toggle(isOn: .constant(false), label: {
+                            Text("Hide my activity status")
+                        })
+                    }
+                    
+                    Section(header: Text("Account")) {
+                        Button(action: {
+                            shouldPresentActionSheet = true
+                            shouldPresentLogoutSheet = true
+                        }, label: {
+                            Text("Logout")
+                                .foregroundColor(.red)
+                        })
                         
-                    }, label: {
-                        Text("Delete account")
-                            .foregroundColor(.red)
-                    })
+                        Button(action: {
+                            shouldPresentActionSheet = true
+                            shouldPresentLogoutSheet = false
+                        }, label: {
+                            Text("Delete account")
+                                .foregroundColor(.red)
+                        })
+                    }
+                    
+                    Section(header: Text("Additional")) {
+                        Label("Follow me on GitHub:", systemImage: "link")
+                            .font(.system(size: 17, weight: .semibold))
+                        Link("@Vader20FF", destination: URL(string: "https://github.com/Vader20FF")!)
+                            .font(.system(size: 17, weight: .semibold))
+                    }
                 }
-                
-                Section {
-                    Label("Follow me on GitHub @Vader20FF", systemImage: "link")
-                        .font(.system(size: 17, weight: .semibold))
+                .navigationTitle("Settings")
+                .sheet(isPresented: $deleteUserWasPrompted, content: {
+                    DeleteAccountSheetView(profile: profileViewModel)
+                })
+                .actionSheet(isPresented: $shouldPresentActionSheet) {
+                    if shouldPresentLogoutSheet {
+                        return ActionSheet(title: Text("Logout"), message: Text("Are you sure you want to logout?"), buttons: [
+                            .destructive(Text("Logout"), action: {
+                                profileViewModel.session.signOut()
+                             }),
+                            .cancel()
+                        ])
+                    } else {
+                        return ActionSheet(title: Text("Delete Account"), message: Text("Are you sure you want to delete your account? All data will be lost."), buttons: [
+                            .destructive(Text("Delete my account"), action: {
+                                deleteUserWasPrompted = true
+                             }),
+                            .cancel()
+                        ])
+                    }
                 }
             }
-            .navigationTitle("Settings")
         }
-        .preferredColorScheme(darkMode ? .dark : .light)
-        .environment(\.colorScheme, darkMode ? .dark : .light)
+    }
+}
+
+struct DeleteAccountSheetView: View {
+    @ObservedObject private var profileViewModel: ProfileViewModel
+    
+    @Environment(\.presentationMode) private var presentationMode
+    
+    @State private var email = ""
+    @State private var password = ""
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+        
+            NavigationView {
+                VStack {
+                    Form {
+                        Section(footer: Text("Before you delete your account please provide your login credentials to confirm it is really you.")) {
+                            TextField("E-mail", text: $email)
+                            SecureField("Password", text: $password)
+                        }
+                    }
+                    
+                    Button(action: {
+                        withAnimation {
+                            presentationMode.wrappedValue.dismiss()
+                            profileViewModel.session.deleteUser(email: email, password: password)
+                        }
+                    }, label: {
+                        Text("Delete account permanently")
+                    })
+                    .frame(width: screenWidth * 0.6, height: screenHeight * 0.08)
+                    .background(Color.green)
+                    .cornerRadius(15.0)
+                    .font(.system(size: screenHeight * 0.026))
+                    .foregroundColor(.white)
+                    .padding()
+                }
+                .navigationBarHidden(true)
+            }
+            .ignoresSafeArea(.keyboard)
+        }
     }
 }
 
@@ -246,8 +320,10 @@ struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         let profileViewModel = ProfileViewModel()
         Group {
-            ProfileView(profile: profileViewModel)
-            SettingsView(profile: profileViewModel)
+            ForEach(ColorScheme.allCases, id: \.self) {
+                ProfileView(profile: profileViewModel).preferredColorScheme($0)
+                SettingsView(profile: profileViewModel).preferredColorScheme($0)
+            }
         }
     }
 }
