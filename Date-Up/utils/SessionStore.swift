@@ -92,52 +92,23 @@ class SessionStore: ObservableObject {
         let userUID = user!.uid
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
         
+        self.db.collection("profiles").document(userUID).delete() { (error) in
+            if let error = error {
+                print("Could not delete user data: \(error)")
+            }
+        }
+        
         user?.reauthenticate(with: credential) { (result, error) in
             if let error = error {
                 print("Error re-authenticating user \(error)")
             } else {
-                let queue = OperationQueue()
-                
-                queue.addOperation {
-                    self.signOut()
-                }
-                
-                queue.waitUntilAllOperationsAreFinished()
-                
-                queue.addOperation {
-                    self.db.collection("profiles").document(userUID).delete() { (error) in
-                        if let error = error {
-                            print("Could not delete user data: \(error)")
-                        } else {
-                            print("!!!! DELETED USER DATA")
-                            
-                            user?.delete { (error) in
-                                if let error = error {
-                                    print("Could not delete user: \(error)")
-                                }
-                            }
-                        }
+                user?.delete { (error) in
+                    if let error = error {
+                        print("Could not delete user: \(error)")
                     }
                 }
                 
-                queue.waitUntilAllOperationsAreFinished()
-                
-//                queue.addOperation {
-//                    print("!!!! DELETING USER DATA")
-//                    print("USER UID \(userUID)")
-//
-//                    self.db.collection("profiles").document(userUID).delete() { (error) in
-//                        if let error = error {
-//                            print("Could not delete user data: \(error)")
-//                        } else {
-//                            print("!!!! DELETED USER DATA")
-//                        }
-//                    }
-//
-//                    print("AFTER DELETION DATA")
-//                }
-//
-//                queue.waitUntilAllOperationsAreFinished()
+                self.signOut()
             }
         }
     }

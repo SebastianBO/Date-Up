@@ -302,7 +302,7 @@ struct DeleteAccountSheetView: View {
                     }, label: {
                         Text("Delete account permanently")
                     })
-                    .frame(width: screenWidth * 0.6, height: screenHeight * 0.08)
+                    .frame(width: screenWidth * 0.7, height: screenHeight * 0.08)
                     .background(Color.green)
                     .cornerRadius(15.0)
                     .font(.system(size: screenHeight * 0.026))
@@ -310,8 +310,8 @@ struct DeleteAccountSheetView: View {
                     .padding()
                 }
                 .navigationBarHidden(true)
+                .ignoresSafeArea(.keyboard)
             }
-            .ignoresSafeArea(.keyboard)
         }
     }
 }
