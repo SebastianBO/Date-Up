@@ -65,12 +65,14 @@ struct LoginView: View {
                                         .foregroundColor(.white)
                                         .padding()
                         }
+                        .ignoresSafeArea(.keyboard)
                         .frame(width: screenWidth, height: screenHeight * 0.83)
                     }
                     
                 }
             }
         }
+        .ignoresSafeArea(.keyboard)
     }
 }
 
