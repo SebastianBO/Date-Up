@@ -16,8 +16,10 @@ struct LoggedUserView: View {
     @State private var showSettings = false
     @State private var selectedTab = 0
     @State private var alreadyExisting = false
+    @State private var tabBarImage: Image?
     
     let tabBarImagesNames = ["house", "bubble.left.and.bubble.right", "person"]
+    let tabBarFilledImagesNames = ["house.fill", "bubble.left.and.bubble.right.fill", "person.fill"]
     
     var body: some View {
         GeometryReader { geometry in
@@ -50,7 +52,11 @@ struct LoggedUserView: View {
                         Button(action: {
                             selectedTab = number
                         }, label: {
-                            Image(systemName: tabBarImagesNames[number])
+                            if selectedTab == number {
+                                Image(systemName: tabBarFilledImagesNames[number])
+                            } else {
+                                Image(systemName: tabBarImagesNames[number])
+                            }
                         })
                         
                         Spacer()
@@ -59,11 +65,10 @@ struct LoggedUserView: View {
                 .foregroundColor(darkMode ? .white : .black)
                 .font(.system(size: screenHeight * 0.03))
             }
-            .preferredColorScheme(darkMode ? .dark : .light)
-            .environment(\.colorScheme, darkMode ? .dark : .light)
             .onAppear() {
                 profileViewModel.getUserInfo()
             }
+            .preferredColorScheme(darkMode ? .dark : .light)
         }
     }
 }

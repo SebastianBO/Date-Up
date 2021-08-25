@@ -14,16 +14,19 @@ struct NotificationsView: View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
-        
-            Text("Notifications View")
+            
+            NavigationView {
+                Text("Notifications View")
+            }
+            .preferredColorScheme(darkMode ? .dark : .light)
         }
-        .preferredColorScheme(darkMode ? .dark : .light)
-        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 
 struct NotificationsView_Previews: PreviewProvider {
     static var previews: some View {
-        NotificationsView()
+        ForEach(ColorScheme.allCases, id: \.self) {
+            NotificationsView().preferredColorScheme($0)
+        }
     }
 }

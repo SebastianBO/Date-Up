@@ -20,16 +20,19 @@ struct ChatsView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            Text("ChatView")
+            NavigationView {
+                Text("ChatView")
+            }
+            .preferredColorScheme(darkMode ? .dark : .light)
         }
-        .preferredColorScheme(darkMode ? .dark : .light)
-        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 
 struct ChatsView_Previews: PreviewProvider {
     static var previews: some View {
         let profileViewModel = ProfileViewModel()
-        ChatsView(profile: profileViewModel)
+        ForEach(ColorScheme.allCases, id: \.self) {
+            ChatsView(profile: profileViewModel).preferredColorScheme($0)
+        }
     }
 }

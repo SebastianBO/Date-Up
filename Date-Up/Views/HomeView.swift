@@ -56,17 +56,17 @@ struct HomeView: View {
                             })
                     }
                 }
-                .accentColor(darkMode ? .white : .black)
             }
+            .preferredColorScheme(darkMode ? .dark : .light)
         }
-        .preferredColorScheme(darkMode ? .dark : .light)
-        .environment(\.colorScheme, darkMode ? .dark : .light)
     }
 }
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         let profileViewModel = ProfileViewModel()
-        HomeView(profile: profileViewModel)
+        ForEach(ColorScheme.allCases, id: \.self) {
+            HomeView(profile: profileViewModel).preferredColorScheme($0)
+        }
     }
 }

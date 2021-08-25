@@ -9,7 +9,10 @@ import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
+    @AppStorage("isDarkMode") private var darkMode = false
+    
     private let textFieldColor = Color("TextFieldsColor")
+    
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var bio = ""
@@ -36,11 +39,7 @@ struct ProfileView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            if self.shouldPresentSettings {
-                withAnimation {
-                    SettingsView(profile: profileViewModel)
-                }
-            } else {
+            NavigationView {
                 ScrollView(.vertical) {
                     VStack {
                         HStack {
@@ -54,13 +53,15 @@ struct ProfileView: View {
                             
                             Spacer()
                             
-                            Button(action: {
-                                shouldPresentSettings = true
-                            }, label: {
-                                Image(systemName: "gearshape")
-                            })
-                            .padding(.trailing, screenWidth * 0.1)
-                            .padding(.top, screenHeight * 0.03)
+                            NavigationLink(destination: SettingsView(profile: profileViewModel), isActive: $shouldPresentSettings) {
+                                Button(action: {
+                                    self.shouldPresentSettings = true
+                                }, label: {
+                                    Image(systemName: "gearshape")
+                                })
+                                .padding(.trailing, screenWidth * 0.1)
+                                .padding(.top, screenHeight * 0.03)
+                            }
         
                         }
                         .font(.system(size: screenHeight * 0.03))
@@ -179,6 +180,8 @@ struct ProfileView: View {
                         }
                     }
                 }
+                .preferredColorScheme(darkMode ? .dark : .light)
+                .navigationBarHidden(true)
             }
         }
     }
@@ -211,6 +214,7 @@ struct SettingsView: View {
                         })
                     }
                     
+                    
                     Section(header: Text("Chats")) {
                         Toggle(isOn: .constant(false), label: {
                             Text("Hide my activity status")
@@ -242,7 +246,7 @@ struct SettingsView: View {
                             .font(.system(size: 17, weight: .semibold))
                     }
                 }
-                .navigationTitle("Settings")
+                .navigationBarHidden(true)
                 .sheet(isPresented: $deleteUserWasPrompted, content: {
                     DeleteAccountSheetView(profile: profileViewModel)
                 })
@@ -264,12 +268,15 @@ struct SettingsView: View {
                     }
                 }
             }
+            .navigationBarTitle("Settings")
+            .preferredColorScheme(darkMode ? .dark : .light)
         }
     }
 }
 
 struct DeleteAccountSheetView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
+    @AppStorage("isDarkMode") private var darkMode = false
     
     @Environment(\.presentationMode) private var presentationMode
     
@@ -312,6 +319,7 @@ struct DeleteAccountSheetView: View {
                 .navigationBarHidden(true)
                 .ignoresSafeArea(.keyboard)
             }
+            .preferredColorScheme(darkMode ? .dark : .light)
         }
     }
 }
