@@ -122,9 +122,7 @@ struct RegisterView: View {
                                     .pickerStyle(SegmentedPickerStyle())
                                 }
                             }
-                            .frame(width: screenWidth, height: screenHeight * 0.76)
-                               
-                            Spacer()
+                            .frame(width: screenWidth, height: screenHeight * 0.72)
                             
                             HStack {
                                 Button(action: {
@@ -153,7 +151,8 @@ struct RegisterView: View {
                                             .background(Color.green)
                                             .cornerRadius(15.0)
                             }
-                            .frame(width: screenWidth, height: screenHeight * 0.05)
+                            .padding(.bottom, screenHeight * 0.15)
+                            .frame(width: screenWidth, height: screenHeight * 0.2)
                             .font(.system(size: screenHeight * 0.026))
                             .foregroundColor(.white)
                             .padding()

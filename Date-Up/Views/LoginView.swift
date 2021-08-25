@@ -13,6 +13,7 @@ struct LoginView: View {
     @State private var password = ""
     private let textFieldColor = Color("TextFieldsColor")
     @State private var switchToRegisterView = false
+    @State private var wrongCredentials = false
     @State private var showForgotPasswordSheet = false
     @State private var sendRecoveryEmailButtonPressed = false
     @State private var recoveryEmailSent = false
@@ -35,9 +36,7 @@ struct LoginView: View {
                     NavigationView {
                         VStack {
                             Form {
-                                Section(footer: Text("Forgot Password?").foregroundColor(.blue).onTapGesture {
-                                    showForgotPasswordSheet = true
-                                }) {
+                                Section(footer: Text("Forgot Password?").foregroundColor(.blue).onTapGesture { showForgotPasswordSheet = true }) {
                                     TextField("E-mail", text: $email)
                                     
                                     SecureField("Password", text: $password)
@@ -48,11 +47,11 @@ struct LoginView: View {
                                 NavigationView {
                                     ScrollView(.vertical) {
                                         Form {
-                                            Section(header: Text("Forgot Password"), footer: sendRecoveryEmailButtonPressed ? (recoveryEmailSent ? Text("Recovery e-mail has been sent! Please check your inbox.").foregroundColor(.green) : Text("Please provide correct e-mail address").foregroundColor(.red)) : Text("Please provide your e-mail address so that we could send you recovery e-mail with instructions to reset the password.")) {
+                                            Section(header: Text("Forgot Password"), footer: sendRecoveryEmailButtonPressed ? (recoveryEmailSent ? Text("Recovery e-mail has been sent! Please check your inbox.").foregroundColor(.green) : Text("Please provide correct e-mail address.").foregroundColor(.red)) : Text("Please provide your e-mail address so that we could send you recovery e-mail with instructions to reset the password.")) {
                                                 TextField("E-mail", text: $forgotPasswordEmail)
                                             }
                                         }
-                                        .frame(width: screenWidth, height: screenHeight * 0.87)
+                                        .frame(width: screenWidth, height: screenHeight * 0.80)
                                         
                                         HStack {
                                             Button(action: {
@@ -82,7 +81,15 @@ struct LoginView: View {
                             HStack {
                                 Button(action: {
                                     withAnimation {
-                                        sessionStore.signIn(email: email, password: password)
+                                        let queue = OperationQueue()
+                                        queue.addOperation {
+                                            sessionStore.signIn(email: email, password: password)
+                                        }
+                                        queue.waitUntilAllOperationsAreFinished()
+                                        
+                                        if sessionStore.isAnonymous {
+                                            wrongCredentials = true
+                                        }
                                     }
                                 }, label: {
                                     Text("Login")
@@ -102,7 +109,8 @@ struct LoginView: View {
                                             .background(Color.green)
                                             .cornerRadius(15.0)
                             }
-                            .frame(width: screenWidth, height: screenHeight * 0.05)
+                            .padding(.bottom, screenHeight * 0.15)
+                            .frame(width: screenWidth, height: screenHeight * 0.2)
                             .font(.system(size: screenHeight * 0.026))
                                         .foregroundColor(.white)
                                         .padding()
