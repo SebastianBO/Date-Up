@@ -122,8 +122,7 @@ struct RegisterView: View {
                                     .pickerStyle(SegmentedPickerStyle())
                                 }
                             }
-                            .padding(.top, screenHeight * 0.1)
-                            .frame(width: screenWidth, height: screenHeight * 0.8)
+                            .frame(width: screenWidth, height: screenHeight * 0.76)
                                
                             Spacer()
                             
@@ -154,11 +153,12 @@ struct RegisterView: View {
                                             .background(Color.green)
                                             .cornerRadius(15.0)
                             }
+                            .frame(width: screenWidth, height: screenHeight * 0.05)
                             .font(.system(size: screenHeight * 0.026))
-                                        .foregroundColor(.white)
-                                        .padding()
+                            .foregroundColor(.white)
+                            .padding()
                         }
-                        .navigationBarHidden(true)
+                        .navigationBarTitle("Registration Form", displayMode: .inline)
                     }
                 }
             }
