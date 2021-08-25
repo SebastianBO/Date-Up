@@ -34,15 +34,15 @@ struct LoginView: View {
                         .frame(width: screenWidth, height: screenHeight)
                 
                     NavigationView {
-                        VStack {
+                        ScrollView(.vertical) {
                             Form {
-                                Section(footer: Text("Forgot Password?").foregroundColor(.blue).onTapGesture { showForgotPasswordSheet = true }) {
+                                Section(header: Text("Login Credentials"), footer: Text("Forgot Password?").foregroundColor(.blue).onTapGesture { showForgotPasswordSheet = true }) {
                                     TextField("E-mail", text: $email)
                                     
                                     SecureField("Password", text: $password)
                                 }
                             }
-                            .frame(width: screenWidth, height: screenHeight * 0.8)
+                            .frame(width: screenWidth, height: screenHeight * 0.7)
                             .sheet(isPresented: $showForgotPasswordSheet, content: {
                                 NavigationView {
                                     ScrollView(.vertical) {
@@ -109,8 +109,8 @@ struct LoginView: View {
                                             .background(Color.green)
                                             .cornerRadius(15.0)
                             }
-                            .padding(.bottom, screenHeight * 0.15)
-                            .frame(width: screenWidth, height: screenHeight * 0.2)
+                            .padding(.bottom, screenHeight * 0.04)
+                            .frame(width: screenWidth, height: screenHeight * 0.1)
                             .font(.system(size: screenHeight * 0.026))
                                         .foregroundColor(.white)
                                         .padding()
