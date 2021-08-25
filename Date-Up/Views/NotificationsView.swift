@@ -8,25 +8,45 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @AppStorage("isDarkMode") private var darkMode = false
+    @ObservedObject private var profileViewModel: ProfileViewModel
+    @State private var numbers = [1, 2, 3, 4]
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
     
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            NavigationView {
-                Text("Notifications View")
+            VStack {
+                List {
+                    ForEach(numbers, id: \.self) { number in
+                        Text("\(number)")
+                    }
+                }
+                .navigationBarTitle("Notifications")
+                .navigationBarTitleDisplayMode(.large)
+                .navigationBarItems(trailing:
+                    Button(action: {
+                        withAnimation {
+                            numbers.removeAll()
+                        }
+                    }, label: {
+                        Image(systemName: "trash")
+                    })
+                )
             }
-            .preferredColorScheme(darkMode ? .dark : .light)
         }
     }
 }
 
 struct NotificationsView_Previews: PreviewProvider {
     static var previews: some View {
+        let profileViewModel = ProfileViewModel(forPreviews: true)
         ForEach(ColorScheme.allCases, id: \.self) {
-            NotificationsView().preferredColorScheme($0)
+            NotificationsView(profile: profileViewModel).preferredColorScheme($0)
         }
     }
 }

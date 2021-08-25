@@ -18,6 +18,10 @@ class ProfileViewModel: ObservableObject {
         self.getUserInfo()
     }
     
+    init(forPreviews: Bool) {
+        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email")
+    }
+    
     func getUserInfo() {
         if (user != nil) {
             dataBase.collection("profiles").document(user!.uid).getDocument { (document, error) in

@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ChatsView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
-    @AppStorage("isDarkMode") private var darkMode = false
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
@@ -23,14 +22,13 @@ struct ChatsView: View {
             NavigationView {
                 Text("ChatView")
             }
-            .preferredColorScheme(darkMode ? .dark : .light)
         }
     }
 }
 
 struct ChatsView_Previews: PreviewProvider {
     static var previews: some View {
-        let profileViewModel = ProfileViewModel()
+        let profileViewModel = ProfileViewModel(forPreviews: true)
         ForEach(ColorScheme.allCases, id: \.self) {
             ChatsView(profile: profileViewModel).preferredColorScheme($0)
         }

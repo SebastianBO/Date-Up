@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
-    @AppStorage("isDarkMode") private var darkMode = false
     
     private let textFieldColor = Color("TextFieldsColor")
     
@@ -180,7 +179,6 @@ struct ProfileView: View {
                         }
                     }
                 }
-                .preferredColorScheme(darkMode ? .dark : .light)
                 .navigationBarHidden(true)
             }
         }
@@ -190,7 +188,6 @@ struct ProfileView: View {
 
 struct SettingsView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
-    @AppStorage("isDarkMode") private var darkMode = false
     
     @State private var shouldPresentActionSheet = false
     @State private var shouldPresentLogoutSheet = false
@@ -205,16 +202,8 @@ struct SettingsView: View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
-
-            NavigationView {
+            
                 Form {
-                    Section(header: Text("Display")) {
-                        Toggle(isOn: $darkMode, label: {
-                            Text("Dark mode")
-                        })
-                    }
-                    
-                    
                     Section(header: Text("Chats")) {
                         Toggle(isOn: .constant(false), label: {
                             Text("Hide my activity status")
@@ -246,7 +235,9 @@ struct SettingsView: View {
                             .font(.system(size: 17, weight: .semibold))
                     }
                 }
-                .navigationBarHidden(true)
+                .navigationBarTitle("Settings")
+                .navigationBarTitleDisplayMode(.large)
+                
                 .sheet(isPresented: $deleteUserWasPrompted, content: {
                     DeleteAccountSheetView(profile: profileViewModel)
                 })
@@ -268,15 +259,11 @@ struct SettingsView: View {
                     }
                 }
             }
-            .navigationBarTitle("Settings")
-            .preferredColorScheme(darkMode ? .dark : .light)
-        }
     }
 }
 
 struct DeleteAccountSheetView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
-    @AppStorage("isDarkMode") private var darkMode = false
     
     @Environment(\.presentationMode) private var presentationMode
     
@@ -319,14 +306,13 @@ struct DeleteAccountSheetView: View {
                 .navigationBarHidden(true)
                 .ignoresSafeArea(.keyboard)
             }
-            .preferredColorScheme(darkMode ? .dark : .light)
         }
     }
 }
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        let profileViewModel = ProfileViewModel()
+        let profileViewModel = ProfileViewModel(forPreviews: true)
         Group {
             ForEach(ColorScheme.allCases, id: \.self) {
                 ProfileView(profile: profileViewModel).preferredColorScheme($0)
