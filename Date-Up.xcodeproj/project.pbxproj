@@ -26,6 +26,7 @@
 		0A8E68EF26B82A8800C4803A /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68EE26B82A8800C4803A /* RegisterView.swift */; };
 		0A8E68F626B82F7900C4803A /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */; };
 		0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68F726B830B100C4803A /* LoggedUserView.swift */; };
+		0AB1FB0826D7E9B70017175C /* FirebaseStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB1FB0726D7E9B70017175C /* FirebaseStorageManager.swift */; };
 		9CEBF832BB7F7ED6D2C5AB67 /* Pods_Date_Up.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D68BDCE35DD26E70D85A47 /* Pods_Date_Up.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		0A8E68EE26B82A8800C4803A /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		0A8E68F726B830B100C4803A /* LoggedUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedUserView.swift; sourceTree = "<group>"; };
+		0AB1FB0726D7E9B70017175C /* FirebaseStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageManager.swift; sourceTree = "<group>"; };
 		0F0C9E5C3EB59950CE88938C /* Pods-Date-Up.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Date-Up.debug.xcconfig"; path = "Target Support Files/Pods-Date-Up/Pods-Date-Up.debug.xcconfig"; sourceTree = "<group>"; };
 		39D68BDCE35DD26E70D85A47 /* Pods_Date_Up.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Date_Up.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8971C7F2E78491ACF202167E /* Pods-Date-Up.debug (development).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Date-Up.debug (development).xcconfig"; path = "Target Support Files/Pods-Date-Up/Pods-Date-Up.debug (development).xcconfig"; sourceTree = "<group>"; };
@@ -74,6 +76,7 @@
 			children = (
 				0A2302F026C1182C000A7BC7 /* SessionStore.swift */,
 				0A31F18F26D3BF5F00F34390 /* SwiftUIImagePicker.swift */,
+				0AB1FB0726D7E9B70017175C /* FirebaseStorageManager.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */,
 				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A2C29CF26CADA840093A944 /* ProfileView.swift in Sources */,
+				0AB1FB0826D7E9B70017175C /* FirebaseStorageManager.swift in Sources */,
 				0A8E68ED26B82A7A00C4803A /* LoginView.swift in Sources */,
 				0A3A5C2A26C2D81E000CBA0A /* Profile.swift in Sources */,
 				0A2C29C926CADA600093A944 /* NotificationsView.swift in Sources */,

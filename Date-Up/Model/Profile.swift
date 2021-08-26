@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Profile: Codable, Identifiable {
     var id: String
@@ -18,5 +19,6 @@ struct Profile: Codable, Identifiable {
     var language: String
     var preference: String
     var bio: String
-    var email: String 
+    var email: String
+    var photosURL: [String]?
 }

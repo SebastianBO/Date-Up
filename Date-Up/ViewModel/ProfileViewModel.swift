@@ -7,11 +7,16 @@
 
 import Foundation
 import Firebase
+import FirebaseStorage
+import SwiftUI
+import UIKit
 
 class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
+    @Published var firebaseStorageManager = FirebaseStorageManager()
     private let dataBase = Firestore.firestore()
     private let user = Auth.auth().currentUser
+    
     public let session = SessionStore()
     
     init() {

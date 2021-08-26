@@ -9,21 +9,18 @@ import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
+    @Environment(\.colorScheme) var colorScheme
     
     private let textFieldColor = Color("TextFieldsColor")
     
-    @State private var firstName = ""
-    @State private var lastName = ""
-    @State private var bio = ""
-    @State private var preference = ""
-    private var preferenceValues = ["Men", "Women", "Both"]
     @State private var editMode = false
-    @State private var isActivePhoto = false
     
     @State private var shouldPresentSettings = false
     
-    @State private var images = [UIImage(named: "blank-profile-hi"), UIImage(named: "blank-profile-hi"), UIImage(named: "blank-profile-hi")]
+    @State private var images = Array(repeating: UIImage(named: "blank-profile-hi"), count: 12)
+    
     @State private var image = UIImage()
+    
     @State private var shouldPresentAddActionSheet = false
     @State private var shouldPresentEditActionSheet = false
     @State private var shouldPresentImagePicker = false
@@ -39,7 +36,7 @@ struct ProfileView: View {
             let screenHeight = geometry.size.height
             
             NavigationView {
-                ScrollView(.vertical) {
+                ScrollView {
                     VStack {
                         HStack {
                             Button(action: {
@@ -49,6 +46,7 @@ struct ProfileView: View {
                             })
                             .padding(.leading, screenWidth * 0.05)
                             .padding(.top, screenHeight * 0.03)
+                            .foregroundColor(colorScheme == .dark ? .white : .black)
                             
                             Spacer()
                             
@@ -60,6 +58,7 @@ struct ProfileView: View {
                                 })
                                 .padding(.trailing, screenWidth * 0.1)
                                 .padding(.top, screenHeight * 0.03)
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
                             }
         
                         }
@@ -68,6 +67,7 @@ struct ProfileView: View {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
                                     images.append(image)
+                                    profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
                                 }
                         }
                         .actionSheet(isPresented: $shouldPresentAddActionSheet) {
@@ -85,19 +85,41 @@ struct ProfileView: View {
                         }
                         
                         VStack {
-                            TabView {
-                                ForEach(0..<images.count, id: \.self) { imageIndex in
+                            Image(uiImage: images[0]!)
+                                .resizable()
+                                .clipShape(Circle())
+                                .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
+                                .shadow(radius: 10)
+                            
+                            Text(profileViewModel.profile!.firstName + " " + profileViewModel.profile!.lastName)
+                                .font(.title2)
+                                .padding(.bottom, screenHeight * 0.02)
+                            Text(profileViewModel.profile!.bio)
+                            
+                            NavigationLink(destination: EditView(profile: profileViewModel), isActive: $editMode) {
+                                Button(action: {
+                                    withAnimation {
+                                        editMode.toggle()
+                                    }
+                                }, label: {
+                                    HStack {
+                                        Image(systemName: "pencil.circle")
+                                        Text("Edit profile")
+                                    }
+                                })
+                                .padding(.top, screenHeight * 0.03)
+                                .font(.system(size: screenHeight * 0.02))
+                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                            }
+                        }
+                            
+                        ScrollView() {
+                            LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
+                                ForEach(0..<images.count) { imageIndex in
                                     Image(uiImage: images[imageIndex]!)
                                         .resizable()
-                                        .clipShape(Circle())
-                                        .overlay(Circle().stroke(Color.black, lineWidth: 0.5))
-                                        .frame(width: isActivePhoto ? screenWidth * 0.9 : screenWidth * 0.5, height: isActivePhoto ? screenHeight * 0.45 : screenHeight * 0.25)
-                                        .shadow(radius: isActivePhoto ? 10 : 0)
-                                        .onTapGesture {
-                                            withAnimation {
-                                                self.isActivePhoto.toggle()
-                                            }
-                                        }
+                                        .border(Color.black, width: 0.25)
+                                        .frame(width: screenWidth * 0.34, height: screenHeight * 0.17)
                                         .onLongPressGesture {
                                             withAnimation {
                                                 self.shouldPresentEditActionSheet = true
@@ -107,7 +129,7 @@ struct ProfileView: View {
                                             ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
                                                 .destructive(Text("Delete this photo"), action: {
                                                     withAnimation {
-                                                        self.images.remove(at: imageIndex)
+//                                                        self.images.remove(at: imageIndex)
                                                     }
                                                 }),
                                                 .cancel()
@@ -115,71 +137,13 @@ struct ProfileView: View {
                                         }
                                 }
                             }
-                            .tabViewStyle(PageTabViewStyle())
-                            .frame(width: screenWidth, height: isActivePhoto ? screenHeight * 0.55 : screenHeight * 0.27)
-                            
-                            Button(action: {
-                                withAnimation {
-                                    if editMode {
-                                        if profileViewModel.firstNameChange(firstName: firstName) {
-                                            profileViewModel.session.editUserFirstNameInDatabase(firstName: firstName)
-                                        }
-                                        if profileViewModel.lastNameChange(lastName: lastName) {
-                                            profileViewModel.session.editUserLastNameInDatabase(lastName: lastName)
-                                        }
-                                        if profileViewModel.bioChange(bio: bio) {
-                                            profileViewModel.session.editUserBioInDatabase(bio: bio)
-                                        }
-                                        if profileViewModel.preferenceChange(preference: preference) {
-                                            profileViewModel.session.editUserPreferenceInDatabase(preference: preference)
-                                        }
-                                    }
-                                    profileViewModel.getUserInfo()
-                                    editMode.toggle()
-                                }
-                            }, label: {
-                                Image(systemName: editMode ? "pencil.circle.fill" : "pencil.circle")
-                            })
-                            .padding(.top, screenHeight * 0.03)
-                            .font(.system(size: screenHeight * 0.03))
-                            
-                            Spacer()
-                            
-                            if profileViewModel.profile != nil {
-                                Group {
-                                    TextField(profileViewModel.profile!.firstName, text: $firstName)
-
-                                    TextField(profileViewModel.profile!.lastName, text: $lastName)
-
-                                    TextField(profileViewModel.profile!.bio, text: $bio)
-                                        .padding(.bottom, screenHeight * 0.1)
-                                        .lineLimit(4)
-                                        .multilineTextAlignment(.leading)
-                                }
-                                .padding()
-                                .background(textFieldColor)
-                                .cornerRadius(5.0)
-                                .disabled(editMode ? false : true)
-
-                                Text("Preference:")
-                                    .padding(.trailing, screenWidth * 0.65)
-                                    .padding(.top, screenHeight * 0.05)
-                                Picker("preference", selection: $preference) {
-                                    ForEach(preferenceValues, id: \.self) {
-                                        Text($0)
-                                    }
-                                }
-                                .pickerStyle(SegmentedPickerStyle())
-                                .padding(.bottom, screenHeight * 0.05)
-                                .disabled(editMode ? false : true)
-                                
-                            } else {
-                                Text("ProfileView: The profile is nil!")
-                            }
                         }
                     }
+                    .navigationBarHidden(true)
                 }
-                .navigationBarHidden(true)
+            }
+            .onAppear() {
+                profileViewModel.getUserInfo()
             }
         }
     }
@@ -262,6 +226,92 @@ struct SettingsView: View {
     }
 }
 
+struct EditView: View {
+    @ObservedObject private var profileViewModel: ProfileViewModel
+    
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    @State private var firstName = ""
+    @State private var lastName = ""
+    @State private var bio = ""
+    @State private var preference = ""
+    private var preferenceValues = ["Men", "Women", "Both"]
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+            
+            Form {
+                VStack {
+                    HStack {
+                        Text("First Name")
+                        Divider()
+                        Spacer(minLength: screenWidth * 0.06)
+                        TextField(profileViewModel.profile!.firstName, text: $firstName)
+                    }
+                    
+                    HStack {
+                        Text("Last Name")
+                        Divider()
+                        Spacer(minLength: screenWidth * 0.06)
+                        TextField(profileViewModel.profile!.lastName, text: $lastName)
+                    }
+                    
+                    HStack {
+                        Text("Bio")
+                        Divider()
+                        Spacer(minLength: screenWidth * 0.06)
+                        TextField(profileViewModel.profile!.bio, text: $bio)
+                    }
+                    
+                    HStack {
+                        Text("Preference")
+                        Divider()
+                        Spacer(minLength: screenWidth * 0.06)
+                        Picker("preference", selection: $preference) {
+                            ForEach(preferenceValues, id: \.self) {
+                                Text($0)
+                            }
+                        }
+                        .pickerStyle(SegmentedPickerStyle())
+                    }
+                }
+            }
+            .navigationBarTitle("Edit profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarItems(trailing:
+                Button(action: {
+                    withAnimation {
+                        if profileViewModel.firstNameChange(firstName: firstName) {
+                            profileViewModel.session.editUserFirstNameInDatabase(firstName: firstName)
+                        }
+                        if profileViewModel.lastNameChange(lastName: lastName) {
+                            profileViewModel.session.editUserLastNameInDatabase(lastName: lastName)
+                        }
+                        if profileViewModel.bioChange(bio: bio) {
+                            profileViewModel.session.editUserBioInDatabase(bio: bio)
+                        }
+                        if profileViewModel.preferenceChange(preference: preference) {
+                            profileViewModel.session.editUserPreferenceInDatabase(preference: preference)
+                        }
+                        
+                        profileViewModel.getUserInfo()
+                        
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                }, label: {
+                    Text("Finished")
+                })
+            )
+        }
+    }
+}
+
 struct DeleteAccountSheetView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
     
@@ -317,6 +367,7 @@ struct ProfileView_Previews: PreviewProvider {
             ForEach(ColorScheme.allCases, id: \.self) {
                 ProfileView(profile: profileViewModel).preferredColorScheme($0)
                 SettingsView(profile: profileViewModel).preferredColorScheme($0)
+                EditView(profile: profileViewModel).preferredColorScheme($0)
             }
         }
     }
