@@ -22,7 +22,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     init(forPreviews: Bool) {
-        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email")
+        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: nil)
     }
     
     func fetchData() {
@@ -38,6 +38,7 @@ class ProfileViewModel: ObservableObject {
                     let language = document.get("language") as? String ?? ""
                     let preference = document.get("preference") as? String ?? ""
                     let bio = document.get("bio") as? String ?? ""
+                    let photosURLs = document.get("userPhotosURLs") as? [String] ?? [String]()
                     
                     self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil)
                 }
@@ -95,9 +96,20 @@ class ProfileViewModel: ObservableObject {
     
     func addImageURLToUserImages(imageURL: String) {
         self.profile?.photosURLs?.append(imageURL)
+        self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile?.photosURLs)!)
     }
     
-    
+    func downloadUserPhotos() -> [UIImage] {
+        var userImages = [UIImage]()
+        
+        if self.profile?.photosURLs != nil {
+            for photoURLIndex in 0..<(self.profile?.photosURLs!.count)! {
+                userImages.append(self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.profile?.photosURLs![photoURLIndex])!))
+            }
+        }
+        
+        return userImages
+    }
 }
 
 public func yearsBetweenDate(startDate: Date, endDate: Date) -> Int {

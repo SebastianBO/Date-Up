@@ -41,24 +41,18 @@ class FirebaseStorageManager: ObservableObject {
         
     }
     
-    func downloadImagesFromStorage(userID: String, userPhotosURLs: [String]) -> UIImage {
-//        let userImagesStorageRef = storageRef.child("images/\(userID)/\(UUID().uuidString)")
-//
-//        let metadata = StorageMetadata()
-//        metadata.contentType = "image/jpeg"
-//
-//        if let data = data {
-//            userImagesStorageRef.putData(data, metadata: metadata) { (metadata, error) in
-//                if let error = error {
-//                    print("Error while uploading file: ", error.localizedDescription)
-//                }
-//
-//                if let metadata = metadata {
-//                    print("Metadata: ", metadata)
-//                }
-//            }
-//        }
-//
-        return UIImage()
+    func downloadImageFromStorage(userID: String, userPhotoURL: String) -> UIImage {
+        let userImagesStorageRef = storageRef.child("images/\(userID)/\(userPhotoURL)")
+        var downloadedImage = UIImage()
+
+        userImagesStorageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) in
+            if let error = error {
+                print("Error downloading file: ", error.localizedDescription)
+            } else {
+                downloadedImage = UIImage(data: data!)!
+            }
+        }
+        
+        return downloadedImage
     }
 }

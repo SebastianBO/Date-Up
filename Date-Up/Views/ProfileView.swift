@@ -17,7 +17,7 @@ struct ProfileView: View {
     
     @State private var shouldPresentSettings = false
     
-    @State private var images = Array(repeating: UIImage(named: "blank-profile-hi"), count: 12)
+    @State private var userImages = [UIImage]()
     
     @State private var image = UIImage()
     
@@ -28,6 +28,10 @@ struct ProfileView: View {
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
+        self.userImages = self.profileViewModel.downloadUserPhotos()
+        if self.userImages.count == 0 {
+            self.userImages = Array(repeating: UIImage(named: "blank-profile-hi")!, count: 12)
+        }
     }
     
     var body: some View {
@@ -66,7 +70,6 @@ struct ProfileView: View {
                         .sheet(isPresented: $shouldPresentImagePicker) {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
-                                    images.append(image)
                                     let uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
                                     profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
                                 }
@@ -86,7 +89,7 @@ struct ProfileView: View {
                         }
                         
                         VStack {
-                            Image(uiImage: images[0]!)
+                            Image(uiImage: userImages[0])
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
@@ -116,8 +119,8 @@ struct ProfileView: View {
                             
                         ScrollView() {
                             LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
-                                ForEach(0..<images.count) { imageIndex in
-                                    Image(uiImage: images[imageIndex]!)
+                                ForEach(0..<userImages.count) { imageIndex in
+                                    Image(uiImage: userImages[imageIndex])
                                         .resizable()
                                         .border(Color.black, width: 0.25)
                                         .frame(width: screenWidth * 0.34, height: screenHeight * 0.17)

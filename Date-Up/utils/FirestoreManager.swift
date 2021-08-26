@@ -11,6 +11,7 @@ import SwiftUI
 
 class FirestoreManager: ObservableObject {
     private let db = Firestore.firestore()
+    private let user = SessionStore().currentUser
     
     func getDatabase() -> Firestore {
         return self.db
@@ -80,12 +81,14 @@ class FirestoreManager: ObservableObject {
     }
     
     private func updateUserData(documentData: [String: Any]) {
-        let user = Auth.auth().currentUser
-        
         self.db.collection("profiles").document(user!.uid).updateData(documentData) { (error) in
             if let error = error {
                 print(error)
             }
         }
+    }
+    
+    func addUsersPhotoURLsToDatabase(photosURLs: [String]) {
+        self.db.collection("profiles").document(user!.uid).setData(["userPhotosURLs":photosURLs])
     }
 }
