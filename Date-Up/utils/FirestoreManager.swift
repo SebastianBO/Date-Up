@@ -12,6 +12,10 @@ import SwiftUI
 class FirestoreManager: ObservableObject {
     private let db = Firestore.firestore()
     
+    func getDatabase() -> Firestore {
+        return self.db
+    }
+    
     func signUpDataCreation(id: String, firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, password: String, preference: String) {
         let age = yearsBetweenDate(startDate: birthDate, endDate: Date())
         let documentData: [String: Any] = [

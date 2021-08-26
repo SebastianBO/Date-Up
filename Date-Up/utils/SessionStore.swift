@@ -19,7 +19,8 @@ class SessionStore: ObservableObject {
     @Published var firestoreManager = FirestoreManager()
     
     var handle: AuthStateDidChangeListenerHandle?
-    let authRef = Auth.auth()
+    private let authRef = Auth.auth()
+    public let currentUser = Auth.auth().currentUser
     
     func listen() {
         handle = authRef.addStateDidChangeListener({ (auth, user) in

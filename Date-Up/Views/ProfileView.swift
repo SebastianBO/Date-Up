@@ -67,7 +67,8 @@ struct ProfileView: View {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
                                     images.append(image)
-                                    profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
+                                    let uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
+                                    profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
                                 }
                         }
                         .actionSheet(isPresented: $shouldPresentAddActionSheet) {
@@ -143,7 +144,7 @@ struct ProfileView: View {
                 }
             }
             .onAppear() {
-                profileViewModel.getUserInfo()
+                profileViewModel.fetchData()
             }
         }
     }
@@ -288,19 +289,19 @@ struct EditView: View {
                 Button(action: {
                     withAnimation {
                         if profileViewModel.firstNameChange(firstName: firstName) {
-                            profileViewModel.session.editUserFirstNameInDatabase(firstName: firstName)
+                            profileViewModel.firestoreManager.editUserFirstNameInDatabase(firstName: firstName)
                         }
                         if profileViewModel.lastNameChange(lastName: lastName) {
-                            profileViewModel.session.editUserLastNameInDatabase(lastName: lastName)
+                            profileViewModel.firestoreManager.editUserLastNameInDatabase(lastName: lastName)
                         }
                         if profileViewModel.bioChange(bio: bio) {
-                            profileViewModel.session.editUserBioInDatabase(bio: bio)
+                            profileViewModel.firestoreManager.editUserBioInDatabase(bio: bio)
                         }
                         if profileViewModel.preferenceChange(preference: preference) {
-                            profileViewModel.session.editUserPreferenceInDatabase(preference: preference)
+                            profileViewModel.firestoreManager.editUserPreferenceInDatabase(preference: preference)
                         }
                         
-                        profileViewModel.getUserInfo()
+                        profileViewModel.fetchData()
                         
                         self.presentationMode.wrappedValue.dismiss()
                     }

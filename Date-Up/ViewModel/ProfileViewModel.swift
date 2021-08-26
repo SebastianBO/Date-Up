@@ -14,24 +14,21 @@ import UIKit
 class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
     @Published var firebaseStorageManager = FirebaseStorageManager()
-    private let dataBase = Firestore.firestore()
-    private let user = Auth.auth().currentUser
-    
+    @Published var firestoreManager = FirestoreManager()
     public let session = SessionStore()
     
     init() {
-        self.getUserInfo()
+        self.fetchData()
     }
     
     init(forPreviews: Bool) {
         self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email")
     }
     
-    func getUserInfo() {
-        if (user != nil) {
-            dataBase.collection("profiles").document(user!.uid).getDocument { (document, error) in
+    func fetchData() {
+        if (session.currentUser != nil) {
+            firestoreManager.getDatabase().collection("profiles").document(session.currentUser!.uid).getDocument { (document, error) in
                 if let document = document {
-                    let id = self.user!.uid
                     let firstName = document.get("firstName") as? String ?? ""
                     let lastName = document.get("lastName") as? String ?? ""
                     let birthDate = document.get("birthDate") as? Date ?? Date()
@@ -41,9 +38,8 @@ class ProfileViewModel: ObservableObject {
                     let language = document.get("language") as? String ?? ""
                     let preference = document.get("preference") as? String ?? ""
                     let bio = document.get("bio") as? String ?? ""
-                    let email = self.user!.email
                     
-                    self.profile = Profile(id: id, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: email!)
+                    self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil)
                 }
             }
         }
@@ -96,6 +92,12 @@ class ProfileViewModel: ObservableObject {
             return false
         }
     }
+    
+    func addImageURLToUserImages(imageURL: String) {
+        self.profile?.photosURLs?.append(imageURL)
+    }
+    
+    
 }
 
 public func yearsBetweenDate(startDate: Date, endDate: Date) -> Int {

@@ -64,7 +64,7 @@ struct LoggedUserView: View {
                 .font(.system(size: screenHeight * 0.03))
             }
             .onAppear() {
-                profileViewModel.getUserInfo()
+                profileViewModel.fetchData()
             }
         }
     }

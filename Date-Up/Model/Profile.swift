@@ -20,5 +20,5 @@ struct Profile: Codable, Identifiable {
     var preference: String
     var bio: String
     var email: String
-    var photosURL: [String]?
+    var photosURLs: [String]?
 }
