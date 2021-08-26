@@ -34,6 +34,10 @@ class FirebaseStorageManager: ObservableObject {
         }
     }
     
+    func deleteImageFromStorage(userID: String) {
+        
+    }
+    
     func downloadImageFromStorage(userID: String) -> UIImage {
         return UIImage()
     }

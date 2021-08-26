@@ -16,7 +16,7 @@ struct User {
 class SessionStore: ObservableObject {
     @Published var session: User?
     @Published var isAnonymous = true
-    let db = Firestore.firestore()
+    @Published var firestoreManager = FirestoreManager()
     
     var handle: AuthStateDidChangeListenerHandle?
     let authRef = Auth.auth()
@@ -46,26 +46,7 @@ class SessionStore: ObservableObject {
             if let error = error {
                 print(error)
             } else {
-                let age = yearsBetweenDate(startDate: birthDate, endDate: Date())
-                let documentData: [String: Any] = [
-                    "id": result!.user.uid,
-                    "firstName": firstName,
-                    "lastName": lastName,
-                    "birthDate": birthDate,
-                    "age": age,
-                    "country": country,
-                    "city": city,
-                    "language": language,
-                    "email": email,
-                    "password": password,
-                    "preference": preference,
-                    "bio": "Hi, I'm \(firstName)!"
-                ]
-                self.db.collection("profiles").document(result!.user.uid).setData(documentData) { (error) in
-                    if let error = error {
-                        print(error)
-                    }
-                }
+                self.firestoreManager.signUpDataCreation(id: result!.user.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, country: country, city: city, language: language, email: email, password: password, preference: preference)
             }
         }
     }
@@ -89,14 +70,9 @@ class SessionStore: ObservableObject {
     
     func deleteUser(email: String, password: String) {
         let user = authRef.currentUser
-        let userUID = user!.uid
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
         
-        self.db.collection("profiles").document(userUID).delete() { (error) in
-            if let error = error {
-                print("Could not delete user data: \(error)")
-            }
-        }
+        self.firestoreManager.deleteUserData(id: user!.uid)
         
         user?.reauthenticate(with: credential) { (result, error) in
             if let error = error {
@@ -116,48 +92,6 @@ class SessionStore: ObservableObject {
     func unbind() {
         if let handle = handle {
             authRef.removeStateDidChangeListener(handle)
-        }
-    }
-    
-    func editUserFirstNameInDatabase(firstName: String) {
-        let documentData: [String: Any] = [
-            "firstName": firstName
-        ]
-        
-        updateUserData(documentData: documentData)
-    }
-    
-    func editUserLastNameInDatabase(lastName: String) {
-        let documentData: [String: Any] = [
-            "lastName": lastName
-        ]
-        
-        updateUserData(documentData: documentData)
-    }
-    
-    func editUserBioInDatabase(bio: String) {
-        let documentData: [String: Any] = [
-            "bio": bio
-        ]
-        
-        updateUserData(documentData: documentData)
-    }
-    
-    func editUserPreferenceInDatabase(preference: String) {
-        let documentData: [String: Any] = [
-            "preference": preference
-        ]
-        
-        updateUserData(documentData: documentData)
-    }
-    
-    private func updateUserData(documentData: [String: Any]) {
-        let user = Auth.auth().currentUser
-        
-        self.db.collection("profiles").document(user!.uid).updateData(documentData) { (error) in
-            if let error = error {
-                print(error)
-            }
         }
     }
 }
