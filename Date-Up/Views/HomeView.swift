@@ -24,7 +24,7 @@ struct HomeView: View {
                 ScrollView(.vertical) {
                     Text("sample")
                 }
-                .navigationBarTitle(profileViewModel.profile != nil ? "Hello, \(profileViewModel.profile!.firstName)" : "Hello, World")
+                .navigationBarTitle("Hello, \(profileViewModel.profile!.firstName)")
                 .navigationBarItems(trailing:
                     NavigationLink(destination: NotificationsView(profile: profileViewModel), isActive: $showNotifications) {
                         Button(action: {
