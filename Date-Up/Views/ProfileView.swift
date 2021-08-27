@@ -64,22 +64,10 @@ struct ProfileView: View {
                         .sheet(isPresented: $shouldPresentImagePicker) {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
-                                    let queue = OperationQueue()
-                                    var uploadedImageURL = ""
-                                    queue.addOperation {
-                                        uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
-                                        profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
-                                    }
-                                    queue.waitUntilAllOperationsAreFinished()
+                                    let uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
+                                    profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
                                     
-                                    print("1 ProfileView uploadedImage URL ---------------")
-                                    print(uploadedImageURL)
-                                    print("1 ---------------")
-                                    
-                                    let newPhotos = profileViewModel.downloadUserPhotos()
-                                    for photoIndex in 0..<newPhotos.count {
-                                        self.profileViewModel.userPictures.append(newPhotos[photoIndex])
-                                    }
+                                    profileViewModel.fetchData()
                                 }
                         }
                         .actionSheet(isPresented: $shouldPresentAddActionSheet) {
@@ -97,7 +85,7 @@ struct ProfileView: View {
                         }
                         
                         VStack {
-                            Image(uiImage: profileViewModel.userPictures[0])
+                            Image(uiImage: profileViewModel.userPicturesView[0].image!)
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
@@ -127,26 +115,28 @@ struct ProfileView: View {
                             
                         ScrollView() {
                             LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
-                                ForEach(0..<profileViewModel.userPictures.count, id: \.self) { imageIndex in
-                                    Image(uiImage: profileViewModel.userPictures[imageIndex])
-                                        .resizable()
-                                        .border(Color.black, width: 0.25)
-                                        .frame(width: screenWidth * 0.34, height: screenHeight * 0.17)
-                                        .onLongPressGesture {
-                                            withAnimation {
-                                                self.shouldPresentEditActionSheet = true
+                                ForEach(0..<profileViewModel.userPicturesView.count, id: \.self) { imageIndex in
+                                    if profileViewModel.userPicturesView[imageIndex].image != nil {
+                                        Image(uiImage: profileViewModel.userPicturesView[imageIndex].image!)
+                                            .resizable()
+                                            .border(Color.black, width: 0.25)
+                                            .frame(width: screenWidth * 0.34, height: screenHeight * 0.17)
+                                            .onLongPressGesture {
+                                                withAnimation {
+                                                    self.shouldPresentEditActionSheet = true
+                                                }
                                             }
-                                        }
-                                        .actionSheet(isPresented: $shouldPresentEditActionSheet) {
-                                            ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
-                                                .destructive(Text("Delete this photo"), action: {
-                                                    withAnimation {
-//                                                        self.profileViewModel.userPictures.remove(at: imageIndex)
-                                                    }
-                                                }),
-                                                .cancel()
-                                            ])
-                                        }
+                                            .actionSheet(isPresented: $shouldPresentEditActionSheet) {
+                                                ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
+                                                    .destructive(Text("Delete this photo"), action: {
+                                                        withAnimation {
+    //                                                        self.profileViewModel.userPicturesView.remove(at: imageIndex)
+                                                        }
+                                                    }),
+                                                    .cancel()
+                                                ])
+                                            }
+                                    }
                                 }
                             }
                         }
@@ -373,7 +363,7 @@ struct ProfileView_Previews: PreviewProvider {
         let profileViewModel = ProfileViewModel(forPreviews: true)
         Group {
             ForEach(ColorScheme.allCases, id: \.self) {
-                ProfileView(profile: profileViewModel).preferredColorScheme($0)
+                ProfileView(profile: profileViewModel).preferredColorScheme($0).onAppear {profileViewModel.userPicturesView.append(UIImageView(image: UIImage(named: "blank-profile-hi")))}
                 SettingsView(profile: profileViewModel).preferredColorScheme($0)
                 EditView(profile: profileViewModel).preferredColorScheme($0)
             }

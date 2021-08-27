@@ -13,25 +13,26 @@ import UIKit
 
 class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
-    @Published var userPictures = Array(repeating: UIImage(named: "blank-profile-hi")!, count: 1)
+    @Published var userPicturesView = [UIImageView]()
     public let firebaseStorageManager = FirebaseStorageManager()
     public let firestoreManager = FirestoreManager()
     @Published var session = SessionStore()
     
     init() {
-        print("init ProfileViewModel")
-        self.fetchData()
+        let queue = OperationQueue()
+        queue.addOperation {
+            self.fetchData()
+        }
+        queue.waitUntilAllOperationsAreFinished()
     }
     
     init(forPreviews: Bool) {
-        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: nil)
+        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: ["preview"])
     }
     
     func fetchData() {
         if (session.currentUser != nil) {
-            print("Pobieram dane do ProfileViewModel z bazy")
-            print(session.currentUser!.uid)
-            firestoreManager.getDatabase().collection("profiles").document(session.currentUser!.uid).getDocument { (document, error) in
+            firestoreManager.getDatabase().collection("profiles").document(session.currentUser!.uid).getDocument { [self] (document, error) in
                 if let document = document {
                     let firstName = document.get("firstName") as? String ?? ""
                     let lastName = document.get("lastName") as? String ?? ""
@@ -44,14 +45,30 @@ class ProfileViewModel: ObservableObject {
                     let bio = document.get("bio") as? String ?? ""
                     let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
                     
-                    self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs)
+                    
+                    if photosURLs == nil {
+                        let newPhotoURL = self.firebaseStorageManager.uploadImageToStorage(image: UIImage(named: "blank-profile-hi")!, userID: session.currentUser!.uid)
+                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: [newPhotoURL])
+                        self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile!.photosURLs))
+                    } else {
+                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!)
+                    }
                     
                     let newUserPhotos = self.downloadUserPhotos()
-                    for photoIndex in 0..<newUserPhotos.count {
-                        print("Tutaj wyswietle liczbe zdjec", photoIndex)
-                        self.userPictures.append(newUserPhotos[photoIndex])
+                    
+                    if userPicturesView.count == 0 {
+                        for photoIndex in 0..<newUserPhotos.count {
+                            self.userPicturesView.append(newUserPhotos[photoIndex])
+                        }
+                    } else {
+                        for photoIndexInExisting in 0..<userPicturesView.count {
+                            for photoIndexInNew in 0..<newUserPhotos.count {
+                                if self.userPicturesView[photoIndexInExisting] != newUserPhotos[photoIndexInNew] {
+                                    self.userPicturesView.append(newUserPhotos[photoIndexInNew])
+                                }
+                            }
+                        }
                     }
-                    print("Tutaj wyswietle liczbe zdjec po dodaniu", self.userPictures.count)
                 }
             }
         }
@@ -106,25 +123,16 @@ class ProfileViewModel: ObservableObject {
     }
     
     func addImageURLToUserImages(imageURL: String) {
-        self.profile?.photosURLs?.append(imageURL)
-        self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile?.photosURLs)!)
+        self.profile!.photosURLs.append(imageURL)
+        self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile!.photosURLs))
     }
     
-    func downloadUserPhotos() -> [UIImage] {
-        var userImages: [UIImage] = [UIImage]()
-        
-        print("2 ProfileViewModel photosURLs ---------------")
-        if self.profile?.photosURLs != nil {
-            let photosURLs = self.profile?.photosURLs
-            for photoIndex in 0..<photosURLs!.count {
-                print(photosURLs![photoIndex])
-            }
-        }
-        print("2 ---------------")
+    func downloadUserPhotos() -> [UIImageView] {
+        var userImages: [UIImageView] = [UIImageView]()
         
         if self.profile?.photosURLs != nil {
-            for photoURLIndex in 0..<(self.profile?.photosURLs!.count)! {
-                userImages.append(self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.profile?.photosURLs![photoURLIndex])!))
+            for photoURLIndex in 0..<(self.profile?.photosURLs.count)! {
+                userImages.append(self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.profile?.photosURLs[photoURLIndex])!))
             }
         }
         

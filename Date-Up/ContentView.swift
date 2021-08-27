@@ -18,6 +18,10 @@ struct ContentView: View {
         StartView()
             .fullScreenCover(isPresented: $sessionStore.isAnonymous, content: {
                 LoginView()
+//                IN CASE APP CRASHES BECAUSE OF LACK OF ACCOUNT TO LOG IN
+//                    .onAppear {
+//                        sessionStore.signOut()
+//                    }
             })
             .ignoresSafeArea(.keyboard)
     }

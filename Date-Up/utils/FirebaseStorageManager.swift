@@ -42,13 +42,20 @@ class FirebaseStorageManager: ObservableObject {
         
     }
     
-    func downloadImageFromStorage(userID: String, userPhotoURL: String) -> UIImage {
+    func downloadImageFromStorage(userID: String, userPhotoURL: String) -> UIImageView {
         let userImagesStorageRef = storageRef.child("images/\(userID)/\(userPhotoURL)")
-        var downloadedImage: UIImage = UIImage()
+        var downloadedImage: UIImageView = UIImageView()
         
-        print("3 FirebaseStorageManager userPhotoURL ---------------")
-        print(userPhotoURL)
-        print("3 ---------------")
+        userImagesStorageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) in
+            if let error = error {
+                print("Error downloading file: ", error.localizedDescription)
+            } else {
+                let image = UIImage(data: data!)!
+                downloadedImage.image = image
+            }
+        }
+
+        return downloadedImage
 
 //        userImagesStorageRef.downloadURL { (url, error) in
 //            if let error = error {
@@ -59,16 +66,6 @@ class FirebaseStorageManager: ObservableObject {
 //                downloadedImage = image!
 //            }
 //        }
-        
-//        userImagesStorageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) in
-//            if let error = error {
-//                print("Error downloading file: ", error.localizedDescription)
-//            } else {
-//                downloadedImage = UIImage(data: data!)!
-//            }
-//        }
-//
-//        return downloadedImage
         
 //        userImagesStorageRef.downloadURL { url, error in
 //            if error != nil {
@@ -83,7 +80,7 @@ class FirebaseStorageManager: ObservableObject {
 //                }.resume()
 //            }
 //        }
-//        
+//
 //        return downloadedImage
     }
 }
