@@ -13,11 +13,12 @@ import UIKit
 
 class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
-    @Published var firebaseStorageManager = FirebaseStorageManager()
-    @Published var firestoreManager = FirestoreManager()
-    public let session = SessionStore()
+    public let firebaseStorageManager = FirebaseStorageManager()
+    public let firestoreManager = FirestoreManager()
+    @Published var session = SessionStore()
     
     init() {
+        print("init ProfileViewModel")
         self.fetchData()
     }
     
@@ -27,6 +28,8 @@ class ProfileViewModel: ObservableObject {
     
     func fetchData() {
         if (session.currentUser != nil) {
+            print("Pobieram dane do ProfileViewModel z bazy")
+            print(session.currentUser!.uid)
             firestoreManager.getDatabase().collection("profiles").document(session.currentUser!.uid).getDocument { (document, error) in
                 if let document = document {
                     let firstName = document.get("firstName") as? String ?? ""
@@ -43,6 +46,9 @@ class ProfileViewModel: ObservableObject {
                     self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs)
                 }
             }
+        } else {
+            print("Używam szablonu")
+            self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: nil)
         }
     }
     
@@ -101,6 +107,15 @@ class ProfileViewModel: ObservableObject {
     
     func downloadUserPhotos() -> [UIImage] {
         var userImages: [UIImage] = [UIImage]()
+        
+        print("2 ProfileViewModel photosURLs ---------------")
+        if self.profile?.photosURLs != nil {
+            let photosURLs = self.profile?.photosURLs
+            for photoIndex in 0..<photosURLs!.count {
+                print(photosURLs![photoIndex])
+            }
+        }
+        print("2 ---------------")
         
         if self.profile?.photosURLs != nil {
             for photoURLIndex in 0..<(self.profile?.photosURLs!.count)! {

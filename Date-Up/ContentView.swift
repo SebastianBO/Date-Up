@@ -15,7 +15,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        LoggedUserView()
+        StartView()
             .fullScreenCover(isPresented: $sessionStore.isAnonymous, content: {
                 LoginView()
             })

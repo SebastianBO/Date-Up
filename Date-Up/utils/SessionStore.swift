@@ -16,7 +16,7 @@ struct User {
 class SessionStore: ObservableObject {
     @Published var session: User?
     @Published var isAnonymous = true
-    @Published var firestoreManager = FirestoreManager()
+    private var firestoreManager = FirestoreManager()
     
     var handle: AuthStateDidChangeListenerHandle?
     private let authRef = Auth.auth()

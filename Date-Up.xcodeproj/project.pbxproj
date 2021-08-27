@@ -17,6 +17,7 @@
 		0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F5B8826BBF07300141D38 /* TopView.swift */; };
 		0A31F19026D3BF5F00F34390 /* SwiftUIImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31F18F26D3BF5F00F34390 /* SwiftUIImagePicker.swift */; };
 		0A3A5C2A26C2D81E000CBA0A /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A5C2926C2D81E000CBA0A /* Profile.swift */; };
+		0A42EB2826D91623000C8556 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A42EB2726D91623000C8556 /* StartView.swift */; };
 		0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */; };
 		0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DA26B8260400C4803A /* Date_UpApp.swift */; };
 		0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DC26B8260400C4803A /* ContentView.swift */; };
@@ -42,6 +43,7 @@
 		0A2F5B8826BBF07300141D38 /* TopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopView.swift; sourceTree = "<group>"; };
 		0A31F18F26D3BF5F00F34390 /* SwiftUIImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIImagePicker.swift; sourceTree = "<group>"; };
 		0A3A5C2926C2D81E000CBA0A /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		0A42EB2726D91623000C8556 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0A8E68D726B8260400C4803A /* Date-Up.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Date-Up.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A8E68DA26B8260400C4803A /* Date_UpApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date_UpApp.swift; sourceTree = "<group>"; };
@@ -139,6 +141,7 @@
 				0A2C29CA26CADA6B0093A944 /* HomeView.swift */,
 				0A2C29CC26CADA780093A944 /* ChatsView.swift */,
 				0A2C29CE26CADA840093A944 /* ProfileView.swift */,
+				0A42EB2726D91623000C8556 /* StartView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A2C29CF26CADA840093A944 /* ProfileView.swift in Sources */,
 				0AB1FB0826D7E9B70017175C /* FirebaseStorageManager.swift in Sources */,
+				0A42EB2826D91623000C8556 /* StartView.swift in Sources */,
 				0A8E68ED26B82A7A00C4803A /* LoginView.swift in Sources */,
 				0A3A5C2A26C2D81E000CBA0A /* Profile.swift in Sources */,
 				0A2C29C926CADA600093A944 /* NotificationsView.swift in Sources */,

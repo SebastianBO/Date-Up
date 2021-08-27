@@ -17,7 +17,7 @@ struct ProfileView: View {
     
     @State private var shouldPresentSettings = false
     
-    @State private var userImages: [UIImage] = [UIImage]()
+    @State private var userImages: [UIImage] = Array(repeating: UIImage(named: "blank-profile-hi")!, count: 1)
     
     @State private var image = UIImage()
     
@@ -29,9 +29,6 @@ struct ProfileView: View {
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
         self.userImages = self.profileViewModel.downloadUserPhotos()
-        if self.userImages.count == 0 {
-            self.userImages = Array(repeating: UIImage(named: "blank-profile-hi")!, count: 12)
-        }
     }
     
     var body: some View {
@@ -72,6 +69,15 @@ struct ProfileView: View {
                                 .onDisappear {
                                     let uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
                                     profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
+                                    
+                                    print("1 ProfileView uploadedImage URL ---------------")
+                                    print(uploadedImageURL)
+                                    print("1 ---------------")
+                                    
+                                    let newPhotos = profileViewModel.downloadUserPhotos()
+                                    for photoIndex in 0..<newPhotos.count {
+                                        self.userImages.append(newPhotos[photoIndex])
+                                    }
                                 }
                         }
                         .actionSheet(isPresented: $shouldPresentAddActionSheet) {
@@ -145,9 +151,6 @@ struct ProfileView: View {
                     }
                     .navigationBarHidden(true)
                 }
-            }
-            .onAppear() {
-                profileViewModel.fetchData()
             }
         }
     }
@@ -318,8 +321,7 @@ struct EditView: View {
 
 struct DeleteAccountSheetView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
-    
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     @State private var email = ""
     @State private var password = ""

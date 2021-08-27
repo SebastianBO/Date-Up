@@ -44,6 +44,10 @@ class FirebaseStorageManager: ObservableObject {
     func downloadImageFromStorage(userID: String, userPhotoURL: String) -> UIImage {
         let userImagesStorageRef = storageRef.child("images/\(userID)/\(userPhotoURL)")
         var downloadedImage: UIImage = UIImage()
+        
+        print("3 FirebaseStorageManager userPhotoURL ---------------")
+        print(userPhotoURL)
+        print("3 ---------------")
 
         userImagesStorageRef.getData(maxSize: 1 * 1024 * 1024) { (data, error) in
             if let error = error {

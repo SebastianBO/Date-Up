@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LoggedUserView: View {
-    @ObservedObject var profileViewModel = ProfileViewModel()
+    @ObservedObject private var profileViewModel: ProfileViewModel
     @State private var switchToContentView = false
     @State private var showHome = false
     @State private var showChats = false
@@ -19,6 +19,10 @@ struct LoggedUserView: View {
     
     let tabBarImagesNames = ["house", "bubble.left.and.bubble.right", "person"]
     let tabBarFilledImagesNames = ["house.fill", "bubble.left.and.bubble.right.fill", "person.fill"]
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -63,17 +67,15 @@ struct LoggedUserView: View {
                 }
                 .font(.system(size: screenHeight * 0.03))
             }
-            .onAppear() {
-                profileViewModel.fetchData()
-            }
         }
     }
 }
 
 struct LoggedUserView_Previews: PreviewProvider {
     static var previews: some View {
+        let profileViewModel = ProfileViewModel()
         ForEach(ColorScheme.allCases, id: \.self) {
-            LoggedUserView().preferredColorScheme($0)
+            LoggedUserView(profile: profileViewModel).preferredColorScheme($0)
         }
     }
 }

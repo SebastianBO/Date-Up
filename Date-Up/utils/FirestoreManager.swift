@@ -10,8 +10,8 @@ import Firebase
 import SwiftUI
 
 class FirestoreManager: ObservableObject {
-    public let db = Firestore.firestore()
-    private let user = SessionStore().currentUser
+    private let db = Firestore.firestore()
+    private let user = Auth.auth().currentUser
     
     func getDatabase() -> Firestore {
         return self.db
@@ -92,6 +92,6 @@ class FirestoreManager: ObservableObject {
             "userPhotosURLs": photosURLs
         ]
         
-        self.db.collection("profiles").document(user!.uid).setData(documentData)
+        self.db.collection("profiles").document(user!.uid).updateData(documentData)
     }
 }

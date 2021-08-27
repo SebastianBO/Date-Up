@@ -81,11 +81,7 @@ struct LoginView: View {
                             HStack {
                                 Button(action: {
                                     withAnimation {
-                                        let queue = OperationQueue()
-                                        queue.addOperation {
-                                            sessionStore.signIn(email: email, password: password)
-                                        }
-                                        queue.waitUntilAllOperationsAreFinished()
+                                        sessionStore.signIn(email: email, password: password)
                                         
                                         if sessionStore.isAnonymous {
                                             wrongCredentials = true
