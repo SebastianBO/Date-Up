@@ -13,6 +13,7 @@ import UIKit
 
 class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
+    @Published var userPictures = Array(repeating: UIImage(named: "blank-profile-hi")!, count: 1)
     public let firebaseStorageManager = FirebaseStorageManager()
     public let firestoreManager = FirestoreManager()
     @Published var session = SessionStore()
@@ -41,9 +42,14 @@ class ProfileViewModel: ObservableObject {
                     let language = document.get("language") as? String ?? ""
                     let preference = document.get("preference") as? String ?? ""
                     let bio = document.get("bio") as? String ?? ""
-                    let photosURLs = document.get("userPhotosURLs") as? [String] ?? [String]()
+                    let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
                     
                     self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs)
+                    
+                    let newUserPhotos = self.downloadUserPhotos()
+                    for photoIndex in 0..<newUserPhotos.count {
+                        self.userPictures.append(newUserPhotos[photoIndex])
+                    }
                 }
             }
         }

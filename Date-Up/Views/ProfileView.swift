@@ -17,8 +17,6 @@ struct ProfileView: View {
     
     @State private var shouldPresentSettings = false
     
-    @State private var userImages: [UIImage] = Array(repeating: UIImage(named: "blank-profile-hi")!, count: 1)
-    
     @State private var image = UIImage()
     
     @State private var shouldPresentAddActionSheet = false
@@ -28,7 +26,6 @@ struct ProfileView: View {
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
-        self.userImages = self.profileViewModel.downloadUserPhotos()
     }
     
     var body: some View {
@@ -67,8 +64,13 @@ struct ProfileView: View {
                         .sheet(isPresented: $shouldPresentImagePicker) {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
-                                    let uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
-                                    profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
+                                    let queue = OperationQueue()
+                                    var uploadedImageURL = ""
+                                    queue.addOperation {
+                                        uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
+                                        profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
+                                    }
+                                    queue.waitUntilAllOperationsAreFinished()
                                     
                                     print("1 ProfileView uploadedImage URL ---------------")
                                     print(uploadedImageURL)
@@ -76,7 +78,7 @@ struct ProfileView: View {
                                     
                                     let newPhotos = profileViewModel.downloadUserPhotos()
                                     for photoIndex in 0..<newPhotos.count {
-                                        self.userImages.append(newPhotos[photoIndex])
+                                        self.profileViewModel.userPictures.append(newPhotos[photoIndex])
                                     }
                                 }
                         }
@@ -95,7 +97,7 @@ struct ProfileView: View {
                         }
                         
                         VStack {
-                            Image(uiImage: userImages[0])
+                            Image(uiImage: profileViewModel.userPictures[0])
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
@@ -125,8 +127,8 @@ struct ProfileView: View {
                             
                         ScrollView() {
                             LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
-                                ForEach(0..<userImages.count) { imageIndex in
-                                    Image(uiImage: userImages[imageIndex])
+                                ForEach(0..<profileViewModel.userPictures.count) { imageIndex in
+                                    Image(uiImage: profileViewModel.userPictures[imageIndex])
                                         .resizable()
                                         .border(Color.black, width: 0.25)
                                         .frame(width: screenWidth * 0.34, height: screenHeight * 0.17)
@@ -139,7 +141,7 @@ struct ProfileView: View {
                                             ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
                                                 .destructive(Text("Delete this photo"), action: {
                                                     withAnimation {
-//                                                        self.images.remove(at: imageIndex)
+//                                                        self.profileViewModel.userPictures.remove(at: imageIndex)
                                                     }
                                                 }),
                                                 .cancel()
