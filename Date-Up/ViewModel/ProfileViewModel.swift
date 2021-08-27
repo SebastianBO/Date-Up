@@ -40,7 +40,7 @@ class ProfileViewModel: ObservableObject {
                     let bio = document.get("bio") as? String ?? ""
                     let photosURLs = document.get("userPhotosURLs") as? [String] ?? [String]()
                     
-                    self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil)
+                    self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs)
                 }
             }
         }
@@ -100,7 +100,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     func downloadUserPhotos() -> [UIImage] {
-        var userImages = [UIImage]()
+        var userImages: [UIImage] = [UIImage]()
         
         if self.profile?.photosURLs != nil {
             for photoURLIndex in 0..<(self.profile?.photosURLs!.count)! {

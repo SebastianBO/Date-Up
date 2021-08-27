@@ -10,7 +10,7 @@ import Firebase
 import SwiftUI
 
 class FirestoreManager: ObservableObject {
-    private let db = Firestore.firestore()
+    public let db = Firestore.firestore()
     private let user = SessionStore().currentUser
     
     func getDatabase() -> Firestore {
@@ -18,13 +18,12 @@ class FirestoreManager: ObservableObject {
     }
     
     func signUpDataCreation(id: String, firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, password: String, preference: String) {
-        let age = yearsBetweenDate(startDate: birthDate, endDate: Date())
         let documentData: [String: Any] = [
             "id": id,
             "firstName": firstName,
             "lastName": lastName,
             "birthDate": birthDate,
-            "age": age,
+            "age": yearsBetweenDate(startDate: birthDate, endDate: Date()),
             "country": country,
             "city": city,
             "language": language,
@@ -89,6 +88,10 @@ class FirestoreManager: ObservableObject {
     }
     
     func addUsersPhotoURLsToDatabase(photosURLs: [String]) {
-        self.db.collection("profiles").document(user!.uid).setData(["userPhotosURLs":photosURLs])
+        let documentData: [String: Any] = [
+            "userPhotosURLs": photosURLs
+        ]
+        
+        self.db.collection("profiles").document(user!.uid).setData(documentData)
     }
 }

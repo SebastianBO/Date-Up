@@ -17,7 +17,7 @@ struct ProfileView: View {
     
     @State private var shouldPresentSettings = false
     
-    @State private var userImages = [UIImage]()
+    @State private var userImages: [UIImage] = [UIImage]()
     
     @State private var image = UIImage()
     
