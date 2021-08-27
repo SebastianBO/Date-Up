@@ -48,8 +48,10 @@ class ProfileViewModel: ObservableObject {
                     
                     let newUserPhotos = self.downloadUserPhotos()
                     for photoIndex in 0..<newUserPhotos.count {
+                        print("Tutaj wyswietle liczbe zdjec", photoIndex)
                         self.userPictures.append(newUserPhotos[photoIndex])
                     }
+                    print("Tutaj wyswietle liczbe zdjec po dodaniu", self.userPictures.count)
                 }
             }
         }

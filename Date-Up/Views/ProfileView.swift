@@ -127,7 +127,7 @@ struct ProfileView: View {
                             
                         ScrollView() {
                             LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
-                                ForEach(0..<profileViewModel.userPictures.count) { imageIndex in
+                                ForEach(0..<profileViewModel.userPictures.count, id: \.self) { imageIndex in
                                     Image(uiImage: profileViewModel.userPictures[imageIndex])
                                         .resizable()
                                         .border(Color.black, width: 0.25)
