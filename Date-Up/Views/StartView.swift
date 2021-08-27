@@ -11,7 +11,7 @@ struct StartView: View {
     @ObservedObject var profileViewModel = ProfileViewModel()
     
     var body: some View {
-        if profileViewModel.profile?.firstName != nil && profileViewModel.profile?.lastName != nil && profileViewModel.profile?.email != nil && profileViewModel.profile?.id != nil {
+        if profileViewModel.profile?.firstName != nil && profileViewModel.profile?.lastName != nil && profileViewModel.profile?.email != nil && profileViewModel.profile?.id != nil && profileViewModel.userPicturesView.count > 0 {
             LoggedUserView(profile: profileViewModel)
         }
     }
