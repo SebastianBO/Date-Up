@@ -13,12 +13,13 @@ import UIKit
 
 class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
-    @Published var userPicturesView = [UIImageView]()
+    @Published var userPicturesView: [UIImageView] = [UIImageView]()
     public let firebaseStorageManager = FirebaseStorageManager()
     public let firestoreManager = FirestoreManager()
     @Published var session = SessionStore()
     
     init() {
+        print("Wykonuje sie init")
         let queue = OperationQueue()
         queue.addOperation {
             self.fetchData()
@@ -45,29 +46,18 @@ class ProfileViewModel: ObservableObject {
                     let bio = document.get("bio") as? String ?? ""
                     let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
                     
-                    
-                    if photosURLs == nil {
-                        let newPhotoURL = self.firebaseStorageManager.uploadImageToStorage(image: UIImage(named: "blank-profile-hi")!, userID: session.currentUser!.uid)
-                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: [newPhotoURL])
-                        self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile!.photosURLs))
-                    } else {
+                    if photosURLs != nil {
                         self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!)
+                    } else {
+                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil)
                     }
                     
                     let newUserPhotos = self.downloadUserPhotos()
                     
-                    if userPicturesView.count == 0 {
-                        for photoIndex in 0..<newUserPhotos.count {
-                            self.userPicturesView.append(newUserPhotos[photoIndex])
-                        }
+                    if newUserPhotos.count == 0 {
+                        self.userPicturesView = [UIImageView(image: UIImage(named: "blank-profile-hi"))]
                     } else {
-                        for photoIndexInExisting in 0..<userPicturesView.count {
-                            for photoIndexInNew in 0..<newUserPhotos.count {
-                                if self.userPicturesView[photoIndexInExisting] != newUserPhotos[photoIndexInNew] {
-                                    self.userPicturesView.append(newUserPhotos[photoIndexInNew])
-                                }
-                            }
-                        }
+                        self.userPicturesView = newUserPhotos
                     }
                 }
             }
@@ -123,16 +113,22 @@ class ProfileViewModel: ObservableObject {
     }
     
     func addImageURLToUserImages(imageURL: String) {
-        self.profile!.photosURLs.append(imageURL)
-        self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile!.photosURLs))
+        if self.profile?.photosURLs != nil {
+            self.profile!.photosURLs!.append(imageURL)
+            self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile!.photosURLs!))
+        } else {
+            self.profile?.photosURLs = [String]()
+            self.profile!.photosURLs!.append(imageURL)
+            self.firestoreManager.addUsersPhotoURLsToDatabase(photosURLs: (self.profile!.photosURLs!))
+        }
     }
     
     func downloadUserPhotos() -> [UIImageView] {
         var userImages: [UIImageView] = [UIImageView]()
         
         if self.profile?.photosURLs != nil {
-            for photoURLIndex in 0..<(self.profile?.photosURLs.count)! {
-                userImages.append(self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.profile?.photosURLs[photoURLIndex])!))
+            for photoURLIndex in 0..<(self.profile?.photosURLs?.count)! {
+                userImages.append(self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.profile?.photosURLs![photoURLIndex])!))
             }
         }
         

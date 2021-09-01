@@ -38,7 +38,11 @@ struct HomeView: View {
                 )
             }
         }
+        .onAppear {
+            self.profileViewModel.fetchData()
+        }
     }
+    
 }
 
 struct HomeView_Previews: PreviewProvider {

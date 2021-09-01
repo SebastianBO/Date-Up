@@ -85,7 +85,7 @@ struct ProfileView: View {
                         }
                         
                         VStack {
-                            Image(uiImage: profileViewModel.userPicturesView[0].image!)
+                            Image(uiImage: (profileViewModel.userPicturesView[0].image != nil ? profileViewModel.userPicturesView[0].image : UIImage(named: "blank-profile-hi"))!)
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
@@ -144,6 +144,9 @@ struct ProfileView: View {
                     .navigationBarHidden(true)
                 }
             }
+        }
+        .onAppear {
+            self.profileViewModel.fetchData()
         }
     }
 }
@@ -363,7 +366,7 @@ struct ProfileView_Previews: PreviewProvider {
         let profileViewModel = ProfileViewModel(forPreviews: true)
         Group {
             ForEach(ColorScheme.allCases, id: \.self) {
-                ProfileView(profile: profileViewModel).preferredColorScheme($0).onAppear {profileViewModel.userPicturesView.append(UIImageView(image: UIImage(named: "blank-profile-hi")))}
+                ProfileView(profile: profileViewModel).preferredColorScheme($0).onAppear {profileViewModel.userPicturesView = [UIImageView(image: UIImage(named: "blank-profile-hi"))]}
                 SettingsView(profile: profileViewModel).preferredColorScheme($0)
                 EditView(profile: profileViewModel).preferredColorScheme($0)
             }
