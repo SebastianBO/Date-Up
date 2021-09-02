@@ -19,16 +19,16 @@ class ProfileViewModel: ObservableObject {
     @Published var session = SessionStore()
     
     init() {
-        print("Wykonuje sie init")
-        let queue = OperationQueue()
-        queue.addOperation {
-            self.fetchData()
-        }
-        queue.waitUntilAllOperationsAreFinished()
+        self.fetchAllData()
     }
     
     init(forPreviews: Bool) {
         self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: ["preview"])
+    }
+    
+    func fetchAllData() {
+        self.fetchData()
+        self.fetchPhotos()
     }
     
     func fetchData() {
@@ -51,15 +51,19 @@ class ProfileViewModel: ObservableObject {
                     } else {
                         self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil)
                     }
-                    
-                    let newUserPhotos = self.downloadUserPhotos()
-                    
-                    if newUserPhotos.count == 0 {
-                        self.userPicturesView = [UIImageView(image: UIImage(named: "blank-profile-hi"))]
-                    } else {
-                        self.userPicturesView = newUserPhotos
-                    }
                 }
+            }
+        }
+    }
+    
+    func fetchPhotos() {
+        if (session.currentUser != nil) {
+            let newUserPhotos = self.downloadUserPhotos()
+            
+            if newUserPhotos.count == 0 {
+                self.userPicturesView = [UIImageView(image: UIImage(named: "blank-profile-hi"))]
+            } else {
+                self.userPicturesView = newUserPhotos
             }
         }
     }
@@ -109,6 +113,13 @@ class ProfileViewModel: ObservableObject {
             }
         } else {
             return false
+        }
+    }
+    
+    func deleteUserImage(imageIndex: Int) {
+        if self.profile?.photosURLs != nil {
+            self.profile!.photosURLs!.remove(at: imageIndex)
+            self.firestoreManager.editUserPhotosURLsInDatabase(photosURLs: self.profile!.photosURLs!)
         }
     }
     

@@ -38,9 +38,6 @@ struct HomeView: View {
                 )
             }
         }
-        .onAppear {
-            self.profileViewModel.fetchData()
-        }
     }
     
 }

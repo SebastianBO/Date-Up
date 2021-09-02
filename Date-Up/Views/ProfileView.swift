@@ -64,10 +64,10 @@ struct ProfileView: View {
                         .sheet(isPresented: $shouldPresentImagePicker) {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
-                                    let uploadedImageURL = profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
+                                    var uploadedImageURL: String {
+                                        profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
+                                    }
                                     profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
-                                    
-                                    profileViewModel.fetchData()
                                 }
                         }
                         .actionSheet(isPresented: $shouldPresentAddActionSheet) {
@@ -130,7 +130,7 @@ struct ProfileView: View {
                                                 ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
                                                     .destructive(Text("Delete this photo"), action: {
                                                         withAnimation {
-    //                                                        self.profileViewModel.userPicturesView.remove(at: imageIndex)
+                                                            self.profileViewModel.deleteUserImage(imageIndex: imageIndex)
                                                         }
                                                     }),
                                                     .cancel()
@@ -145,9 +145,46 @@ struct ProfileView: View {
                 }
             }
         }
-        .onAppear {
-            self.profileViewModel.fetchData()
+        .onDisappear {
+            self.profileViewModel.fetchPhotos()
         }
+    }
+}
+
+
+struct PullToRefresh: View {
+    
+    var coordinateSpaceName: String
+    var onRefresh: ()->Void
+    
+    @State var needRefresh: Bool = false
+    
+    var body: some View {
+        GeometryReader { geo in
+            if (geo.frame(in: .named(coordinateSpaceName)).midY > 50) {
+                Spacer()
+                    .onAppear {
+                        needRefresh = true
+                    }
+            } else if (geo.frame(in: .named(coordinateSpaceName)).maxY < 10) {
+                Spacer()
+                    .onAppear {
+                        if needRefresh {
+                            needRefresh = false
+                            onRefresh()
+                        }
+                    }
+            }
+            HStack {
+                Spacer()
+                if needRefresh {
+                    ProgressView()
+                } else {
+                    Text("⬇️")
+                }
+                Spacer()
+            }
+        }.padding(.top, -50)
     }
 }
 
@@ -366,7 +403,7 @@ struct ProfileView_Previews: PreviewProvider {
         let profileViewModel = ProfileViewModel(forPreviews: true)
         Group {
             ForEach(ColorScheme.allCases, id: \.self) {
-                ProfileView(profile: profileViewModel).preferredColorScheme($0).onAppear {profileViewModel.userPicturesView = [UIImageView(image: UIImage(named: "blank-profile-hi"))]}
+                ProfileView(profile: profileViewModel).preferredColorScheme($0)
                 SettingsView(profile: profileViewModel).preferredColorScheme($0)
                 EditView(profile: profileViewModel).preferredColorScheme($0)
             }

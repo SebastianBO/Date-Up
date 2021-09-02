@@ -79,6 +79,14 @@ class FirestoreManager: ObservableObject {
         updateUserData(documentData: documentData)
     }
     
+    func editUserPhotosURLsInDatabase(photosURLs: [String]) {
+        let documentData: [String: Any] = [
+            "userPhotosURLs": photosURLs
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
     private func updateUserData(documentData: [String: Any]) {
         self.db.collection("profiles").document(user!.uid).updateData(documentData) { (error) in
             if let error = error {

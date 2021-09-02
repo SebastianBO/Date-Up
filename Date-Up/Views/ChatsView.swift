@@ -23,9 +23,6 @@ struct ChatsView: View {
                 Text("ChatView")
             }
         }
-        .onAppear {
-            self.profileViewModel.fetchData()
-        }
     }
 }
 
