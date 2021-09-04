@@ -17,6 +17,7 @@ class SessionStore: ObservableObject {
     @Published var session: User?
     @Published var isAnonymous = true
     private var firestoreManager = FirestoreManager()
+    private var firebaseStorageManager = FirebaseStorageManager()
     
     var handle: AuthStateDidChangeListenerHandle?
     private let authRef = Auth.auth()
@@ -72,8 +73,6 @@ class SessionStore: ObservableObject {
     func deleteUser(email: String, password: String) {
         let user = authRef.currentUser
         let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-        
-        self.firestoreManager.deleteUserData(id: user!.uid)
         
         user?.reauthenticate(with: credential) { (result, error) in
             if let error = error {

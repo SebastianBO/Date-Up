@@ -38,8 +38,24 @@ class FirebaseStorageManager: ObservableObject {
         return imageUUID
     }
     
-    func deleteImageFromStorage(userID: String) {
-        
+    func deleteImageFromStorage(userID: String, userPhotoURL: String) {
+        let userImagesStorageRef = storageRef.child("images/\(userID)/\(userPhotoURL)")
+        userImagesStorageRef.delete() { (error) in
+            if let error = error {
+                print("Error deleting file: ", error.localizedDescription)
+            }
+        }
+    }
+    
+    func deleteAllImagesFromStorage(userID: String, userPhotosURLs: [String]) {
+        for photoURL in userPhotosURLs {
+            let userImagesStorageRef = storageRef.child("images/\(userID)/\(photoURL)")
+            userImagesStorageRef.delete() { (error) in
+                if let error = error {
+                    print("Error deleting file: ", error.localizedDescription)
+                }
+            }
+        }
     }
     
     func downloadImageFromStorage(userID: String, userPhotoURL: String) -> UIImageView {
@@ -56,31 +72,5 @@ class FirebaseStorageManager: ObservableObject {
         }
 
         return downloadedImage
-
-//        userImagesStorageRef.downloadURL { (url, error) in
-//            if let error = error {
-//                print("Error downloading file: ", error.localizedDescription)
-//            } else {
-//                let data = NSData(contentsOf: url!)
-//                let image = UIImage(data: data! as Data)
-//                downloadedImage = image!
-//            }
-//        }
-        
-//        userImagesStorageRef.downloadURL { url, error in
-//            if error != nil {
-//                // Handle error
-//            } else {
-//                // Get the image
-//                URLSession.shared.dataTask(with: url!) { data, response, error in
-//                     guard let data = data, let image = UIImage(data: data) else { return }
-//                    RunLoop.main.perform {
-//                         downloadedImage = image
-//                    }
-//                }.resume()
-//            }
-//        }
-//
-//        return downloadedImage
     }
 }

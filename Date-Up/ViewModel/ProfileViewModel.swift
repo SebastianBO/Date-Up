@@ -118,6 +118,7 @@ class ProfileViewModel: ObservableObject {
     
     func deleteUserImage(imageIndex: Int) {
         if self.profile?.photosURLs != nil {
+            self.firebaseStorageManager.deleteImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: self.profile!.photosURLs![imageIndex])
             self.profile!.photosURLs!.remove(at: imageIndex)
             self.firestoreManager.editUserPhotosURLsInDatabase(photosURLs: self.profile!.photosURLs!)
         }
@@ -144,6 +145,11 @@ class ProfileViewModel: ObservableObject {
         }
         
         return userImages
+    }
+    
+    func deleteUserData() {
+        self.firestoreManager.deleteUserData(id: session.currentUser!.uid)
+        self.firebaseStorageManager.deleteAllImagesFromStorage(userID: session.currentUser!.uid, userPhotosURLs: (self.profile?.photosURLs)!)
     }
 }
 
