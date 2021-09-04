@@ -19,6 +19,10 @@ struct ProfileView: View {
     
     @State private var image = UIImage()
     
+    @State private var profilePictureImage = Image(uiImage: UIImage(named: "blank-profile-hi")!)
+    
+    @State private var selectedItem : PictureView? = nil
+    
     @State private var shouldPresentAddActionSheet = false
     @State private var shouldPresentEditActionSheet = false
     @State private var shouldPresentImagePicker = false
@@ -85,7 +89,7 @@ struct ProfileView: View {
                         }
                         
                         VStack {
-                            Image(uiImage: (profileViewModel.userPicturesView[0].image != nil ? profileViewModel.userPicturesView[0].image : UIImage(named: "blank-profile-hi"))!)
+                            profilePictureImage
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
@@ -115,22 +119,39 @@ struct ProfileView: View {
                             
                         ScrollView() {
                             LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
-                                ForEach(0..<profileViewModel.userPicturesView.count, id: \.self) { imageIndex in
-                                    if profileViewModel.userPicturesView[imageIndex].image != nil {
-                                        Image(uiImage: profileViewModel.userPicturesView[imageIndex].image!)
+                                ForEach(self.profileViewModel.userPicturesView) { (userPictureView) in
+                                    if userPictureView.uiImageView.image != nil {
+                                        Image(uiImage: userPictureView.uiImageView.image!)
                                             .resizable()
                                             .border(Color.black, width: 0.25)
                                             .frame(width: screenWidth * 0.34, height: screenHeight * 0.17)
                                             .onLongPressGesture {
                                                 withAnimation {
-                                                    self.shouldPresentEditActionSheet = true
+                                                    self.selectedItem = userPictureView
                                                 }
                                             }
-                                            .actionSheet(isPresented: $shouldPresentEditActionSheet) {
+                                            .actionSheet(item: $selectedItem) { item in
                                                 ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
+                                                    .default(Text("Set as profile picture"), action: {
+                                                        withAnimation {
+                                                            self.profilePictureImage = Image(uiImage: item.uiImageView.image!)
+                                                            self.profileViewModel.profilePictureChange(imageID: item.id)
+                                                        }
+                                                    }),
                                                     .destructive(Text("Delete this photo"), action: {
                                                         withAnimation {
-                                                            self.profileViewModel.deleteUserImage(imageIndex: imageIndex)
+                                                            if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
+                                                                self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!)
+                                                            }
+                                                            if (self.profileViewModel.profile?.photosURLs!.count)! <= 1 {
+                                                                self.profileViewModel.profilePictureChange(imageID: "nil")
+                                                                self.profilePictureImage = Image(uiImage: UIImage(named: "blank-profile-hi")!)
+                                                            } else {
+                                                                if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
+                                                                    self.profilePictureImage = Image(uiImage: (self.profileViewModel.userPicturesView.first?.uiImageView.image!)!)
+                                                                }
+                                                            }
+                                                            self.profileViewModel.deleteUserImage(imageID: item.id)
                                                         }
                                                     }),
                                                     .cancel()
@@ -145,8 +166,22 @@ struct ProfileView: View {
                 }
             }
         }
+        .onAppear {
+            if profileViewModel.userPicturesView.count != 0 {
+                let index = profileViewModel.getProfilePictureIndex()
+                if self.profileViewModel.userPicturesView[index].uiImageView.image != nil {
+                    self.profilePictureImage = Image(uiImage: self.profileViewModel.userPicturesView[index].uiImageView.image!)
+                } else {
+                    if self.profileViewModel.userPicturesView.first!.uiImageView.image != nil {
+                        self.profilePictureImage = Image(uiImage: self.profileViewModel.userPicturesView.first!.uiImageView.image!)
+                    } else {
+                        self.profilePictureImage = Image(uiImage: UIImage(named: "blank-profile-hi")!)
+                    }
+                }
+            }
+        }
         .onDisappear {
-            self.profileViewModel.fetchPhotos()
+            self.profileViewModel.fetchAllData()
         }
     }
 }

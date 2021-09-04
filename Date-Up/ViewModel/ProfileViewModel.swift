@@ -13,7 +13,7 @@ import UIKit
 
 class ProfileViewModel: ObservableObject {
     @Published var profile: Profile?
-    @Published var userPicturesView: [UIImageView] = [UIImageView]()
+    @Published var userPicturesView: [PictureView] = [PictureView]()
     public let firebaseStorageManager = FirebaseStorageManager()
     public let firestoreManager = FirestoreManager()
     @Published var session = SessionStore()
@@ -45,11 +45,12 @@ class ProfileViewModel: ObservableObject {
                     let preference = document.get("preference") as? String ?? ""
                     let bio = document.get("bio") as? String ?? ""
                     let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
+                    let profilePictureURL = document.get("profilePictureURL") as? String ?? nil
                     
                     if photosURLs != nil {
-                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!)
+                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: profilePictureURL)
                     } else {
-                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil)
+                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil)
                     }
                 }
             }
@@ -61,9 +62,13 @@ class ProfileViewModel: ObservableObject {
             let newUserPhotos = self.downloadUserPhotos()
             
             if newUserPhotos.count == 0 {
-                self.userPicturesView = [UIImageView(image: UIImage(named: "blank-profile-hi"))]
+//                self.userPicturesView = [PictureView(id: "NULL", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]
             } else {
-                self.userPicturesView = newUserPhotos
+                self.userPicturesView.removeAll()
+                self.userPicturesView = [PictureView]()
+                for (newUserPhoto, photoURL) in zip(newUserPhotos, (self.profile?.photosURLs)!) {
+                    self.userPicturesView.append(PictureView(id: photoURL, uiImageView: newUserPhoto))
+                }
             }
         }
     }
@@ -116,8 +121,43 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    func deleteUserImage(imageIndex: Int) {
+    func getImageIndexFromImageID(imageID: String) -> Int {
         if self.profile?.photosURLs != nil {
+            var imageIndex = 0
+            for photoURL in (self.profile?.photosURLs)! {
+                if photoURL == imageID {
+                    return imageIndex
+                } else {
+                    imageIndex += 1
+                }
+            }
+        }
+        return 0
+    }
+    
+    func getProfilePictureIndex() -> Int {
+        if self.profile?.photosURLs != nil {
+            var imageIndex = 0
+            for photoURL in (self.profile?.photosURLs)! {
+                if photoURL == self.profile?.profilePictureURL {
+                    return imageIndex
+                } else {
+                    imageIndex += 1
+                }
+            }
+        }
+        return 0
+    }
+    
+    func profilePictureChange(imageID: String) {
+        self.firestoreManager.editProfilePictureURLInDatabase(photoURL: imageID)
+        self.profile?.profilePictureURL = imageID
+    }
+    
+    func deleteUserImage(imageID: String) {
+        if self.profile?.photosURLs != nil {
+            let imageIndex = self.getImageIndexFromImageID(imageID: imageID)
+            self.userPicturesView.remove(at: imageIndex)
             self.firebaseStorageManager.deleteImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: self.profile!.photosURLs![imageIndex])
             self.profile!.photosURLs!.remove(at: imageIndex)
             self.firestoreManager.editUserPhotosURLsInDatabase(photosURLs: self.profile!.photosURLs!)

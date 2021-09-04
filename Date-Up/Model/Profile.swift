@@ -21,4 +21,5 @@ struct Profile: Codable, Identifiable {
     var bio: String
     var email: String
     var photosURLs: [String]?
+    var profilePictureURL: String?
 }
