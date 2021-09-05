@@ -99,6 +99,8 @@ struct ProfileView: View {
                                 .font(.title2)
                                 .padding(.bottom, screenHeight * 0.02)
                             Text(profileViewModel.profile!.bio)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(width: screenWidth * 0.7)
                             
                             NavigationLink(destination: EditView(profile: profileViewModel), isActive: $editMode) {
                                 Button(action: {
