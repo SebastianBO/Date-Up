@@ -189,13 +189,22 @@ struct ProfileView: View {
 struct SettingsView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
     
+    @StateObject private var sheetManager = SheetManager()
     @State private var shouldPresentActionSheet = false
-    @State private var shouldPresentLogoutSheet = false
-    @State private var shouldPresentEditEmailAddressSheet = false
-    @State private var shouldPresentEditPasswordSheet = false
     
-    @State private var sheetWasPrompted = false
-    @State private var deleteUserSheetWasPrompted = false
+    
+    private class SheetManager: ObservableObject {
+        enum Sheet {
+            case email
+            case password
+            case logout
+            case signout
+        }
+        
+        @Published var showSheet = false
+        @Published var whichSheet: Sheet? = nil
+    }
+    
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
@@ -215,30 +224,21 @@ struct SettingsView: View {
                     
                     Section(header: Text("Account")) {
                         Button(action: {
-                            sheetWasPrompted = true
-                            shouldPresentEditEmailAddressSheet = true
-                            shouldPresentEditPasswordSheet = false
-                            shouldPresentLogoutSheet = false
-                            deleteUserSheetWasPrompted = false
+                            sheetManager.whichSheet = .email
+                            sheetManager.showSheet.toggle()
                         }, label: {
                             Text("Change e-mail address")
                         })
                         
                         Button(action: {
-                            sheetWasPrompted = true
-                            shouldPresentEditPasswordSheet = true
-                            shouldPresentEditEmailAddressSheet = false
-                            shouldPresentLogoutSheet = false
-                            deleteUserSheetWasPrompted = false
+                            sheetManager.whichSheet = .password
+                            sheetManager.showSheet.toggle()
                         }, label: {
                             Text("Change password")
                         })
                         
                         Button(action: {
-                            shouldPresentLogoutSheet = true
-                            shouldPresentEditEmailAddressSheet = false
-                            shouldPresentEditPasswordSheet = false
-                            deleteUserSheetWasPrompted = false
+                            sheetManager.whichSheet = .logout
                             shouldPresentActionSheet = true
                         }, label: {
                             Text("Logout")
@@ -246,10 +246,8 @@ struct SettingsView: View {
                         })
                         
                         Button(action: {
+                            sheetManager.whichSheet = .signout
                             shouldPresentActionSheet = true
-                            shouldPresentEditEmailAddressSheet = false
-                            shouldPresentEditPasswordSheet = false
-                            shouldPresentLogoutSheet = false
                         }, label: {
                             Text("Delete account")
                                 .foregroundColor(.red)
@@ -266,17 +264,20 @@ struct SettingsView: View {
                 .navigationBarTitle("Settings")
                 .navigationBarTitleDisplayMode(.large)
                 
-                .sheet(isPresented: $sheetWasPrompted) {
-                    if deleteUserSheetWasPrompted {
-                        DeleteAccountSheetView(profile: profileViewModel)
-                    } else if shouldPresentEditEmailAddressSheet {
+                .sheet(isPresented: $sheetManager.showSheet) {
+                    switch sheetManager.whichSheet {
+                    case .email:
                         ChangeEmailAddressSheetView(profile: profileViewModel)
-                    } else if shouldPresentEditPasswordSheet {
+                    case .password:
                         ChangePasswordSheetView(profile: profileViewModel)
+                    case .signout:
+                        DeleteAccountSheetView(profile: profileViewModel)
+                    default:
+                        Text("No view")
                     }
                 }
                 .actionSheet(isPresented: $shouldPresentActionSheet) {
-                    if shouldPresentLogoutSheet {
+                    if sheetManager.whichSheet == .logout {
                         return ActionSheet(title: Text("Logout"), message: Text("Are you sure you want to logout?"), buttons: [
                             .destructive(Text("Logout"), action: {
                                 profileViewModel.session.signOut()
@@ -286,8 +287,7 @@ struct SettingsView: View {
                     } else {
                         return ActionSheet(title: Text("Delete Account"), message: Text("Are you sure you want to delete your account? All data will be lost."), buttons: [
                             .destructive(Text("Delete my account"), action: {
-                                deleteUserSheetWasPrompted = true
-                                sheetWasPrompted = true
+                                sheetManager.showSheet.toggle()
                              }),
                             .cancel()
                         ])
