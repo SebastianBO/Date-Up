@@ -20,6 +20,7 @@
 		0A42EB2826D91623000C8556 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A42EB2726D91623000C8556 /* StartView.swift */; };
 		0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */; };
 		0A79765D26E3ED4F00691B35 /* PictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A79765C26E3ED4F00691B35 /* PictureView.swift */; };
+		0A79765F26E4DBA200691B35 /* enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A79765E26E4DBA200691B35 /* enums.swift */; };
 		0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DA26B8260400C4803A /* Date_UpApp.swift */; };
 		0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DC26B8260400C4803A /* ContentView.swift */; };
 		0A8E68DF26B8260500C4803A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A8E68DE26B8260500C4803A /* Assets.xcassets */; };
@@ -47,6 +48,7 @@
 		0A42EB2726D91623000C8556 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
 		0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0A79765C26E3ED4F00691B35 /* PictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureView.swift; sourceTree = "<group>"; };
+		0A79765E26E4DBA200691B35 /* enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = enums.swift; sourceTree = "<group>"; };
 		0A8E68D726B8260400C4803A /* Date-Up.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Date-Up.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A8E68DA26B8260400C4803A /* Date_UpApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date_UpApp.swift; sourceTree = "<group>"; };
 		0A8E68DC26B8260400C4803A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				0A31F18F26D3BF5F00F34390 /* SwiftUIImagePicker.swift */,
 				0AB1FB0726D7E9B70017175C /* FirebaseStorageManager.swift */,
 				0AB1FB0926D7EEAF0017175C /* FirestoreManager.swift */,
+				0A79765E26E4DBA200691B35 /* enums.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -305,6 +308,7 @@
 				0A8E68EF26B82A8800C4803A /* RegisterView.swift in Sources */,
 				0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */,
 				0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */,
+				0A79765F26E4DBA200691B35 /* enums.swift in Sources */,
 				0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */,
 				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A2C29CF26CADA840093A944 /* ProfileView.swift in Sources */,

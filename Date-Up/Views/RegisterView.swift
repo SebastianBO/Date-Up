@@ -34,34 +34,6 @@ struct RegisterView: View {
             calendar.date(from:endComponents)!
     }()
     
-    enum Country: String, CaseIterable, Identifiable {
-        case poland
-        
-        var id: String { self.rawValue }
-    }
-    
-    enum City: String, CaseIterable, Identifiable {
-        case łódź
-        case warszawa
-        case krakow
-        case wroclaw
-        case lublin
-        case gdansk
-        case gdynia
-        case warka
-        case żywiec
-        case sopot
-        
-        var id: String { self.rawValue }
-    }
-    
-    enum Language: String, CaseIterable, Identifiable {
-        case english
-        case polish
-        
-        var id: String { self.rawValue }
-    }
-    
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width

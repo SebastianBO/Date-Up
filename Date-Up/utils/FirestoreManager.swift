@@ -17,7 +17,7 @@ class FirestoreManager: ObservableObject {
         return self.db
     }
     
-    func signUpDataCreation(id: String, firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, password: String, preference: String) {
+    func signUpDataCreation(id: String, firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, preference: String) {
         let documentData: [String: Any] = [
             "id": id,
             "firstName": firstName,
@@ -28,7 +28,6 @@ class FirestoreManager: ObservableObject {
             "city": city,
             "language": language,
             "email": email,
-            "password": password,
             "preference": preference,
             "bio": "Hi, I'm \(firstName)!"
         ]
@@ -71,9 +70,41 @@ class FirestoreManager: ObservableObject {
         updateUserData(documentData: documentData)
     }
     
+    func editUserCountryInDatabase(country: String) {
+        let documentData: [String: Any] = [
+            "country": country
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
+    func editUserCityInDatabase(city: String) {
+        let documentData: [String: Any] = [
+            "city": city
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
+    func editUserLanguageInDatabase(language: String) {
+        let documentData: [String: Any] = [
+            "language": language
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
     func editUserPreferenceInDatabase(preference: String) {
         let documentData: [String: Any] = [
             "preference": preference
+        ]
+        
+        updateUserData(documentData: documentData)
+    }
+    
+    func editUserEmailInDatabase(email: String) {
+        let documentData: [String: Any] = [
+            "email": email
         ]
         
         updateUserData(documentData: documentData)

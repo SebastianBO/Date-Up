@@ -191,8 +191,11 @@ struct SettingsView: View {
     
     @State private var shouldPresentActionSheet = false
     @State private var shouldPresentLogoutSheet = false
+    @State private var shouldPresentEditEmailAddressSheet = false
+    @State private var shouldPresentEditPasswordSheet = false
     
-    @State private var deleteUserWasPrompted = false
+    @State private var sheetWasPrompted = false
+    @State private var deleteUserSheetWasPrompted = false
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
@@ -212,8 +215,31 @@ struct SettingsView: View {
                     
                     Section(header: Text("Account")) {
                         Button(action: {
-                            shouldPresentActionSheet = true
+                            sheetWasPrompted = true
+                            shouldPresentEditEmailAddressSheet = true
+                            shouldPresentEditPasswordSheet = false
+                            shouldPresentLogoutSheet = false
+                            deleteUserSheetWasPrompted = false
+                        }, label: {
+                            Text("Change e-mail address")
+                        })
+                        
+                        Button(action: {
+                            sheetWasPrompted = true
+                            shouldPresentEditPasswordSheet = true
+                            shouldPresentEditEmailAddressSheet = false
+                            shouldPresentLogoutSheet = false
+                            deleteUserSheetWasPrompted = false
+                        }, label: {
+                            Text("Change password")
+                        })
+                        
+                        Button(action: {
                             shouldPresentLogoutSheet = true
+                            shouldPresentEditEmailAddressSheet = false
+                            shouldPresentEditPasswordSheet = false
+                            deleteUserSheetWasPrompted = false
+                            shouldPresentActionSheet = true
                         }, label: {
                             Text("Logout")
                                 .foregroundColor(.red)
@@ -221,6 +247,8 @@ struct SettingsView: View {
                         
                         Button(action: {
                             shouldPresentActionSheet = true
+                            shouldPresentEditEmailAddressSheet = false
+                            shouldPresentEditPasswordSheet = false
                             shouldPresentLogoutSheet = false
                         }, label: {
                             Text("Delete account")
@@ -238,9 +266,15 @@ struct SettingsView: View {
                 .navigationBarTitle("Settings")
                 .navigationBarTitleDisplayMode(.large)
                 
-                .sheet(isPresented: $deleteUserWasPrompted, content: {
-                    DeleteAccountSheetView(profile: profileViewModel)
-                })
+                .sheet(isPresented: $sheetWasPrompted) {
+                    if deleteUserSheetWasPrompted {
+                        DeleteAccountSheetView(profile: profileViewModel)
+                    } else if shouldPresentEditEmailAddressSheet {
+                        ChangeEmailAddressSheetView(profile: profileViewModel)
+                    } else if shouldPresentEditPasswordSheet {
+                        ChangePasswordSheetView(profile: profileViewModel)
+                    }
+                }
                 .actionSheet(isPresented: $shouldPresentActionSheet) {
                     if shouldPresentLogoutSheet {
                         return ActionSheet(title: Text("Logout"), message: Text("Are you sure you want to logout?"), buttons: [
@@ -252,7 +286,8 @@ struct SettingsView: View {
                     } else {
                         return ActionSheet(title: Text("Delete Account"), message: Text("Are you sure you want to delete your account? All data will be lost."), buttons: [
                             .destructive(Text("Delete my account"), action: {
-                                deleteUserWasPrompted = true
+                                deleteUserSheetWasPrompted = true
+                                sheetWasPrompted = true
                              }),
                             .cancel()
                         ])
@@ -271,6 +306,9 @@ struct EditView: View {
     @State private var lastName = ""
     @State private var bio = ""
     @State private var preference = ""
+    @State var country: Country = .poland
+    @State var city: City = .łódź
+    @State var language: Language = .polish
     private var preferenceValues = ["Men", "Women", "Both"]
     
     init(profile: ProfileViewModel) {
@@ -283,39 +321,49 @@ struct EditView: View {
             let screenHeight = geometry.size.height
             
             Form {
-                VStack {
-                    HStack {
-                        Text("First Name")
-                        Divider()
-                        Spacer(minLength: screenWidth * 0.06)
-                        TextField(profileViewModel.profile!.firstName, text: $firstName)
-                    }
-                    
-                    HStack {
-                        Text("Last Name")
-                        Divider()
-                        Spacer(minLength: screenWidth * 0.06)
-                        TextField(profileViewModel.profile!.lastName, text: $lastName)
-                    }
-                    
-                    HStack {
-                        Text("Bio")
-                        Divider()
-                        Spacer(minLength: screenWidth * 0.06)
-                        TextField(profileViewModel.profile!.bio, text: $bio)
-                    }
-                    
-                    HStack {
-                        Text("Preference")
-                        Divider()
-                        Spacer(minLength: screenWidth * 0.06)
-                        Picker("preference", selection: $preference) {
-                            ForEach(preferenceValues, id: \.self) {
-                                Text($0)
-                            }
+                Section(header: Text("First Name")) {
+                    TextField(profileViewModel.profile!.firstName, text: $firstName)
+                }
+                
+                Section(header: Text("Last Name")) {
+                    TextField(profileViewModel.profile!.lastName, text: $lastName)
+                }
+                
+                Section(header: Text("Bio")) {
+                    TextEditor(text: $bio)
+                }
+                
+                Section(header: Text("Country")) {
+                    Picker("Country", selection: $country) {
+                        ForEach(Country.allCases) { country in
+                            Text(country.rawValue.capitalized).tag(country)
                         }
-                        .pickerStyle(SegmentedPickerStyle())
                     }
+                }
+                
+                Section(header: Text("City")) {
+                    Picker("City", selection: $city) {
+                        ForEach(City.allCases) { city in
+                            Text(city.rawValue.capitalized).tag(city)
+                        }
+                    }
+                }
+                
+                Section(header: Text("Language")) {
+                    Picker("Language", selection: $language) {
+                        ForEach(Language.allCases) { language in
+                            Text(language.rawValue.capitalized).tag(language)
+                        }
+                    }
+                }
+                
+                Section(header: Text("Preference")) {
+                    Picker("preference", selection: $preference) {
+                        ForEach(preferenceValues, id: \.self) {
+                            Text($0)
+                        }
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
                 }
             }
             .navigationBarTitle("Edit profile")
@@ -331,6 +379,15 @@ struct EditView: View {
                         }
                         if profileViewModel.bioChange(bio: bio) {
                             profileViewModel.firestoreManager.editUserBioInDatabase(bio: bio)
+                        }
+                        if profileViewModel.countryChange(country: country.rawValue) {
+                            profileViewModel.firestoreManager.editUserCountryInDatabase(country: country.rawValue)
+                        }
+                        if profileViewModel.cityChange(city: city.rawValue) {
+                            profileViewModel.firestoreManager.editUserCityInDatabase(city: city.rawValue)
+                        }
+                        if profileViewModel.languageChange(language: language.rawValue) {
+                            profileViewModel.firestoreManager.editUserLanguageInDatabase(language: language.rawValue)
                         }
                         if profileViewModel.preferenceChange(preference: preference) {
                             profileViewModel.firestoreManager.editUserPreferenceInDatabase(preference: preference)
@@ -395,6 +452,107 @@ struct DeleteAccountSheetView: View {
         }
     }
 }
+
+
+struct ChangeEmailAddressSheetView: View {
+    @ObservedObject private var profileViewModel: ProfileViewModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    @State private var oldEmail = ""
+    @State private var password = ""
+    @State private var newEmail = ""
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+        
+            NavigationView {
+                VStack {
+                    Form {
+                        Section(footer: Text("Before you change your e-mail address please provide your login credentials to confirm it is really you.")) {
+                            TextField("Old e-mail address", text: $oldEmail)
+                            SecureField("Password", text: $password)
+                            TextField("New e-mail address", text: $newEmail)
+                        }
+                    }
+                    
+                    Button(action: {
+                        withAnimation {
+                            presentationMode.wrappedValue.dismiss()
+                            profileViewModel.emailAddressChange(oldEmailAddress: oldEmail, password: password, newEmailAddress: newEmail)
+                        }
+                    }, label: {
+                        Text("Change e-mail address")
+                    })
+                    .frame(width: screenWidth * 0.7, height: screenHeight * 0.08)
+                    .background(Color.green)
+                    .cornerRadius(15.0)
+                    .font(.system(size: screenHeight * 0.026))
+                    .foregroundColor(.white)
+                    .padding()
+                }
+                .navigationBarHidden(true)
+                .ignoresSafeArea(.keyboard)
+            }
+        }
+    }
+}
+
+
+struct ChangePasswordSheetView: View {
+    @ObservedObject private var profileViewModel: ProfileViewModel
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    @State private var email = ""
+    @State private var oldPassword = ""
+    @State private var newPassword = ""
+    
+    init(profile: ProfileViewModel) {
+        self.profileViewModel = profile
+    }
+    
+    var body: some View {
+        GeometryReader { geometry in
+            let screenWidth = geometry.size.width
+            let screenHeight = geometry.size.height
+        
+            NavigationView {
+                VStack {
+                    Form {
+                        Section(footer: Text("Before you change your password please provide your login credentials to confirm it is really you.")) {
+                            TextField("E-mail", text: $email)
+                            SecureField("Old password", text: $oldPassword)
+                            SecureField("New password", text: $newPassword)
+                        }
+                    }
+                    
+                    Button(action: {
+                        withAnimation {
+                            presentationMode.wrappedValue.dismiss()
+                            profileViewModel.passwordChange(emailAddress: email, oldPassword: oldPassword, newPassword: newPassword)
+                        }
+                    }, label: {
+                        Text("Change password")
+                    })
+                    .frame(width: screenWidth * 0.7, height: screenHeight * 0.08)
+                    .background(Color.green)
+                    .cornerRadius(15.0)
+                    .font(.system(size: screenHeight * 0.026))
+                    .foregroundColor(.white)
+                    .padding()
+                }
+                .navigationBarHidden(true)
+                .ignoresSafeArea(.keyboard)
+            }
+        }
+    }
+}
+
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {

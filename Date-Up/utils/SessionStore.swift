@@ -48,7 +48,7 @@ class SessionStore: ObservableObject {
             if let error = error {
                 print(error)
             } else {
-                self.firestoreManager.signUpDataCreation(id: result!.user.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, country: country, city: city, language: language, email: email, password: password, preference: preference)
+                self.firestoreManager.signUpDataCreation(id: result!.user.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, country: country, city: city, language: language, email: email, preference: preference)
             }
         }
     }
@@ -70,15 +70,48 @@ class SessionStore: ObservableObject {
         }
     }
     
-    func deleteUser(email: String, password: String) {
-        let user = authRef.currentUser
-        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+    func changeEmailAddress(oldEmailAddress: String, password: String, newEmailAddress: String) {
+        let credential = EmailAuthProvider.credential(withEmail: oldEmailAddress, password: password)
         
-        user?.reauthenticate(with: credential) { (result, error) in
+        currentUser?.reauthenticate(with: credential) { [self] (result, error) in
             if let error = error {
                 print("Error re-authenticating user \(error)")
             } else {
-                user?.delete { (error) in
+                self.firestoreManager.editUserEmailInDatabase(email: newEmailAddress)
+                
+                currentUser?.updateEmail(to: newEmailAddress) { (error) in
+                    if let error = error {
+                        print("Error changing email address: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    func changePassword(emailAddress: String, oldPassword: String, newPassword: String) {
+        let credential = EmailAuthProvider.credential(withEmail: emailAddress, password: oldPassword)
+        
+        currentUser?.reauthenticate(with: credential) { [self] (result, error) in
+            if let error = error {
+                print("Error re-authenticating user \(error)")
+            } else {
+                currentUser?.updatePassword(to: newPassword) { (error) in
+                    if let error = error {
+                        print("Error changing password: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+    }
+    
+    func deleteUser(email: String, password: String) {
+        let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+        
+        currentUser?.reauthenticate(with: credential) { [self] (result, error) in
+            if let error = error {
+                print("Error re-authenticating user \(error)")
+            } else {
+                currentUser?.delete { (error) in
                     if let error = error {
                         print("Could not delete user: \(error)")
                     }

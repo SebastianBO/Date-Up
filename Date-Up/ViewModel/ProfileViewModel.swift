@@ -23,7 +23,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     init(forPreviews: Bool) {
-        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: ["preview"])
+        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil)
     }
     
     func fetchAllData() {
@@ -109,6 +109,42 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
+    func countryChange(country: String) -> Bool {
+        if profile != nil {
+            if profile!.country != country && !country.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    func cityChange(city: String) -> Bool {
+        if profile != nil {
+            if profile!.city != city && !city.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
+    func languageChange(language: String) -> Bool {
+        if profile != nil {
+            if profile!.language != language && !language.isEmpty {
+                return true
+            } else {
+                return false
+            }
+        } else {
+            return false
+        }
+    }
+    
     func preferenceChange(preference: String) -> Bool {
         if profile != nil {
             if profile!.preference != preference && !preference.isEmpty {
@@ -152,6 +188,14 @@ class ProfileViewModel: ObservableObject {
     func profilePictureChange(imageID: String) {
         self.firestoreManager.editProfilePictureURLInDatabase(photoURL: imageID)
         self.profile?.profilePictureURL = imageID
+    }
+    
+    func emailAddressChange(oldEmailAddress: String, password: String, newEmailAddress: String) {
+        self.session.changeEmailAddress(oldEmailAddress: oldEmailAddress, password: password, newEmailAddress: newEmailAddress)
+    }
+    
+    func passwordChange(emailAddress: String, oldPassword: String, newPassword: String) {
+        self.session.changePassword(emailAddress: emailAddress, oldPassword: oldPassword, newPassword: newPassword)
     }
     
     func deleteUserImage(imageID: String) {
