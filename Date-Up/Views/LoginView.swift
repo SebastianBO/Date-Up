@@ -127,8 +127,13 @@ struct LoginView: View {
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        ForEach(ColorScheme.allCases, id: \.self) {
-             LoginView().preferredColorScheme($0)
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
+                LoginView()
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
+            }
         }
     }
 }

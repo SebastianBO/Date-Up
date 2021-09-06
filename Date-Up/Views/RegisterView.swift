@@ -189,8 +189,13 @@ struct RegisterView: View {
 
 struct RegisterView_Previews: PreviewProvider {
     static var previews: some View {
-        ForEach(ColorScheme.allCases, id: \.self) {
-             RegisterView().preferredColorScheme($0)
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
+                RegisterView()
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
+            }
         }
     }
 }

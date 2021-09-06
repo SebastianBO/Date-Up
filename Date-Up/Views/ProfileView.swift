@@ -559,11 +559,20 @@ struct ChangePasswordSheetView: View {
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         let profileViewModel = ProfileViewModel(forPreviews: true)
-        Group {
-            ForEach(ColorScheme.allCases, id: \.self) {
-                ProfileView(profile: profileViewModel).preferredColorScheme($0)
-                SettingsView(profile: profileViewModel).preferredColorScheme($0)
-                EditView(profile: profileViewModel).preferredColorScheme($0)
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
+                ProfileView(profile: profileViewModel)
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
+                SettingsView(profile: profileViewModel)
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
+                EditView(profile: profileViewModel)
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
             }
         }
     }

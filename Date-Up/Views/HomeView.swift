@@ -45,8 +45,13 @@ struct HomeView: View {
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         let profileViewModel = ProfileViewModel(forPreviews: true)
-        ForEach(ColorScheme.allCases, id: \.self) {
-            HomeView(profile: profileViewModel).preferredColorScheme($0)
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
+                HomeView(profile: profileViewModel)
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
+            }
         }
     }
 }

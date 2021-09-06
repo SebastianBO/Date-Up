@@ -29,8 +29,13 @@ struct ChatsView: View {
 struct ChatsView_Previews: PreviewProvider {
     static var previews: some View {
         let profileViewModel = ProfileViewModel(forPreviews: true)
-        ForEach(ColorScheme.allCases, id: \.self) {
-            ChatsView(profile: profileViewModel).preferredColorScheme($0)
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
+                ChatsView(profile: profileViewModel)
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
+            }
         }
     }
 }

@@ -9,13 +9,6 @@ import SwiftUI
 
 struct LoggedUserView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
-    @State private var switchToContentView = false
-    @State private var showHome = false
-    @State private var showChats = false
-    @State private var showSettings = false
-    @State private var selectedTab = 0
-    @State private var alreadyExisting = false
-    @State private var tabBarImage: Image?
     
     let tabBarImagesNames = ["house", "bubble.left.and.bubble.right", "person"]
     let tabBarFilledImagesNames = ["house.fill", "bubble.left.and.bubble.right.fill", "person.fill"]
@@ -29,43 +22,30 @@ struct LoggedUserView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            VStack {
-                ZStack {
-                    switch selectedTab {
-                    case 0:
-                        HomeView(profile: profileViewModel)
-                        
-                    case 1:
-                        ChatsView(profile: profileViewModel)
-                        
-                    case 2:
-                        ProfileView(profile: profileViewModel)
-                        
-                    default:
-                        Text("ERROR!")
+            TabView {
+                HomeView(profile: profileViewModel)
+                    .tabItem {
+                        Image(systemName: "house.fill")
                     }
-                }
+                    .tag(0)
                 
-                Spacer()
-                
-                HStack {
-                    ForEach(0..<3) { number in
-                        Spacer()
-                        
-                        Button(action: {
-                            selectedTab = number
-                        }, label: {
-                            if selectedTab == number {
-                                Image(systemName: tabBarFilledImagesNames[number])
-                            } else {
-                                Image(systemName: tabBarImagesNames[number])
-                            }
-                        })
-                        
-                        Spacer()
+                ChatsView(profile: profileViewModel)
+                    .tabItem {
+                        Image(systemName: "bubble.left.and.bubble.right.fill")
                     }
-                }
-                .font(.system(size: screenHeight * 0.03))
+                    .tag(1)
+                
+                ProfileView(profile: profileViewModel)
+                    .tabItem {
+                        Image(systemName: "person.fill")
+                    }
+                    .tag(2)
+                    .onAppear {
+                        profileViewModel.fetchAllData()
+                        for photo in profileViewModel.userPicturesView {
+                            print(photo)
+                        }
+                    }
             }
         }
     }
@@ -73,9 +53,14 @@ struct LoggedUserView: View {
 
 struct LoggedUserView_Previews: PreviewProvider {
     static var previews: some View {
-        let profileViewModel = ProfileViewModel()
-        ForEach(ColorScheme.allCases, id: \.self) {
-            LoggedUserView(profile: profileViewModel).preferredColorScheme($0)
+        let profileViewModel = ProfileViewModel(forPreviews: true)
+        ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
+            ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
+                LoggedUserView(profile: profileViewModel)
+                    .preferredColorScheme(colorScheme)
+                    .previewDevice(PreviewDevice(rawValue: deviceName))
+                    .previewDisplayName(deviceName)
+            }
         }
     }
 }

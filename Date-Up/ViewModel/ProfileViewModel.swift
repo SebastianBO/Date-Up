@@ -61,9 +61,7 @@ class ProfileViewModel: ObservableObject {
         if (session.currentUser != nil) {
             let newUserPhotos = self.downloadUserPhotos()
             
-            if newUserPhotos.count == 0 {
-//                self.userPicturesView = [PictureView(id: "NULL", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]
-            } else {
+            if newUserPhotos.count != 0 {
                 self.userPicturesView.removeAll()
                 self.userPicturesView = [PictureView]()
                 for (newUserPhoto, photoURL) in zip(newUserPhotos, (self.profile?.photosURLs)!) {
