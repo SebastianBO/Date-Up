@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct LoggedUserView: View {
+    @ObservedObject private var homeViewModel: HomeViewModel
     @ObservedObject private var profileViewModel: ProfileViewModel
     
     let tabBarImagesNames = ["house", "bubble.left.and.bubble.right", "person"]
     let tabBarFilledImagesNames = ["house.fill", "bubble.left.and.bubble.right.fill", "person.fill"]
     
-    init(profile: ProfileViewModel) {
+    init(homeViewModel: HomeViewModel, profile: ProfileViewModel) {
+        self.homeViewModel = homeViewModel
         self.profileViewModel = profile
     }
     
