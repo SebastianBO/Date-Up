@@ -24,7 +24,7 @@ struct HomeView: View {
             
             NavigationView {
                 ProfileExplorerView(homeViewModel: homeViewModel)
-                    .navigationBarTitle("Hello, \(profileViewModel.profile!.firstName)")
+                    .navigationBarTitle("Yours today's picks")
                     .navigationBarItems(trailing:
                         NavigationLink(destination: NotificationsView(profile: profileViewModel), isActive: $showNotifications) {
                             Button(action: {
@@ -54,32 +54,96 @@ struct ProfileExplorerView: View {
             let screenHeight = geometry.size.height
             
             ZStack {
-                TabView {
-                    RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                        .foregroundColor(.gray)
-                    ForEach(homeViewModel.allProfiles, id: \.self) { profile in
-                        Text(profile.profile.firstName)
+                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                    .foregroundColor(.gray)
+                ZStack {
+                    TabView {
+                        ForEach(homeViewModel.currentProfile.profileImageViews) { (userPictureView) in
+                            Image(uiImage: userPictureView.uiImageView.image!)
+                                .resizable()
+                                .scaledToFit()
+                                .clipped()
+                                
+                        }
+                    }
+                    .tabViewStyle(PageTabViewStyle())
+                    .shadow(color: Color.black, radius: 45, x: 0, y: 60)
+                    
+                    VStack {
+                        VStack {
+                            HStack {
+                                Text(homeViewModel.currentProfile.profile.firstName)
+                                    .font(.system(size: screenHeight * 0.05, weight: .bold))
+                                                            
+                                Text(String(homeViewModel.currentProfile.profile.age))
+                                    .font(.system(size: screenHeight * 0.037, weight: .light))
+                                
+                                Spacer()
+                            }
+                            
+                            HStack {
+                                Image(systemName: "person.fill")
+                                
+                                Text(homeViewModel.currentProfile.profile.city)
+                                
+                                Spacer()
+                            }
+                        }
+                        .padding(.top, screenHeight * 0.65)
+                        .padding(.trailing, screenWidth * 0.30)
+                        .padding(.leading, screenWidth * 0.03)
+                        .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        HStack {
+                            Spacer()
+                            
+                            Button(action: {
+                                
+                            }, label: {
+                                Image(systemName: "multiply.circle")
+                            })
+                            .font(.system(size: screenHeight * 0.09))
+                            .foregroundColor(.red)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                
+                            }, label: {
+                                Image(systemName: "bolt.circle")
+                            })
+                            .font(.system(size: screenHeight * 0.06))
+                            .foregroundColor(.yellow)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                
+                            }, label: {
+                                Image(systemName: "message.circle")
+                            })
+                            .font(.system(size: screenHeight * 0.06))
+                            .foregroundColor(.blue)
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                
+                            }, label: {
+                                Image(systemName: "heart.circle")
+                            })
+                            .font(.system(size: screenHeight * 0.09))
+                            .foregroundColor(.green)
+                            
+                            Spacer()
+                        }
+                        .padding(.bottom, screenHeight * 0.02)
                     }
                 }
-                .tabViewStyle(PageTabViewStyle())
+                
             }
-            .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                .onEnded({ value in
-                                    if value.translation.width < 0 {
-                                        // left
-                                    }
-
-                                    if value.translation.width > 0 {
-                                        // right
-                                    }
-                                    if value.translation.height < 0 {
-                                        // up
-                                    }
-
-                                    if value.translation.height > 0 {
-                                        // down
-                                    }
-                                }))
             .frame(width: screenWidth * 0.93, height: screenHeight * 0.85)
             .padding(.all, screenWidth * 0.035)
         }
