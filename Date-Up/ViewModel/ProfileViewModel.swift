@@ -217,6 +217,10 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
+    func addUploadedImageToPhotos(imageURL: String) {
+        userPicturesView.append(PictureView(id: imageURL, uiImageView: self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: imageURL)))
+    }
+    
     func downloadUserPhotos() -> [UIImageView] {
         var userImages: [UIImageView] = [UIImageView]()
         

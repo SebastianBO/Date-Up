@@ -40,13 +40,10 @@ struct LoggedUserView: View {
                         Image(systemName: "person.fill")
                     }
                     .tag(2)
-                    .onAppear {
-                        profileViewModel.fetchAllData()
-                        for photo in profileViewModel.userPicturesView {
-                            print(photo)
-                        }
-                    }
             }
+        }
+        .onAppear {
+            profileViewModel.fetchAllData()
         }
     }
 }

@@ -72,6 +72,12 @@ struct ProfileView: View {
                                         profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
                                     }
                                     profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
+                                    
+                                    profileViewModel.addUploadedImageToPhotos(imageURL: uploadedImageURL)
+                                    
+                                    for photo in profileViewModel.userPicturesView {
+                                        print(photo)
+                                    }
                                 }
                         }
                         .actionSheet(isPresented: $shouldPresentAddActionSheet) {
@@ -181,9 +187,6 @@ struct ProfileView: View {
                     }
                 }
             }
-        }
-        .onDisappear {
-            self.profileViewModel.fetchAllData()
         }
     }
 }
