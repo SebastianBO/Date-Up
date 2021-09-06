@@ -23,7 +23,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     init(forPreviews: Bool) {
-        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil)
+        self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil)
     }
     
     func fetchAllData() {
@@ -43,14 +43,15 @@ class ProfileViewModel: ObservableObject {
                     let city = document.get("city") as? String ?? ""
                     let language = document.get("language") as? String ?? ""
                     let preference = document.get("preference") as? String ?? ""
+                    let gender = document.get("gender") as? String ?? ""
                     let bio = document.get("bio") as? String ?? ""
                     let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
                     let profilePictureURL = document.get("profilePictureURL") as? String ?? nil
                     
                     if photosURLs != nil {
-                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: profilePictureURL)
+                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: profilePictureURL)
                     } else {
-                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil)
+                        self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil)
                     }
                 }
             }

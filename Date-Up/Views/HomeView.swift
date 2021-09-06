@@ -10,14 +10,11 @@ import SwiftUI
 struct HomeView: View {
     @State private var showNotifications = false
     @ObservedObject private var profileViewModel: ProfileViewModel
-    @ObservedObject private var homeViewModel = HomeViewModel()
-    @State private var currentProfile = Profile()
+    @ObservedObject private var homeViewModel: HomeViewModel
     
-    init(profile: ProfileViewModel) {
+    init(homeViewModel: HomeViewModel, profile: ProfileViewModel) {
+        self.homeViewModel = homeViewModel
         self.profileViewModel = profile
-        if homeViewModel.allProfiles != nil {
-            self.currentProfile = homeViewModel.allProfiles![0]
-        }
     }
     
     var body: some View {
@@ -26,7 +23,7 @@ struct HomeView: View {
             let screenHeight = geometry.size.height
             
             NavigationView {
-                ProfileExplorerView()
+                ProfileExplorerView(homeViewModel: homeViewModel)
                     .navigationBarTitle("Hello, \(profileViewModel.profile!.firstName)")
                     .navigationBarItems(trailing:
                         NavigationLink(destination: NotificationsView(profile: profileViewModel), isActive: $showNotifications) {
@@ -41,24 +38,30 @@ struct HomeView: View {
                     )
             }
         }
-        .onAppear {
-            if homeViewModel.allProfiles != nil {
-                self.currentProfile = homeViewModel.allProfiles![0]
-            }
-        }
     }
 }
 
 struct ProfileExplorerView: View {
+    @ObservedObject private var homeViewModel: HomeViewModel
+    
+    init(homeViewModel: HomeViewModel) {
+        self.homeViewModel = homeViewModel
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
             ZStack {
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                    .foregroundColor(.gray)
-                Text("Hello")
+                TabView {
+                    RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                        .foregroundColor(.gray)
+                    ForEach(homeViewModel.allProfiles, id: \.self) { profile in
+                        Text(profile.profile.firstName)
+                    }
+                }
+                .tabViewStyle(PageTabViewStyle())
             }
             .gesture(DragGesture(minimumDistance: 0, coordinateSpace: .local)
                                 .onEnded({ value in
@@ -85,10 +88,11 @@ struct ProfileExplorerView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
+        let homeViewModel = HomeViewModel(forPreviews: true)
         let profileViewModel = ProfileViewModel(forPreviews: true)
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
-                HomeView(profile: profileViewModel)
+                HomeView(homeViewModel: homeViewModel, profile: profileViewModel)
                     .preferredColorScheme(colorScheme)
                     .previewDevice(PreviewDevice(rawValue: deviceName))
                     .previewDisplayName(deviceName)

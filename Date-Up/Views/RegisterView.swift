@@ -13,7 +13,9 @@ struct RegisterView: View {
     @State private var birthDate = Date()
     @State private var age = 0
     private var preferenceValues = ["Men", "Women", "Both"]
+    private var genderValues = ["Man", "Woman"]
     @State private var preference = ""
+    @State private var gender = ""
     @State private var email = ""
     @State private var password = ""
     @State var country: Country = .poland
@@ -93,6 +95,15 @@ struct RegisterView: View {
                                     }
                                     .pickerStyle(SegmentedPickerStyle())
                                 }
+                                
+                                Section(header: Text("Gender")) {
+                                    Picker("gender", selection: $gender) {
+                                        ForEach(genderValues, id: \.self) {
+                                            Text($0)
+                                        }
+                                    }
+                                    .pickerStyle(SegmentedPickerStyle())
+                                }
                             }
                             .frame(width: screenWidth, height: screenHeight * 0.72)
                             
@@ -102,7 +113,7 @@ struct RegisterView: View {
                                         signUpButtonClicked = true
                                             
                                         if checkDataIsCorrect() {
-                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, country: country.rawValue, city: city.rawValue, language: language.rawValue, email: email, password: password, preference: preference)
+                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, country: country.rawValue, city: city.rawValue, language: language.rawValue, email: email, password: password, preference: preference, gender: gender)
                                         }
                                     }
                                 }, label: {
@@ -139,7 +150,7 @@ struct RegisterView: View {
     
     private func displayPersonalInformationAndPreferenceErrors() -> Text {
         if !checkFieldsNotEmpty() {
-            return Text("Please fill in all data including your preference").foregroundColor(.red)
+            return Text("Please fill in all data including your preference and gender").foregroundColor(.red)
         } else {
             return Text("")
         }

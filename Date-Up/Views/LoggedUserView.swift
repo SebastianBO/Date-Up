@@ -25,7 +25,7 @@ struct LoggedUserView: View {
             let screenHeight = geometry.size.height
             
             TabView {
-                HomeView(profile: profileViewModel)
+                HomeView(homeViewModel: homeViewModel, profile: profileViewModel)
                     .tabItem {
                         Image(systemName: "house.fill")
                     }
@@ -45,6 +45,7 @@ struct LoggedUserView: View {
             }
         }
         .onAppear {
+            homeViewModel.fetchData()
             profileViewModel.fetchAllData()
         }
     }
@@ -52,10 +53,11 @@ struct LoggedUserView: View {
 
 struct LoggedUserView_Previews: PreviewProvider {
     static var previews: some View {
+        let homeViewModel = HomeViewModel(forPreviews: true)
         let profileViewModel = ProfileViewModel(forPreviews: true)
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
-                LoggedUserView(profile: profileViewModel)
+                LoggedUserView(homeViewModel: homeViewModel, profile: profileViewModel)
                     .preferredColorScheme(colorScheme)
                     .previewDevice(PreviewDevice(rawValue: deviceName))
                     .previewDisplayName(deviceName)

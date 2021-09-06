@@ -18,6 +18,7 @@ struct Profile: Codable, Identifiable {
     var city: String
     var language: String
     var preference: String
+    var gender: String
     var bio: String
     var email: String
     var photosURLs: [String]?

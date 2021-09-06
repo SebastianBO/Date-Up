@@ -17,7 +17,7 @@ class FirestoreManager: ObservableObject {
         return self.db
     }
     
-    func signUpDataCreation(id: String, firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, preference: String) {
+    func signUpDataCreation(id: String, firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, preference: String, gender: String) {
         let documentData: [String: Any] = [
             "id": id,
             "firstName": firstName,
@@ -29,6 +29,7 @@ class FirestoreManager: ObservableObject {
             "language": language,
             "email": email,
             "preference": preference,
+            "gender": gender,
             "bio": "Hi, I'm \(firstName)!"
         ]
         self.db.collection("profiles").document(id).setData(documentData) { (error) in
@@ -44,6 +45,30 @@ class FirestoreManager: ObservableObject {
                 print("Could not delete user data: \(error)")
             }
         }
+    }
+    
+    func getLoggedUserPreference() -> String {
+        var userPreference = "Both"
+        
+        self.db.collection("profiles").document(user!.uid).getDocument { (document, error) in
+            if let document = document {
+                userPreference = (document.get("preference") as? String)!
+            }
+        }
+        
+        return userPreference
+    }
+    
+    func getLoggedUserGender() -> String {
+        var userGender = ""
+        
+        self.db.collection("profiles").document(user!.uid).getDocument { (document, error) in
+            if let document = document {
+                userGender = (document.get("gender") as? String)!
+            }
+        }
+        
+        return userGender
     }
     
     func editUserFirstNameInDatabase(firstName: String) {

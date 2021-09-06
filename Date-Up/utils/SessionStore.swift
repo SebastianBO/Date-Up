@@ -43,12 +43,12 @@ class SessionStore: ObservableObject {
         }
     }
     
-    func signUp(firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, password: String, preference: String) {
+    func signUp(firstName: String, lastName: String, birthDate: Date, country: String, city: String, language: String, email: String, password: String, preference: String, gender: String) {
         authRef.createUser(withEmail: email, password: password) { (result, error) in
             if let error = error {
                 print(error)
             } else {
-                self.firestoreManager.signUpDataCreation(id: result!.user.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, country: country, city: city, language: language, email: email, preference: preference)
+                self.firestoreManager.signUpDataCreation(id: result!.user.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, country: country, city: city, language: language, email: email, preference: preference, gender: gender)
             }
         }
     }
