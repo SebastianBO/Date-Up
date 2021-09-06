@@ -12,7 +12,7 @@ struct StartView: View {
     @ObservedObject var profileViewModel = ProfileViewModel()
     
     var body: some View {
-        if profileViewModel.profile?.firstName != nil && profileViewModel.profile?.lastName != nil && profileViewModel.profile?.email != nil && profileViewModel.profile?.id != nil {
+        if profileViewModel.profile?.firstName != nil && profileViewModel.profile?.lastName != nil && profileViewModel.profile?.email != nil && profileViewModel.profile?.id != nil && homeViewModel.currentProfile?.profile.firstName != nil && homeViewModel.currentProfile?.profile.lastName != nil && homeViewModel.currentProfile?.profile.age != nil {
             LoggedUserView(homeViewModel: homeViewModel, profile: profileViewModel)
         }
     }

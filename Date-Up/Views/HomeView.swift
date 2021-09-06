@@ -58,7 +58,7 @@ struct ProfileExplorerView: View {
                     .foregroundColor(.gray)
                 ZStack {
                     TabView {
-                        ForEach(homeViewModel.currentProfile.profileImageViews) { (userPictureView) in
+                        ForEach(homeViewModel.currentProfile!.profileImageViews) { (userPictureView) in
                             Image(uiImage: userPictureView.uiImageView.image!)
                                 .resizable()
                                 .scaledToFit()
@@ -72,10 +72,10 @@ struct ProfileExplorerView: View {
                     VStack {
                         VStack {
                             HStack {
-                                Text(homeViewModel.currentProfile.profile.firstName)
+                                Text(homeViewModel.currentProfile!.profile.firstName)
                                     .font(.system(size: screenHeight * 0.05, weight: .bold))
                                                             
-                                Text(String(homeViewModel.currentProfile.profile.age))
+                                Text(String(homeViewModel.currentProfile!.profile.age))
                                     .font(.system(size: screenHeight * 0.037, weight: .light))
                                 
                                 Spacer()
@@ -84,7 +84,7 @@ struct ProfileExplorerView: View {
                             HStack {
                                 Image(systemName: "person.fill")
                                 
-                                Text(homeViewModel.currentProfile.profile.city)
+                                Text(homeViewModel.currentProfile!.profile.city)
                                 
                                 Spacer()
                             }

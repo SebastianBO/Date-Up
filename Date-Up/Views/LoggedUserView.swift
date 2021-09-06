@@ -45,7 +45,6 @@ struct LoggedUserView: View {
             }
         }
         .onAppear {
-            homeViewModel.fetchData()
             profileViewModel.fetchAllData()
         }
     }
