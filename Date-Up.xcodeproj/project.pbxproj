@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0A03EB4426CEAF78002BAB44 /* blank-profile-hi.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A03EB4326CEAF78002BAB44 /* blank-profile-hi.png */; };
+		0A1E7F6C26E65C2D009C4DFA /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1E7F6B26E65C2D009C4DFA /* HomeViewModel.swift */; };
 		0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2302ED26C115E8000A7BC7 /* Message.swift */; };
 		0A2302F126C1182C000A7BC7 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2302F026C1182C000A7BC7 /* SessionStore.swift */; };
 		0A2C29C926CADA600093A944 /* NotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2C29C826CADA600093A944 /* NotificationsView.swift */; };
@@ -36,6 +37,7 @@
 
 /* Begin PBXFileReference section */
 		0A03EB4326CEAF78002BAB44 /* blank-profile-hi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blank-profile-hi.png"; sourceTree = "<group>"; };
+		0A1E7F6B26E65C2D009C4DFA /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		0A2302ED26C115E8000A7BC7 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		0A2302F026C1182C000A7BC7 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
 		0A2C29C826CADA600093A944 /* NotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsView.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */,
+				0A1E7F6B26E65C2D009C4DFA /* HomeViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				0A3A5C2A26C2D81E000CBA0A /* Profile.swift in Sources */,
 				0A2C29C926CADA600093A944 /* NotificationsView.swift in Sources */,
 				0A2C29CD26CADA780093A944 /* ChatsView.swift in Sources */,
+				0A1E7F6C26E65C2D009C4DFA /* HomeViewModel.swift in Sources */,
 				0A8E68F626B82F7900C4803A /* ProfileViewModel.swift in Sources */,
 				0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */,
 				0AB1FB0A26D7EEAF0017175C /* FirestoreManager.swift in Sources */,
