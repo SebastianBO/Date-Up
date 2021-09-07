@@ -54,28 +54,25 @@ struct ProfileExplorerView: View {
             let screenHeight = geometry.size.height
             
             ZStack {
-                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                    .foregroundColor(.gray)
                 ZStack {
                     TabView {
-                        ForEach(homeViewModel.currentProfile!.profileImageViews) { (userPictureView) in
+                        ForEach(homeViewModel.currentProfile.profileImageViews) { (userPictureView) in
                             Image(uiImage: userPictureView.uiImageView.image!)
                                 .resizable()
-                                .scaledToFit()
-                                .clipped()
-                                
+                                .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
+                                .frame(width: screenWidth * 0.9, height: screenHeight * 0.85, alignment: .center)
+                                .clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
                         }
                     }
                     .tabViewStyle(PageTabViewStyle())
-                    .shadow(color: Color.black, radius: 45, x: 0, y: 60)
                     
                     VStack {
                         VStack {
                             HStack {
-                                Text(homeViewModel.currentProfile!.profile.firstName)
+                                Text(homeViewModel.currentProfile.profile.firstName)
                                     .font(.system(size: screenHeight * 0.05, weight: .bold))
                                                             
-                                Text(String(homeViewModel.currentProfile!.profile.age))
+                                Text(String(homeViewModel.currentProfile.profile.age))
                                     .font(.system(size: screenHeight * 0.037, weight: .light))
                                 
                                 Spacer()
@@ -84,7 +81,7 @@ struct ProfileExplorerView: View {
                             HStack {
                                 Image(systemName: "person.fill")
                                 
-                                Text(homeViewModel.currentProfile!.profile.city)
+                                Text(homeViewModel.currentProfile.profile.city)
                                 
                                 Spacer()
                             }

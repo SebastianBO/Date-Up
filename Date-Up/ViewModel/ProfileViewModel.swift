@@ -256,7 +256,7 @@ class ProfileViewModel: ObservableObject {
     func deleteUserData(completion: @escaping (() -> ())) {
         self.firestoreManager.deleteUserData(userUID: session.currentUser!.uid) {
             print("Successfully deleted user data")
-            self.firebaseStorageManager.deleteAllImagesFromStorage(userID: self.session.currentUser!.uid, userPhotosURLs: (self.profile?.photosURLs)!) {
+            self.firebaseStorageManager.deleteAllImagesFromStorage(userID: self.session.currentUser!.uid, userPhotosURLs: self.profile?.photosURLs != nil ? (self.profile?.photosURLs)! : [String]()) {
                 print("Successfully deleted user images")
                 completion()
             }

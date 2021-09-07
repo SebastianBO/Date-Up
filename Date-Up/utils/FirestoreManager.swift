@@ -45,6 +45,7 @@ class FirestoreManager: ObservableObject {
         self.db.collection("profiles").document(userUID).delete() { (error) in
             if let error = error {
                 print("Could not delete user data: \(error)")
+            } else {
                 completion()
             }
         }

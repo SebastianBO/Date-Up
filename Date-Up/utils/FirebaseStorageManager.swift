@@ -50,15 +50,19 @@ class FirebaseStorageManager: ObservableObject {
     }
     
     func deleteAllImagesFromStorage(userID: String, userPhotosURLs: [String], completion: @escaping (() -> ())) {
-        for photoURL in userPhotosURLs {
-            let userImagesStorageRef = storageRef.child("images/\(userID)/\(photoURL)")
-            userImagesStorageRef.delete() { (error) in
-                if let error = error {
-                    print("Error deleting file: ", error.localizedDescription)
+        if userPhotosURLs.count != 0 {
+            for photoURL in userPhotosURLs {
+                let userImagesStorageRef = storageRef.child("images/\(userID)/\(photoURL)")
+                userImagesStorageRef.delete() { (error) in
+                    if let error = error {
+                        print("Error deleting file: ", error.localizedDescription)
+                    } else {
+                        completion()
+                    }
                 }
-                
-                completion()
             }
+        } else {
+            completion()
         }
     }
     

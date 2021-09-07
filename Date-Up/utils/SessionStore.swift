@@ -85,7 +85,7 @@ class SessionStore: ObservableObject {
                 print("Error re-authenticating user \(error)")
             } else {
                 self.firestoreManager.editUserEmailInDatabase(email: newEmailAddress) {
-                    print("Successfully updated user's email adsress")
+                    print("Successfully updated user's email address")
                 }
                 
                 currentUser?.updateEmail(to: newEmailAddress) { (error) in

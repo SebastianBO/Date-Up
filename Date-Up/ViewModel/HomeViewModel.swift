@@ -13,7 +13,7 @@ import UIKit
 
 class HomeViewModel: ObservableObject {
     @Published var allProfiles = [ProfileLookup]()
-    @Published var currentProfile: ProfileLookup?
+    @Published var currentProfile = ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])
     private var allUsersUIDs = [String]()
     
     public let firebaseStorageManager = FirebaseStorageManager()
@@ -32,18 +32,20 @@ class HomeViewModel: ObservableObject {
         if (session.currentUser != nil) {
             getAllUserUIDsOfSamePreference() { [self] filledArray in
                 self.allUsersUIDs = filledArray
-                for userUID in self.allUsersUIDs {
-                    self.firestoreManager.fetchDataFromDatabase(userUID: userUID) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs, _ in
-                        if photosURLs != nil {
-                            self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: [PictureView]())
-                            self.fetchPhotos(userUID: userUID) {
-                                self.allProfiles.append(self.currentProfile!)
-                                self.currentProfile = allProfiles[0]
+                if filledArray.count != 0 {
+                    for userUID in self.allUsersUIDs {
+                        self.firestoreManager.fetchDataFromDatabase(userUID: userUID) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs, _ in
+                            if photosURLs != nil {
+                                self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: [PictureView]())
+                                self.fetchPhotos(userUID: userUID) {
+                                    self.allProfiles.append(self.currentProfile)
+                                    self.currentProfile = allProfiles[0]
+                                    completion()
+                                }
+                            } else {
+                                self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView]())
                                 completion()
                             }
-                        } else {
-                            self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView]())
-                            completion()
                         }
                     }
                 }
@@ -55,13 +57,13 @@ class HomeViewModel: ObservableObject {
         if (session.currentUser != nil) {
             self.downloadUserPhotos(userUID: userUID) { fetchedPictureViews in
                 if fetchedPictureViews.count != 0 {
-                    self.currentProfile?.profileImageViews.removeAll()
+                    self.currentProfile.profileImageViews.removeAll()
                     for fetchedPictureView in fetchedPictureViews {
-                        self.currentProfile?.profileImageViews.append(fetchedPictureView)
+                        self.currentProfile.profileImageViews.append(fetchedPictureView)
                     }
                     completion()
                 } else {
-                    self.currentProfile?.profileImageViews = [PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]
+                    self.currentProfile.profileImageViews = [PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]
                     completion()
                 }
             }
@@ -120,11 +122,11 @@ class HomeViewModel: ObservableObject {
         var userImages: [PictureView] = [PictureView]()
         
         let g = DispatchGroup()
-        if self.currentProfile?.profile.photosURLs != nil {
-            for photoURLIndex in 0..<(self.currentProfile?.profile.photosURLs?.count)! {
+        if self.currentProfile.profile.photosURLs != nil {
+            for photoURLIndex in 0..<(self.currentProfile.profile.photosURLs?.count)! {
                 g.enter()
-                self.firebaseStorageManager.downloadImageFromStorage(userID: userUID, userPhotoURL: (self.currentProfile?.profile.photosURLs![photoURLIndex])!) { downloadedUIImageView in
-                    userImages.append(PictureView(id: (self.currentProfile?.profile.photosURLs![photoURLIndex])!, uiImageView: downloadedUIImageView))
+                self.firebaseStorageManager.downloadImageFromStorage(userID: userUID, userPhotoURL: (self.currentProfile.profile.photosURLs![photoURLIndex])) { downloadedUIImageView in
+                    userImages.append(PictureView(id: (self.currentProfile.profile.photosURLs![photoURLIndex]), uiImageView: downloadedUIImageView))
                     g.leave()
                 }
             }
