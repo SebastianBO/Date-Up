@@ -32,25 +32,10 @@ class HomeViewModel: ObservableObject {
     func fetchData() {
         if (session.currentUser != nil) {
             print("STARTING FETCHING")
-            getAllUserUIDsOfSamePreference()
-            print("DISPLAYING USERS IN FETCH: \(allUsersUIDs)")
-            
-            for userUID in allUsersUIDs {
-                print("USER UID: \(userUID)")
-                firestoreManager.getDatabase().collection("profiles").document(userUID).getDocument { (document, error) in
-                    if let document = document {
-                        let firstName = document.get("firstName") as? String ?? ""
-                        let lastName = document.get("lastName") as? String ?? ""
-                        let birthDate = document.get("birthDate") as? Date ?? Date()
-                        let age = document.get("age") as? Int ?? 0
-                        let country = document.get("country") as? String ?? ""
-                        let city = document.get("city") as? String ?? ""
-                        let language = document.get("language") as? String ?? ""
-                        let preference = document.get("preference") as? String ?? ""
-                        let gender = document.get("gender") as? String ?? ""
-                        let bio = document.get("bio") as? String ?? ""
-                        let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
-                        
+            getAllUserUIDsOfSamePreference() { [self] filledArray in
+                self.allUsersUIDs = filledArray
+                for userUID in self.allUsersUIDs {
+                    self.getDataFromDatabase(userUID: userUID) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs in
                         if photosURLs != nil {
                             self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: [PictureView]())
                             print("THERE ARE PHOTOS")
@@ -58,23 +43,82 @@ class HomeViewModel: ObservableObject {
                             self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView]())
                             print("THERE ARE NO PHOTOS")
                         }
+                        
+                        self.fetchPhotos(userUID: userUID)
+                        
+                        self.allProfiles.append(self.currentProfile!)
                     }
-                    
-                    self.fetchPhotos(userUID: userUID)
-                    
-                    self.allProfiles.append(self.currentProfile!)
-                    
+                }
+                
+                if self.allProfiles.count != 0 {
+                    self.currentProfile = allProfiles[0]
+                    print("THERE ARE PROFILES IN ARRAY")
+                } else {
+                    self.currentProfile = ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])
+                    print("THERE ARE NO PROFILES IN ARRAY")
                 }
             }
+//            print("DISPLAYING USERS IN FETCH: \(allUsersUIDs)")
+//
+//            for userUID in allUsersUIDs {
+//                print("USER UID: \(userUID)")
+//                firestoreManager.getDatabase().collection("profiles").document(userUID).getDocument { (document, error) in
+//                    if let document = document {
+//                        let firstName = document.get("firstName") as? String ?? ""
+//                        let lastName = document.get("lastName") as? String ?? ""
+//                        let birthDate = document.get("birthDate") as? Date ?? Date()
+//                        let age = document.get("age") as? Int ?? 0
+//                        let country = document.get("country") as? String ?? ""
+//                        let city = document.get("city") as? String ?? ""
+//                        let language = document.get("language") as? String ?? ""
+//                        let preference = document.get("preference") as? String ?? ""
+//                        let gender = document.get("gender") as? String ?? ""
+//                        let bio = document.get("bio") as? String ?? ""
+//                        let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
+//
+//                        if photosURLs != nil {
+//                            self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: [PictureView]())
+//                            print("THERE ARE PHOTOS")
+//                        } else {
+//                            self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView]())
+//                            print("THERE ARE NO PHOTOS")
+//                        }
+//                    }
+//
+//                    self.fetchPhotos(userUID: userUID)
+//
+//                    self.allProfiles.append(self.currentProfile!)
+//
+//                }
+//            }
+//
+//            if allProfiles.count != 0 {
+//                self.currentProfile = allProfiles[0]
+//                print("THERE ARE PROFILES IN ARRAY")
+//            } else {
+//                self.currentProfile = ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])
+//                print("THERE ARE NO PROFILES IN ARRAY")
+//            }
             
-            if allProfiles.count != 0 {
-                self.currentProfile = allProfiles[0]
-                print("THERE ARE PROFILES IN ARRAY")
-            } else {
-                self.currentProfile = ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])
-                print("THERE ARE NO PROFILES IN ARRAY")
+        }
+    }
+    
+    private func getDataFromDatabase(userUID: String, completion: @escaping ((String, String, Date, Int, String, String, String, String, String, String, [String]?) -> ())) {
+        firestoreManager.getDatabase().collection("profiles").document(userUID).getDocument { (document, error) in
+            if let document = document {
+                let firstName = document.get("firstName") as? String ?? ""
+                let lastName = document.get("lastName") as? String ?? ""
+                let birthDate = document.get("birthDate") as? Date ?? Date()
+                let age = document.get("age") as? Int ?? 0
+                let country = document.get("country") as? String ?? ""
+                let city = document.get("city") as? String ?? ""
+                let language = document.get("language") as? String ?? ""
+                let preference = document.get("preference") as? String ?? ""
+                let gender = document.get("gender") as? String ?? ""
+                let bio = document.get("bio") as? String ?? ""
+                let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
+                completion(firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs)
             }
-            
         }
     }
     
@@ -93,8 +137,8 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func getAllUserUIDsOfSamePreference() {
-        self.allUsersUIDs.removeAll()
+    private func getAllUserUIDsOfSamePreference(completion: @escaping (([String]) -> ())) {
+        var newArray = [String]()
         let loggedUserGender = firestoreManager.getLoggedUserGender()
         let loggedUserPreference = firestoreManager.getLoggedUserPreference()
         
@@ -111,26 +155,27 @@ class HomeViewModel: ObservableObject {
                     if foundUserUID != session.currentUser!.uid {
                         if foundUserPreference == "Both" {
                             if loggedUserPreference == "Both" {
-                                self.allUsersUIDs.append(foundUserUID)
+                                newArray.append(foundUserUID)
                             } else {
                                 if loggedUserPreference == foundUserGender {
-                                    self.allUsersUIDs.append(foundUserUID)
+                                    newArray.append(foundUserUID)
                                 }
                             }
                         } else {
                             if loggedUserPreference == "Both" {
                                 if foundUserPreference == loggedUserGender {
-                                    self.allUsersUIDs.append(foundUserUID)
+                                    newArray.append(foundUserUID)
                                 }
                             } else {
                                 if foundUserPreference == loggedUserGender && loggedUserPreference == foundUserGender {
-                                    self.allUsersUIDs.append(foundUserUID)
+                                    newArray.append(foundUserUID)
                                 }
                             }
                         }
                     }
                 }
-                print("DISPLAYING USERS IN getAllUsers METHOD: \(allUsersUIDs)")
+                print("DISPLAYING USERS IN getAllUsers METHOD: \(newArray)")
+                completion(newArray)
             }
         }
     }
