@@ -58,7 +58,9 @@ struct LoginView: View {
                                                 withAnimation {
                                                     sendRecoveryEmailButtonPressed = true
                                                     if checkEmail() {
-                                                        sessionStore.sendRecoveryEmail(forgotPasswordEmail)
+                                                        sessionStore.sendRecoveryEmail(forgotPasswordEmail) {
+                                                            print("Successfully sent recovery e-mail.")
+                                                        }
                                                         recoveryEmailSent = true
                                                     }
                                                 }
@@ -81,7 +83,9 @@ struct LoginView: View {
                             HStack {
                                 Button(action: {
                                     withAnimation {
-                                        sessionStore.signIn(email: email, password: password)
+                                        sessionStore.signIn(email: email, password: password) {
+                                            print("Successfully signed in.")
+                                        }
                                         
                                         if sessionStore.isAnonymous {
                                             wrongCredentials = true

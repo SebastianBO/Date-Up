@@ -13,7 +13,7 @@ import FirebaseStorage
 class FirebaseStorageManager: ObservableObject {
     private let storageRef = Storage.storage().reference()
     
-    func uploadImageToStorage(image: UIImage, userID: String) -> String {
+    func uploadImageToStorage(image: UIImage, userID: String, completion: @escaping ((String) -> ())) {
         let imageUUID = UUID().uuidString
         let userImagesStorageRef = storageRef.child("images/\(userID)/\(imageUUID)")
         
@@ -32,35 +32,39 @@ class FirebaseStorageManager: ObservableObject {
                 if let metadata = metadata {
                     print("Metadata: ", metadata)
                 }
+                
+                completion(imageUUID)
             }
         }
-        
-        return imageUUID
     }
     
-    func deleteImageFromStorage(userID: String, userPhotoURL: String) {
+    func deleteImageFromStorage(userID: String, userPhotoURL: String, completion: @escaping (() -> ())) {
         let userImagesStorageRef = storageRef.child("images/\(userID)/\(userPhotoURL)")
         userImagesStorageRef.delete() { (error) in
             if let error = error {
                 print("Error deleting file: ", error.localizedDescription)
             }
+            
+            completion()
         }
     }
     
-    func deleteAllImagesFromStorage(userID: String, userPhotosURLs: [String]) {
+    func deleteAllImagesFromStorage(userID: String, userPhotosURLs: [String], completion: @escaping (() -> ())) {
         for photoURL in userPhotosURLs {
             let userImagesStorageRef = storageRef.child("images/\(userID)/\(photoURL)")
             userImagesStorageRef.delete() { (error) in
                 if let error = error {
                     print("Error deleting file: ", error.localizedDescription)
                 }
+                
+                completion()
             }
         }
     }
     
-    func downloadImageFromStorage(userID: String, userPhotoURL: String) -> UIImageView {
+    func downloadImageFromStorage(userID: String, userPhotoURL: String, completion: @escaping ((UIImageView) -> ())) {
         let userImagesStorageRef = storageRef.child("images/\(userID)/\(userPhotoURL)")
-        var downloadedImage: UIImageView = UIImageView()
+        let downloadedImage: UIImageView = UIImageView()
         
         userImagesStorageRef.getData(maxSize: 1 * 100 * 1024 * 1024) { (data, error) in
             if let error = error {
@@ -68,9 +72,9 @@ class FirebaseStorageManager: ObservableObject {
             } else {
                 let image = UIImage(data: data!)!
                 downloadedImage.image = image
+                downloadedImage.accessibilityLabel = userPhotoURL
+                completion(downloadedImage)
             }
         }
-
-        return downloadedImage
     }
 }

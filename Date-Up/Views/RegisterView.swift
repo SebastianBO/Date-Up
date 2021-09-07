@@ -113,7 +113,9 @@ struct RegisterView: View {
                                         signUpButtonClicked = true
                                             
                                         if checkDataIsCorrect() {
-                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, country: country.rawValue, city: city.rawValue, language: language.rawValue, email: email, password: password, preference: preference, gender: gender)
+                                            sessionStore.signUp(firstName: firstName, lastName: lastName, birthDate: birthDate, country: country.rawValue, city: city.rawValue, language: language.rawValue, email: email, password: password, preference: preference, gender: gender) {
+                                                print("Successfully signed up.")
+                                            }
                                         }
                                     }
                                 }, label: {

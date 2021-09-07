@@ -19,8 +19,6 @@ struct ProfileView: View {
     
     @State private var image = UIImage()
     
-    @State private var profilePictureImage = Image(uiImage: UIImage(named: "blank-profile-hi")!)
-    
     @State private var selectedItem : PictureView? = nil
     
     @State private var shouldPresentAddActionSheet = false
@@ -68,15 +66,10 @@ struct ProfileView: View {
                         .sheet(isPresented: $shouldPresentImagePicker) {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
-                                    var uploadedImageURL: String {
-                                        profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id)
-                                    }
-                                    profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL)
-                                    
-                                    profileViewModel.addUploadedImageToPhotos(imageURL: uploadedImageURL)
-                                    
-                                    for photo in profileViewModel.userPicturesView {
-                                        print(photo)
+                                    profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id) { uploadedImageURL in
+                                        profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL) {
+                                            profileViewModel.addUploadedImageToPhotos(imageURL: uploadedImageURL) {}
+                                        }
                                     }
                                 }
                         }
@@ -95,11 +88,18 @@ struct ProfileView: View {
                         }
                         
                         VStack {
-                            profilePictureImage
+                            Image(uiImage: profileViewModel.userProfilePicture.uiImageView.image!)
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
                                 .shadow(radius: 10)
+                                .onAppear {
+                                    if profileViewModel.userProfilePicture.id == "nil" {
+                                        profileViewModel.fetchPhotos {
+                                            print("Fetched user's photos again in order to restore profile picture")
+                                        }
+                                    }
+                                }
                             
                             Text(profileViewModel.profile!.firstName + " " + profileViewModel.profile!.lastName)
                                 .font(.title2)
@@ -142,24 +142,22 @@ struct ProfileView: View {
                                                 ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
                                                     .default(Text("Set as profile picture"), action: {
                                                         withAnimation {
-                                                            self.profilePictureImage = Image(uiImage: item.uiImageView.image!)
-                                                            self.profileViewModel.profilePictureChange(imageID: item.id)
+                                                            self.profileViewModel.profilePictureChange(imageID: item.id, newProfilePicture: item) {}
                                                         }
                                                     }),
                                                     .destructive(Text("Delete this photo"), action: {
                                                         withAnimation {
+                                                            self.profileViewModel.deleteUserImage(imageID: item.id) {}
                                                             if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
-                                                                self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!)
+                                                                self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
                                                             }
                                                             if (self.profileViewModel.profile?.photosURLs!.count)! <= 1 {
-                                                                self.profileViewModel.profilePictureChange(imageID: "nil")
-                                                                self.profilePictureImage = Image(uiImage: UIImage(named: "blank-profile-hi")!)
+                                                                self.profileViewModel.profilePictureChange(imageID: "nil", newProfilePicture: PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))) {}
                                                             } else {
                                                                 if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
-                                                                    self.profilePictureImage = Image(uiImage: (self.profileViewModel.userPicturesView.first?.uiImageView.image!)!)
+                                                                    self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
                                                                 }
                                                             }
-                                                            self.profileViewModel.deleteUserImage(imageID: item.id)
                                                         }
                                                     }),
                                                     .cancel()
@@ -171,20 +169,6 @@ struct ProfileView: View {
                         }
                     }
                     .navigationBarHidden(true)
-                }
-            }
-        }
-        .onAppear {
-            if profileViewModel.userPicturesView.count != 0 {
-                let index = profileViewModel.getProfilePictureIndex()
-                if self.profileViewModel.userPicturesView[index].uiImageView.image != nil {
-                    self.profilePictureImage = Image(uiImage: self.profileViewModel.userPicturesView[index].uiImageView.image!)
-                } else {
-                    if self.profileViewModel.userPicturesView.first!.uiImageView.image != nil {
-                        self.profilePictureImage = Image(uiImage: self.profileViewModel.userPicturesView.first!.uiImageView.image!)
-                    } else {
-                        self.profilePictureImage = Image(uiImage: UIImage(named: "blank-profile-hi")!)
-                    }
                 }
             }
         }
@@ -377,30 +361,30 @@ struct EditView: View {
                 Button(action: {
                     withAnimation {
                         if profileViewModel.firstNameChange(firstName: firstName) {
-                            profileViewModel.firestoreManager.editUserFirstNameInDatabase(firstName: firstName)
+                            profileViewModel.firestoreManager.editUserFirstNameInDatabase(firstName: firstName) {}
                         }
                         if profileViewModel.lastNameChange(lastName: lastName) {
-                            profileViewModel.firestoreManager.editUserLastNameInDatabase(lastName: lastName)
+                            profileViewModel.firestoreManager.editUserLastNameInDatabase(lastName: lastName) {}
                         }
                         if profileViewModel.bioChange(bio: bio) {
-                            profileViewModel.firestoreManager.editUserBioInDatabase(bio: bio)
+                            profileViewModel.firestoreManager.editUserBioInDatabase(bio: bio) {}
                         }
                         if profileViewModel.countryChange(country: country.rawValue) {
-                            profileViewModel.firestoreManager.editUserCountryInDatabase(country: country.rawValue)
+                            profileViewModel.firestoreManager.editUserCountryInDatabase(country: country.rawValue) {}
                         }
                         if profileViewModel.cityChange(city: city.rawValue) {
-                            profileViewModel.firestoreManager.editUserCityInDatabase(city: city.rawValue)
+                            profileViewModel.firestoreManager.editUserCityInDatabase(city: city.rawValue) {}
                         }
                         if profileViewModel.languageChange(language: language.rawValue) {
-                            profileViewModel.firestoreManager.editUserLanguageInDatabase(language: language.rawValue)
+                            profileViewModel.firestoreManager.editUserLanguageInDatabase(language: language.rawValue) {}
                         }
                         if profileViewModel.preferenceChange(preference: preference) {
-                            profileViewModel.firestoreManager.editUserPreferenceInDatabase(preference: preference)
+                            profileViewModel.firestoreManager.editUserPreferenceInDatabase(preference: preference) {}
                         }
                         
-                        profileViewModel.fetchData()
-                        
-                        self.presentationMode.wrappedValue.dismiss()
+                        profileViewModel.fetchData() {
+                            self.presentationMode.wrappedValue.dismiss()
+                        }
                     }
                 }, label: {
                     Text("Finished")
@@ -438,8 +422,11 @@ struct DeleteAccountSheetView: View {
                     Button(action: {
                         withAnimation {
                             presentationMode.wrappedValue.dismiss()
-                            profileViewModel.deleteUserData()
-                            profileViewModel.session.deleteUser(email: email, password: password)
+                            profileViewModel.deleteUserData() {
+                                profileViewModel.session.deleteUser(email: email, password: password) {
+                                    print("Successfully deleted user.")
+                                }
+                            }
                         }
                     }, label: {
                         Text("Delete account permanently")
@@ -489,7 +476,7 @@ struct ChangeEmailAddressSheetView: View {
                     Button(action: {
                         withAnimation {
                             presentationMode.wrappedValue.dismiss()
-                            profileViewModel.emailAddressChange(oldEmailAddress: oldEmail, password: password, newEmailAddress: newEmail)
+                            profileViewModel.emailAddressChange(oldEmailAddress: oldEmail, password: password, newEmailAddress: newEmail) {}
                         }
                     }, label: {
                         Text("Change e-mail address")
@@ -539,7 +526,7 @@ struct ChangePasswordSheetView: View {
                     Button(action: {
                         withAnimation {
                             presentationMode.wrappedValue.dismiss()
-                            profileViewModel.passwordChange(emailAddress: email, oldPassword: oldPassword, newPassword: newPassword)
+                            profileViewModel.passwordChange(emailAddress: email, oldPassword: oldPassword, newPassword: newPassword) {}
                         }
                     }, label: {
                         Text("Change password")

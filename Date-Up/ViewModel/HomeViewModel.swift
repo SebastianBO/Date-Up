@@ -35,7 +35,7 @@ class HomeViewModel: ObservableObject {
             getAllUserUIDsOfSamePreference() { [self] filledArray in
                 self.allUsersUIDs = filledArray
                 for userUID in self.allUsersUIDs {
-                    self.getDataFromDatabase(userUID: userUID) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs in
+                    self.firestoreManager.fetchDataFromDatabase(userUID: userUID) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs, _ in
                         if photosURLs != nil {
                             self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: [PictureView]())
                             print("THERE ARE PHOTOS")
@@ -58,80 +58,18 @@ class HomeViewModel: ObservableObject {
                     print("THERE ARE NO PROFILES IN ARRAY")
                 }
             }
-//            print("DISPLAYING USERS IN FETCH: \(allUsersUIDs)")
-//
-//            for userUID in allUsersUIDs {
-//                print("USER UID: \(userUID)")
-//                firestoreManager.getDatabase().collection("profiles").document(userUID).getDocument { (document, error) in
-//                    if let document = document {
-//                        let firstName = document.get("firstName") as? String ?? ""
-//                        let lastName = document.get("lastName") as? String ?? ""
-//                        let birthDate = document.get("birthDate") as? Date ?? Date()
-//                        let age = document.get("age") as? Int ?? 0
-//                        let country = document.get("country") as? String ?? ""
-//                        let city = document.get("city") as? String ?? ""
-//                        let language = document.get("language") as? String ?? ""
-//                        let preference = document.get("preference") as? String ?? ""
-//                        let gender = document.get("gender") as? String ?? ""
-//                        let bio = document.get("bio") as? String ?? ""
-//                        let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
-//
-//                        if photosURLs != nil {
-//                            self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: [PictureView]())
-//                            print("THERE ARE PHOTOS")
-//                        } else {
-//                            self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView]())
-//                            print("THERE ARE NO PHOTOS")
-//                        }
-//                    }
-//
-//                    self.fetchPhotos(userUID: userUID)
-//
-//                    self.allProfiles.append(self.currentProfile!)
-//
-//                }
-//            }
-//
-//            if allProfiles.count != 0 {
-//                self.currentProfile = allProfiles[0]
-//                print("THERE ARE PROFILES IN ARRAY")
-//            } else {
-//                self.currentProfile = ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])
-//                print("THERE ARE NO PROFILES IN ARRAY")
-//            }
-            
-        }
-    }
-    
-    private func getDataFromDatabase(userUID: String, completion: @escaping ((String, String, Date, Int, String, String, String, String, String, String, [String]?) -> ())) {
-        firestoreManager.getDatabase().collection("profiles").document(userUID).getDocument { (document, error) in
-            if let document = document {
-                let firstName = document.get("firstName") as? String ?? ""
-                let lastName = document.get("lastName") as? String ?? ""
-                let birthDate = document.get("birthDate") as? Date ?? Date()
-                let age = document.get("age") as? Int ?? 0
-                let country = document.get("country") as? String ?? ""
-                let city = document.get("city") as? String ?? ""
-                let language = document.get("language") as? String ?? ""
-                let preference = document.get("preference") as? String ?? ""
-                let gender = document.get("gender") as? String ?? ""
-                let bio = document.get("bio") as? String ?? ""
-                let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
-                completion(firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs)
-            }
         }
     }
     
     func fetchPhotos(userUID: String) {
         if (session.currentUser != nil) {
             print("STARTING DOWNLOADING PHOTOS")
-            let newUserPhotos = self.downloadUserPhotos()
-            
-            if newUserPhotos.count != 0 {
-                self.currentProfile?.profileImageViews.removeAll()
-                self.currentProfile?.profileImageViews = [PictureView]()
-                for (newUserPhoto, photoURL) in zip(newUserPhotos, (self.currentProfile!.profile.photosURLs)!) {
-                    self.currentProfile?.profileImageViews.append(PictureView(id: photoURL, uiImageView: newUserPhoto))
+            self.downloadUserPhotos() { fetchedPhotos in
+                if fetchedPhotos.count != 0 {
+                    self.currentProfile?.profileImageViews.removeAll()
+                    for (newUserPhoto, photoURL) in zip(fetchedPhotos, (self.currentProfile!.profile.photosURLs)!) {
+                        self.currentProfile?.profileImageViews.append(PictureView(id: photoURL, uiImageView: newUserPhoto))
+                    }
                 }
             }
         }
@@ -139,8 +77,16 @@ class HomeViewModel: ObservableObject {
     
     private func getAllUserUIDsOfSamePreference(completion: @escaping (([String]) -> ())) {
         var newArray = [String]()
-        let loggedUserGender = firestoreManager.getLoggedUserGender()
-        let loggedUserPreference = firestoreManager.getLoggedUserPreference()
+        var loggedUserGender = ""
+        var loggedUserPreference = ""
+            
+        firestoreManager.getLoggedUserGender() { fetchedGender in
+            loggedUserGender = fetchedGender
+        }
+        
+        firestoreManager.getLoggedUserPreference() { fetchedPreference in
+            loggedUserPreference = fetchedPreference
+        }
         
         print("STARTING DOWNLOADING USERS")
         
@@ -180,15 +126,21 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func downloadUserPhotos() -> [UIImageView] {
+    func downloadUserPhotos(completion: @escaping (([UIImageView]) -> ())) {
         var userImages: [UIImageView] = [UIImageView]()
         
+        let g = DispatchGroup()
         if self.currentProfile?.profile.photosURLs != nil {
             for photoURLIndex in 0..<(self.currentProfile?.profile.photosURLs?.count)! {
-                userImages.append(self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.currentProfile?.profile.photosURLs![photoURLIndex])!))
+                g.enter()
+                self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.currentProfile?.profile.photosURLs![photoURLIndex])!) { downloadedUIImageView in
+                    userImages.append(downloadedUIImageView)
+                    g.leave()
+                }
+            }
+            g.notify(queue:.main) {
+                completion(userImages)
             }
         }
-        
-        return userImages
     }
 }
