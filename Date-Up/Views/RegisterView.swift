@@ -12,7 +12,7 @@ struct RegisterView: View {
     @State private var lastName = ""
     @State private var birthDate = Date()
     @State private var age = 0
-    private var preferenceValues = ["Men", "Women", "Both"]
+    private var preferenceValues = ["Man", "Woman", "Both"]
     private var genderValues = ["Man", "Woman"]
     @State private var preference = ""
     @State private var gender = ""
