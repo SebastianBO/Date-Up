@@ -159,9 +159,9 @@
 			isa = PBXGroup;
 			children = (
 				0A2302ED26C115E8000A7BC7 /* Message.swift */,
-				0A3A5C2926C2D81E000CBA0A /* Profile.swift */,
 				0A79765C26E3ED4F00691B35 /* PictureView.swift */,
 				0A1E7F6D26E68311009C4DFA /* ProfileLookup.swift */,
+				0A3A5C2926C2D81E000CBA0A /* Profile.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";

@@ -73,10 +73,10 @@ class ProfileViewModel: ObservableObject {
         
         let g = DispatchGroup()
         if self.profile?.photosURLs != nil {
-            for photoURLIndex in 0..<(self.profile?.photosURLs?.count)! {
+            for photoURLIndex in self.profile!.photosURLs! {
                 g.enter()
-                self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: (self.profile?.photosURLs![photoURLIndex])!) { downloadedUIImageView in
-                    userImages.append(PictureView(id: (self.profile?.photosURLs![photoURLIndex])!, uiImageView: downloadedUIImageView))
+                self.firebaseStorageManager.downloadImageFromStorage(userID: session.currentUser!.uid, userPhotoURL: photoURLIndex) { downloadedUIImageView in
+                    userImages.append(PictureView(id: photoURLIndex, uiImageView: downloadedUIImageView))
                     g.leave()
                 }
             }

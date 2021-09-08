@@ -29,6 +29,7 @@ class HomeViewModel: ObservableObject {
     }
     
     func fetchData(completion: @escaping (() -> ())) {
+        self.allProfiles.removeAll()
         if (session.currentUser != nil) {
             getAllUserUIDsOfSamePreference() { [self] filledArray in
                 self.allUsersUIDs = filledArray
@@ -36,14 +37,12 @@ class HomeViewModel: ObservableObject {
                     for userUID in self.allUsersUIDs {
                         self.firestoreManager.fetchDataFromDatabase(userUID: userUID) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs, _ in
                             if photosURLs != nil {
-                                self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: [PictureView]())
-                                self.fetchPhotos(userUID: userUID) {
-                                    self.allProfiles.append(self.currentProfile)
-                                    self.currentProfile = allProfiles[0]
+                                self.fetchPhotos(userUID: userUID, photosURLs: photosURLs!) { fetchedPhotos in
+                                    self.allProfiles.append(ProfileLookup(profile: Profile(id: userUID, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: fetchedPhotos))
                                     completion()
                                 }
                             } else {
-                                self.currentProfile = ProfileLookup(profile: Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView]())
+                                self.allProfiles.append(ProfileLookup(profile: Profile(id: userUID, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]))
                                 completion()
                             }
                         }
@@ -53,18 +52,13 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func fetchPhotos(userUID: String, completion: @escaping (() -> ())) {
+    func fetchPhotos(userUID: String, photosURLs: [String], completion: @escaping (([PictureView]) -> ())) {
         if (session.currentUser != nil) {
-            self.downloadUserPhotos(userUID: userUID) { fetchedPictureViews in
+            self.downloadUserPhotos(userUID: userUID, photosURLs: photosURLs) { fetchedPictureViews in
                 if fetchedPictureViews.count != 0 {
-                    self.currentProfile.profileImageViews.removeAll()
-                    for fetchedPictureView in fetchedPictureViews {
-                        self.currentProfile.profileImageViews.append(fetchedPictureView)
-                    }
-                    completion()
+                    completion(fetchedPictureViews)
                 } else {
-                    self.currentProfile.profileImageViews = [PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]
-                    completion()
+                    completion([PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])
                 }
             }
         }
@@ -118,15 +112,32 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func downloadUserPhotos(userUID: String, completion: @escaping (([PictureView]) -> ())) {
+    func removeProfileFromProposed(userUID: String) {
+        print(self.allProfiles.count)
+        var index = 0
+        for profile in self.allProfiles {
+            print(profile.id)
+            print(userUID)
+            if profile.id == userUID {
+                print(index)
+                self.allProfiles.remove(at: index)
+            }
+            index += 1
+        }
+        if self.allProfiles.count == 0 {
+            fetchData {}
+        }
+    }
+    
+    func downloadUserPhotos(userUID: String, photosURLs: [String], completion: @escaping (([PictureView]) -> ())) {
         var userImages: [PictureView] = [PictureView]()
         
         let g = DispatchGroup()
         if self.currentProfile.profile.photosURLs != nil {
-            for photoURLIndex in 0..<(self.currentProfile.profile.photosURLs?.count)! {
+            for photoURL in photosURLs {
                 g.enter()
-                self.firebaseStorageManager.downloadImageFromStorage(userID: userUID, userPhotoURL: (self.currentProfile.profile.photosURLs![photoURLIndex])) { downloadedUIImageView in
-                    userImages.append(PictureView(id: (self.currentProfile.profile.photosURLs![photoURLIndex]), uiImageView: downloadedUIImageView))
+                self.firebaseStorageManager.downloadImageFromStorage(userID: userUID, userPhotoURL: photoURL) { downloadedUIImageView in
+                    userImages.append(PictureView(id: photoURL, uiImageView: downloadedUIImageView))
                     g.leave()
                 }
             }
