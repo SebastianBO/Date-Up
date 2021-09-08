@@ -67,7 +67,7 @@ struct ProfileView: View {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
                                     profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id) { uploadedImageURL in
-                                        if profileViewModel.profile?.photosURLs == nil {
+                                        if profileViewModel.profile?.photosURLs?.count == 0 || self.profileViewModel.userPicturesView.count == 0 {
                                             profileViewModel.profilePictureChange(imageID: uploadedImageURL, newProfilePicture: PictureView(id: uploadedImageURL, uiImageView: UIImageView(image: image))) {
                                                 print("Successfully set new profile picture.")
                                             }
@@ -98,7 +98,7 @@ struct ProfileView: View {
                                 .resizable()
                                 .clipShape(Circle())
                                 .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
-                                .shadow(radius: 10)
+                                .shadow(color: colorScheme == .dark ? .white : .black, radius: 10)
                                 .onAppear {
                                     if profileViewModel.userProfilePicture.id == "nil" {
                                         profileViewModel.fetchPhotos {
@@ -107,7 +107,7 @@ struct ProfileView: View {
                                     }
                                 }
                             
-                            Text(profileViewModel.profile!.firstName + " " + profileViewModel.profile!.lastName)
+                            Text(profileViewModel.profile!.firstName.capitalized + " " + profileViewModel.profile!.lastName.capitalized)
                                 .font(.title2)
                                 .padding(.bottom, screenHeight * 0.02)
                             Text(profileViewModel.profile!.bio)
@@ -155,7 +155,11 @@ struct ProfileView: View {
                                                         withAnimation {
                                                             self.profileViewModel.deleteUserImage(imageID: item.id) {}
                                                             if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
-                                                                self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
+                                                                if (self.profileViewModel.profile?.photosURLs!.count)! >= 1 && self.profileViewModel.userPicturesView.count >= 1 {
+                                                                    self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
+                                                                } else {
+                                                                    self.profileViewModel.profilePictureChange(imageID: "nil", newProfilePicture: PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))) {}
+                                                                }
                                                             }
                                                             if (self.profileViewModel.profile?.photosURLs!.count)! <= 1 {
                                                                 self.profileViewModel.profilePictureChange(imageID: "nil", newProfilePicture: PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))) {}

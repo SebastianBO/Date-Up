@@ -79,7 +79,7 @@ struct ProfileExplorerView: View {
                             VStack {
                                 VStack {
                                     HStack {
-                                        Text(profile.profile.firstName)
+                                        Text(profile.profile.firstName.capitalized)
                                             .font(.system(size: screenHeight * 0.05, weight: .bold))
                                                                     
                                         Text(String(profile.profile.age))
@@ -91,7 +91,7 @@ struct ProfileExplorerView: View {
                                     HStack {
                                         Image(systemName: "person.fill")
                                         
-                                        Text(profile.profile.city)
+                                        Text(profile.profile.city.capitalized)
                                         
                                         Spacer()
                                     }
