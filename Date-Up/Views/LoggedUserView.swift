@@ -30,10 +30,6 @@ struct LoggedUserView: View {
                         Image(systemName: "house.fill")
                     }
                     .tag(0)
-//                    .onAppear {
-//                        homeViewModel.fetchData {}
-//                        homeViewModel.fetchPhotos {}
-//                    }
                 
                 ChatsView(profile: profileViewModel)
                     .tabItem {

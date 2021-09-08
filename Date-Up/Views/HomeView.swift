@@ -24,9 +24,17 @@ struct HomeView: View {
             
             NavigationView {
                 ProfileExplorerView(homeViewModel: homeViewModel)
-                    .navigationBarTitle("Yours today's picks")
+                    .navigationBarTitle("Today's picks")
                     .navigationBarItems(trailing:
                         NavigationLink(destination: NotificationsView(profile: profileViewModel), isActive: $showNotifications) {
+                            Button(action: {
+                                withAnimation {
+                                    homeViewModel.fetchData {}
+                                }
+                            }, label: {
+                                Image(systemName: "arrow.clockwise")
+                            })
+                            
                             Button(action: {
                                 withAnimation {
                                     showNotifications.toggle()

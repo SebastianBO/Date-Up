@@ -76,14 +76,14 @@ class HomeViewModel: ObservableObject {
                 firestoreManager.getLoggedUserPreference() { fetchedPreference in
                     loggedUserPreference = fetchedPreference
                     
-                    firestoreManager.getDatabase().collection("profiles").getDocuments { (querySnapshot, error) in
+                    firestoreManager.getDatabase().collection("profiles").whereField("id", isNotEqualTo: session.currentUser!.uid).getDocuments { (querySnapshot, error) in
                         if let querySnapshot = querySnapshot {
                             for document in querySnapshot.documents {
                                 let foundUserPreference = document.get("preference") as! String
                                 let foundUserGender = document.get("gender") as! String
                                 let foundUserUID = document.get("id") as! String
                                 
-                                if foundUserUID != session.currentUser!.uid && rejectedUsers != nil ? !rejectedUsers!.contains(foundUserUID) : true {
+                                if rejectedUsers != nil ? !rejectedUsers!.contains(foundUserUID) : true {
                                     if foundUserPreference == "Both" {
                                         if loggedUserPreference == "Both" {
                                             newArray.append(foundUserUID)
@@ -115,13 +115,9 @@ class HomeViewModel: ObservableObject {
     }
     
     func removeProfileFromProposed(userUID: String) {
-        print(self.allProfiles.count)
         var index = 0
         for profile in self.allProfiles {
-            print(profile.id)
-            print(userUID)
             if profile.id == userUID {
-                print(index)
                 self.firestoreManager.getRejectedUsersUIDs() { rejectedUsers in
                     var tempRejectedUsers = [String]()
                     if rejectedUsers != nil {

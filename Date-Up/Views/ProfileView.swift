@@ -67,8 +67,14 @@ struct ProfileView: View {
                             ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
                                 .onDisappear {
                                     profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id) { uploadedImageURL in
+                                        if profileViewModel.profile?.photosURLs == nil {
+                                            profileViewModel.profilePictureChange(imageID: uploadedImageURL, newProfilePicture: PictureView(id: uploadedImageURL, uiImageView: UIImageView(image: image))) {
+                                                print("Successfully set new profile picture.")
+                                            }
+                                        }
                                         profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL) {
-                                            profileViewModel.addUploadedImageToPhotos(imageURL: uploadedImageURL) {}
+                                            profileViewModel.addUploadedImageToPhotos(imageURL: uploadedImageURL) {
+                                            }
                                         }
                                     }
                                 }
@@ -298,7 +304,7 @@ struct EditView: View {
     @State var country: Country = .poland
     @State var city: City = .łódź
     @State var language: Language = .polish
-    private var preferenceValues = ["Men", "Women", "Both"]
+    private var preferenceValues = ["Man", "Woman", "Both"]
     
     init(profile: ProfileViewModel) {
         self.profileViewModel = profile
