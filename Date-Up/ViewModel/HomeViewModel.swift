@@ -68,47 +68,49 @@ class HomeViewModel: ObservableObject {
         var newArray = [String]()
         var loggedUserGender = ""
         var loggedUserPreference = ""
-            
-        firestoreManager.getLoggedUserGender() { [self] fetchedGender in
-            loggedUserGender = fetchedGender
-            
-            firestoreManager.getLoggedUserPreference() { fetchedPreference in
-                loggedUserPreference = fetchedPreference
+        
+        firestoreManager.getRejectedUsersUIDs() { [self] rejectedUsers in
+            firestoreManager.getLoggedUserGender() { fetchedGender in
+                loggedUserGender = fetchedGender
                 
-                firestoreManager.getDatabase().collection("profiles").getDocuments { [self] (querySnapshot, error) in
-                    if let querySnapshot = querySnapshot {
-                        for document in querySnapshot.documents {
-                            let foundUserPreference = document.get("preference") as! String
-                            let foundUserGender = document.get("gender") as! String
-                            let foundUserUID = document.get("id") as! String
-                            
-                            if foundUserUID != session.currentUser!.uid {
-                                if foundUserPreference == "Both" {
-                                    if loggedUserPreference == "Both" {
-                                        newArray.append(foundUserUID)
-                                    } else {
-                                        if loggedUserPreference == foundUserGender {
+                firestoreManager.getLoggedUserPreference() { fetchedPreference in
+                    loggedUserPreference = fetchedPreference
+                    
+                    firestoreManager.getDatabase().collection("profiles").getDocuments { (querySnapshot, error) in
+                        if let querySnapshot = querySnapshot {
+                            for document in querySnapshot.documents {
+                                let foundUserPreference = document.get("preference") as! String
+                                let foundUserGender = document.get("gender") as! String
+                                let foundUserUID = document.get("id") as! String
+                                
+                                if foundUserUID != session.currentUser!.uid && rejectedUsers != nil ? !rejectedUsers!.contains(foundUserUID) : true {
+                                    if foundUserPreference == "Both" {
+                                        if loggedUserPreference == "Both" {
                                             newArray.append(foundUserUID)
-                                        }
-                                    }
-                                } else {
-                                    if loggedUserPreference == "Both" {
-                                        if foundUserPreference == loggedUserGender {
-                                            newArray.append(foundUserUID)
+                                        } else {
+                                            if loggedUserPreference == foundUserGender {
+                                                newArray.append(foundUserUID)
+                                            }
                                         }
                                     } else {
-                                        if foundUserPreference == loggedUserGender && loggedUserPreference == foundUserGender {
-                                            newArray.append(foundUserUID)
+                                        if loggedUserPreference == "Both" {
+                                            if foundUserPreference == loggedUserGender {
+                                                newArray.append(foundUserUID)
+                                            }
+                                        } else {
+                                            if foundUserPreference == loggedUserGender && loggedUserPreference == foundUserGender {
+                                                newArray.append(foundUserUID)
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                        completion(newArray)
                     }
-                    completion(newArray)
                 }
+                
             }
-            
         }
     }
     
@@ -120,12 +122,35 @@ class HomeViewModel: ObservableObject {
             print(userUID)
             if profile.id == userUID {
                 print(index)
-                self.allProfiles.remove(at: index)
+                self.firestoreManager.getRejectedUsersUIDs() { rejectedUsers in
+                    var tempRejectedUsers = [String]()
+                    if rejectedUsers != nil {
+                        tempRejectedUsers = rejectedUsers!
+                        tempRejectedUsers.append(userUID)
+                    } else {
+                        tempRejectedUsers = [userUID]
+                    }
+                    self.firestoreManager.addRejectedUsersUIDsToUsersDocumentInDatabase(rejectedUsers: tempRejectedUsers) {
+                        self.allProfiles.remove(at: index)
+                    }
+                }
+                break
             }
             index += 1
         }
         if self.allProfiles.count == 0 {
-            fetchData {}
+            fetchData {
+                print("Fetched data so that new profiles could appear.")
+            }
+        }
+    }
+    
+    func restoreAllRejectedUsers() {
+        self.firestoreManager.removeAllRejectedUsersUIDsFromUsersDocumentInDatabase {
+            print("Successfully restored all rejected users.")
+            self.fetchData {
+                print("Fetched data so that the same profiles as previously could appear.")
+            }
         }
     }
     

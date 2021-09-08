@@ -73,6 +73,15 @@ class FirestoreManager: ObservableObject {
         }
     }
     
+    func getRejectedUsersUIDs(completion: @escaping ([String]?) -> ()) {
+        self.db.collection("profiles").document(user!.uid).getDocument { (document, error) in
+            if let document = document {
+                let rejectedUsersUIDs = document.get("rejectedUsersUIDs") as? [String] ?? nil
+                completion(rejectedUsersUIDs)
+            }
+        }
+    }
+    
     func fetchDataFromDatabase(userUID: String, completion: @escaping ((String, String, Date, Int, String, String, String, String, String, String, [String]?, String?) -> ())) {
         self.db.collection("profiles").document(userUID).getDocument { (document, error) in
             if let document = document {
@@ -210,6 +219,28 @@ class FirestoreManager: ObservableObject {
         
         updateUserData(documentData: documentData) {
             print("Successfully added user's photo urls in database.")
+            completion()
+        }
+    }
+    
+    func addRejectedUsersUIDsToUsersDocumentInDatabase(rejectedUsers uids: [String], completion: @escaping (() -> ())) {
+        let documentData: [String: Any] = [
+            "rejectedUsersUIDs": uids
+        ]
+        
+        updateUserData(documentData: documentData) {
+            print("Successfully added rejected users uids to user's document in database.")
+            completion()
+        }
+    }
+    
+    func removeAllRejectedUsersUIDsFromUsersDocumentInDatabase(completion: @escaping (() -> ())) {
+        let documentData: [String: Any] = [
+            "rejectedUsersUIDs": [String]()
+        ]
+        
+        updateUserData(documentData: documentData) {
+            print("Successfully removed all rejected users uids from user's document in database.")
             completion()
         }
     }
