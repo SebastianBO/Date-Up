@@ -17,6 +17,8 @@ struct ProfileLookupView: View {
     @State private var y: CGFloat = 0
     @State private var deegres: Double = 0
     
+    @State private var showProfileDetails: Bool = false
+    
     init(homeViewModel: HomeViewModel, profile: ProfileViewModel, profileLookup: ProfileLookup) {
         self.homeViewModel = homeViewModel
         self.profileViewModel = profile
@@ -31,9 +33,6 @@ struct ProfileLookupView: View {
             ZStack(alignment: .topLeading) {
                 Image(uiImage: self.profileLookup.profileImageViews[0].uiImageView.image!)
                     .resizable()
-                    .onTapGesture {
-                        
-                    }
                 
                 HStack {
                     Image(uiImage: UIImage(named: "like")!)
@@ -67,7 +66,7 @@ struct ProfileLookupView: View {
                     }
                     
                     HStack {
-                        Image(systemName: "person.fill")
+                        Image(systemName: "house.fill")
                         
                         Text(self.profileLookup.profile.city.capitalized)
                         
@@ -129,11 +128,17 @@ struct ProfileLookupView: View {
                     .padding(.bottom, screenHeight * 0.02)
                 }
             }
+            .onTapGesture {
+                showProfileDetails = true
+            }
             .cornerRadius(20)
             .padding()
             .offset(x: self.x, y: self.y)
             .rotationEffect(.init(degrees: self.deegres))
             .zIndex(1.0)
+            .sheet(isPresented: $showProfileDetails) {
+                ProfileLookupDetailsView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: profileLookup, isEditable: false, showProfileDetails: $showProfileDetails)
+            }
             .gesture(
                 DragGesture()
                     .onChanged { value in
@@ -172,11 +177,14 @@ struct ProfileLookupDetailsView: View {
     
     private var isEditable: Bool
     
-    init(homeViewModel: HomeViewModel, profile: ProfileViewModel, profileLookup: ProfileLookup, isEditable: Bool = false) {
+    @Binding var showProfileDetails: Bool
+    
+    init(homeViewModel: HomeViewModel, profile: ProfileViewModel, profileLookup: ProfileLookup, isEditable: Bool = false, showProfileDetails: Binding<Bool>) {
         self.homeViewModel = homeViewModel
         self.profileViewModel = profile
         self.profileLookup = profileLookup
         self.isEditable = isEditable
+        self._showProfileDetails = showProfileDetails
     }
     
     var body: some View {
@@ -184,11 +192,77 @@ struct ProfileLookupDetailsView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            VStack {
-                HStack {
+            ScrollView {
+                VStack {
+                    Image(uiImage: self.profileLookup.profileImageViews[0].uiImageView.image!)
+                        .resizable()
+                        .frame(width: screenWidth, height: screenHeight * 0.4, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        .ignoresSafeArea()
+                    
+                    VStack {
+                        HStack {
+                            Text(self.profileLookup.profile.firstName.capitalized)
+                                .font(.system(size: screenHeight * 0.05, weight: .bold))
+                                                        
+                            Text(String(self.profileLookup.profile.age))
+                                .font(.system(size: screenHeight * 0.037, weight: .light))
+                            
+                            Spacer()
+                            
+                            Button(action: {
+                                withAnimation {
+                                    showProfileDetails = false
+                                }
+                            }, label: {
+                                Image(systemName: "multiply.circle")
+                            })
+                            .font(.system(size: screenHeight * 0.05))
+                            .foregroundColor(.red)
+                            
+                            Spacer()
+                        }
+                        
+                        HStack {
+                            Image(systemName: "house.fill")
+                            
+                            Text(self.profileLookup.profile.city.capitalized)
+                            
+                            Spacer()
+                        }
+                        
+                        HStack {
+                            Text("About me:")
+                                .font(.system(size: screenHeight * 0.023, weight: .semibold))
+                            
+                            Spacer()
+                        }
+                        .padding(.top, screenHeight * 0.02)
+                        
+                        HStack {
+                            Text(self.profileLookup.profile.bio)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Spacer()
+                        }
+                        
+                    }
+                    .padding(.leading)
+                    
+                    LazyVGrid(columns: Array(repeating: GridItem(), count: 2)) {
+                        ForEach(self.profileLookup.profileImageViews) { (profileImageView) in
+                            if profileImageView.uiImageView.image != nil {
+                                Image(uiImage: profileImageView.uiImageView.image!)
+                                    .resizable()
+                                    .clipShape(RoundedRectangle(cornerRadius: 25))
+                                    .frame(width: screenWidth * 0.48, height: screenHeight * 0.4)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, screenWidth * 0.005)
                     
                 }
             }
+            .ignoresSafeArea()
         }
     }
 }
@@ -199,7 +273,7 @@ struct ProfileLookupView_Previews: PreviewProvider {
         let profileViewModel = ProfileViewModel(forPreviews: true)
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
-                ProfileLookupDetailsView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]))
+                ProfileLookupDetailsView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]), showProfileDetails: .constant(true))
                     .preferredColorScheme(colorScheme)
                     .previewDevice(PreviewDevice(rawValue: deviceName))
                     .previewDisplayName(deviceName)

@@ -131,7 +131,7 @@ struct ProfileView: View {
                             }
                         }
                             
-                        ScrollView() {
+                        ScrollView {
                             LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
                                 ForEach(self.profileViewModel.userPicturesView) { (userPictureView) in
                                     if userPictureView.uiImageView.image != nil {
