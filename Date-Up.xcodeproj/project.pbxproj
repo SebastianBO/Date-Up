@@ -20,6 +20,9 @@
 		0A31F19026D3BF5F00F34390 /* SwiftUIImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A31F18F26D3BF5F00F34390 /* SwiftUIImagePicker.swift */; };
 		0A3A5C2A26C2D81E000CBA0A /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3A5C2926C2D81E000CBA0A /* Profile.swift */; };
 		0A42EB2826D91623000C8556 /* StartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A42EB2726D91623000C8556 /* StartView.swift */; };
+		0A502E3726EA310700965369 /* ProfileLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A502E3626EA310700965369 /* ProfileLookupView.swift */; };
+		0A502E3A26EA4E0E00965369 /* nope.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A502E3826EA4E0E00965369 /* nope.png */; };
+		0A502E3B26EA4E0E00965369 /* like.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A502E3926EA4E0E00965369 /* like.png */; };
 		0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */; };
 		0A79765D26E3ED4F00691B35 /* PictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A79765C26E3ED4F00691B35 /* PictureView.swift */; };
 		0A79765F26E4DBA200691B35 /* enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A79765E26E4DBA200691B35 /* enums.swift */; };
@@ -50,6 +53,9 @@
 		0A31F18F26D3BF5F00F34390 /* SwiftUIImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIImagePicker.swift; sourceTree = "<group>"; };
 		0A3A5C2926C2D81E000CBA0A /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
 		0A42EB2726D91623000C8556 /* StartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartView.swift; sourceTree = "<group>"; };
+		0A502E3626EA310700965369 /* ProfileLookupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLookupView.swift; sourceTree = "<group>"; };
+		0A502E3826EA4E0E00965369 /* nope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nope.png; sourceTree = "<group>"; };
+		0A502E3926EA4E0E00965369 /* like.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = like.png; sourceTree = "<group>"; };
 		0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0A79765C26E3ED4F00691B35 /* PictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureView.swift; sourceTree = "<group>"; };
 		0A79765E26E4DBA200691B35 /* enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = enums.swift; sourceTree = "<group>"; };
@@ -124,6 +130,8 @@
 				0A8E68DA26B8260400C4803A /* Date_UpApp.swift */,
 				0A8E68DC26B8260400C4803A /* ContentView.swift */,
 				0A8E68DE26B8260500C4803A /* Assets.xcassets */,
+				0A502E3926EA4E0E00965369 /* like.png */,
+				0A502E3826EA4E0E00965369 /* nope.png */,
 				0A03EB4326CEAF78002BAB44 /* blank-profile-hi.png */,
 				0A8E68E326B8260500C4803A /* Info.plist */,
 				0A8E68E026B8260500C4803A /* Preview Content */,
@@ -151,6 +159,7 @@
 				0A2C29CC26CADA780093A944 /* ChatsView.swift */,
 				0A2C29CE26CADA840093A944 /* ProfileView.swift */,
 				0A42EB2726D91623000C8556 /* StartView.swift */,
+				0A502E3626EA310700965369 /* ProfileLookupView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -253,6 +262,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A8E68E226B8260500C4803A /* Preview Assets.xcassets in Resources */,
+				0A502E3A26EA4E0E00965369 /* nope.png in Resources */,
+				0A502E3B26EA4E0E00965369 /* like.png in Resources */,
 				0A8E68DF26B8260500C4803A /* Assets.xcassets in Resources */,
 				0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */,
 				0A03EB4426CEAF78002BAB44 /* blank-profile-hi.png in Resources */,
@@ -317,6 +328,7 @@
 				0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */,
 				0A79765F26E4DBA200691B35 /* enums.swift in Sources */,
 				0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */,
+				0A502E3726EA310700965369 /* ProfileLookupView.swift in Sources */,
 				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A2C29CF26CADA840093A944 /* ProfileView.swift in Sources */,
 				0AB1FB0826D7E9B70017175C /* FirebaseStorageManager.swift in Sources */,
