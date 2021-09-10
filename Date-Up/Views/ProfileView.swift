@@ -38,148 +38,186 @@ struct ProfileView: View {
             NavigationView {
                 ScrollView {
                     VStack {
-                        HStack {
-                            Button(action: {
-                                self.shouldPresentAddActionSheet = true
-                            }, label: {
-                                Image(systemName: "plus.circle")
-                            })
-                            .padding(.leading, screenWidth * 0.05)
-                            .padding(.top, screenHeight * 0.03)
-                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                            
-                            Spacer()
-                            
-                            NavigationLink(destination: SettingsView(profile: profileViewModel), isActive: $shouldPresentSettings) {
-                                Button(action: {
-                                    self.shouldPresentSettings = true
-                                }, label: {
-                                    Image(systemName: "gearshape")
-                                })
-                                .padding(.trailing, screenWidth * 0.1)
-                                .padding(.top, screenHeight * 0.03)
-                                .foregroundColor(colorScheme == .dark ? .white : .black)
-                            }
-        
-                        }
-                        .font(.system(size: screenHeight * 0.03))
-                        .sheet(isPresented: $shouldPresentImagePicker) {
-                            ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
-                                .onDisappear {
-                                    profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id) { uploadedImageURL in
-                                        if profileViewModel.profile?.photosURLs?.count == 0 || self.profileViewModel.userPicturesView.count == 0 {
-                                            profileViewModel.profilePictureChange(imageID: uploadedImageURL, newProfilePicture: PictureView(id: uploadedImageURL, uiImageView: UIImageView(image: image))) {
-                                                print("Successfully set new profile picture.")
-                                            }
-                                        }
-                                        profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL) {
-                                            profileViewModel.addUploadedImageToPhotos(imageURL: uploadedImageURL) {
-                                            }
-                                        }
-                                    }
-                                }
-                        }
-                        .actionSheet(isPresented: $shouldPresentAddActionSheet) {
-                            ActionSheet(title: Text("Add a new photo"), message: nil, buttons: [
-                                .default(Text("Take a new photo"), action: {
-                                     self.shouldPresentImagePicker = true
-                                     self.shouldPresentCamera = true
-                                 }),
-                                .default(Text("Upload a new photo"), action: {
-                                     self.shouldPresentImagePicker = true
-                                     self.shouldPresentCamera = false
-                                 }),
-                                ActionSheet.Button.cancel()
-                            ])
-                        }
-                        
                         VStack {
-                            Image(uiImage: profileViewModel.userProfilePicture.uiImageView.image!)
-                                .resizable()
-                                .clipShape(Circle())
-                                .frame(width: screenWidth * 0.7, height: screenHeight * 0.35)
-                                .shadow(color: colorScheme == .dark ? .white : .black, radius: 10)
-                                .onAppear {
-                                    if profileViewModel.userProfilePicture.id == "nil" {
-                                        profileViewModel.fetchPhotos {
-                                            print("Fetched user's photos again in order to restore profile picture")
+                            ZStack(alignment: .bottomTrailing) {
+                                Image(uiImage: self.profileViewModel.userProfilePicture.uiImageView.image!)
+                                    .resizable()
+                                    .frame(width: screenWidth, height: screenHeight * 0.4, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                    .ignoresSafeArea()
+                                    .onAppear {
+                                        if profileViewModel.userProfilePicture.id == "nil" {
+                                            profileViewModel.fetchPhotos {
+                                                print("Fetched user's photos again in order to restore profile picture")
+                                            }
                                         }
                                     }
-                                }
-                            
-                            Text(profileViewModel.profile!.firstName.capitalized + " " + profileViewModel.profile!.lastName.capitalized)
-                                .font(.title2)
-                                .padding(.bottom, screenHeight * 0.02)
-                            Text(profileViewModel.profile!.bio)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .frame(width: screenWidth * 0.7)
-                            
-                            NavigationLink(destination: EditView(profile: profileViewModel), isActive: $editMode) {
+                                
+                                LinearGradient(gradient: Gradient(colors: [Color.black.opacity(0), Color.black.opacity(0.5)]), startPoint: .top, endPoint: .bottom)
+                                
                                 Button(action: {
-                                    withAnimation {
-                                        editMode.toggle()
-                                    }
+                                    self.shouldPresentAddActionSheet = true
                                 }, label: {
-                                    HStack {
-                                        Image(systemName: "pencil.circle")
-                                        Text("Edit profile")
-                                    }
+                                    Image(systemName: "plus.circle")
                                 })
-                                .padding(.top, screenHeight * 0.03)
-                                .font(.system(size: screenHeight * 0.02))
+                                .padding(.trailing, screenWidth * 0.05)
+                                .padding(.bottom, screenHeight * 0.03)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
-                            }
-                        }
-                            
-                        ScrollView {
-                            LazyVGrid(columns: Array(repeating: GridItem(), count: 3)) {
-                                ForEach(self.profileViewModel.userPicturesView) { (userPictureView) in
-                                    if userPictureView.uiImageView.image != nil {
-                                        Image(uiImage: userPictureView.uiImageView.image!)
-                                            .resizable()
-                                            .border(Color.black, width: 0.25)
-                                            .frame(width: screenWidth * 0.34, height: screenHeight * 0.17)
-                                            .onLongPressGesture {
-                                                withAnimation {
-                                                    self.selectedItem = userPictureView
+                                .font(.system(size: screenHeight * 0.03))
+                                .sheet(isPresented: $shouldPresentImagePicker) {
+                                    ImagePicker(sourceType: self.shouldPresentCamera ? .camera : .photoLibrary, selectedImage: self.$image)
+                                        .onDisappear {
+                                            profileViewModel.firebaseStorageManager.uploadImageToStorage(image: image, userID: profileViewModel.profile!.id) { uploadedImageURL in
+                                                if profileViewModel.profile?.photosURLs?.count == 0 || self.profileViewModel.userPicturesView.count == 0 {
+                                                    profileViewModel.profilePictureChange(imageID: uploadedImageURL, newProfilePicture: PictureView(id: uploadedImageURL, uiImageView: UIImageView(image: image))) {
+                                                        print("Successfully set new profile picture.")
+                                                    }
+                                                }
+                                                profileViewModel.addImageURLToUserImages(imageURL: uploadedImageURL) {
+                                                    profileViewModel.addUploadedImageToPhotos(imageURL: uploadedImageURL) {
+                                                    }
                                                 }
                                             }
-                                            .actionSheet(item: $selectedItem) { item in
-                                                ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
-                                                    .default(Text("Set as profile picture"), action: {
-                                                        withAnimation {
-                                                            self.profileViewModel.profilePictureChange(imageID: item.id, newProfilePicture: item) {}
-                                                        }
-                                                    }),
-                                                    .destructive(Text("Delete this photo"), action: {
-                                                        withAnimation {
-                                                            self.profileViewModel.deleteUserImage(imageID: item.id) {}
-                                                            if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
-                                                                if (self.profileViewModel.profile?.photosURLs!.count)! >= 1 && self.profileViewModel.userPicturesView.count >= 1 {
-                                                                    self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
-                                                                } else {
-                                                                    self.profileViewModel.profilePictureChange(imageID: "nil", newProfilePicture: PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))) {}
-                                                                }
-                                                            }
-                                                            if (self.profileViewModel.profile?.photosURLs!.count)! <= 1 {
-                                                                self.profileViewModel.profilePictureChange(imageID: "nil", newProfilePicture: PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))) {}
-                                                            } else {
-                                                                if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
-                                                                    self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
-                                                                }
-                                                            }
-                                                        }
-                                                    }),
-                                                    .cancel()
-                                                ])
+                                        }
+                                }
+                                .actionSheet(isPresented: $shouldPresentAddActionSheet) {
+                                    ActionSheet(title: Text("Add a new photo"), message: nil, buttons: [
+                                        .default(Text("Take a new photo"), action: {
+                                             self.shouldPresentImagePicker = true
+                                             self.shouldPresentCamera = true
+                                         }),
+                                        .default(Text("Upload a new photo"), action: {
+                                             self.shouldPresentImagePicker = true
+                                             self.shouldPresentCamera = false
+                                         }),
+                                        ActionSheet.Button.cancel()
+                                    ])
+                                }
+                            }
+                            
+                            VStack {
+                                HStack {
+                                    Text(self.profileViewModel.profile!.firstName.capitalized)
+                                        .font(.system(size: screenHeight * 0.05, weight: .bold))
+                                                                
+                                    Text(String(self.profileViewModel.profile!.age))
+                                        .font(.system(size: screenHeight * 0.037, weight: .light))
+                                    
+                                    Spacer()
+                                }
+                                
+                                HStack {
+                                    Image(systemName: "house.fill")
+                                    
+                                    Text(self.profileViewModel.profile!.city.capitalized)
+                                    
+                                    Spacer()
+                                }
+                                
+                                HStack {
+                                    Text("About me:")
+                                        .font(.system(size: screenHeight * 0.023, weight: .semibold))
+                                    
+                                    Spacer()
+                                    
+                                    NavigationLink(destination: SettingsView(profile: profileViewModel), isActive: $shouldPresentSettings) {
+                                        Button(action: {
+                                            self.shouldPresentSettings = true
+                                        }, label: {
+                                            HStack {
+                                                Image(systemName: "gearshape")
+                                                Text("Settings")
                                             }
+                                        })
+                                        .padding(.trailing, screenWidth * 0.1)
+                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                        .font(.system(size: screenHeight * 0.025))
                                     }
+                                }
+                                .padding(.top, screenHeight * 0.02)
+                                
+                                HStack {
+                                    Text(self.profileViewModel.profile!.bio)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    
+                                    Spacer()
+                                }
+                                
+                                HStack {
+                                    
+                                    
+                                    Spacer()
+                                }
+                                
+                                
+                                NavigationLink(destination: EditView(profile: profileViewModel), isActive: $editMode) {
+                                                                Button(action: {
+                                                                    withAnimation {
+                                                                        editMode.toggle()
+                                                                    }
+                                                                }, label: {
+                                                                    HStack {
+                                                                        Image(systemName: "pencil.circle")
+                                                                        Text("Update your profile")
+                                                                    }
+                                                                })
+                                                                .padding(.top, screenHeight * 0.03)
+                                                                .font(.system(size: screenHeight * 0.02))
+                                                                .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                            }
+                                
+                            }
+                            .padding(.leading)
+                        }
+                        
+                        LazyVGrid(columns: Array(repeating: GridItem(), count: 2)) {
+                            ForEach(self.profileViewModel.userPicturesView) { (userPictureView) in
+                                if userPictureView.uiImageView.image != nil {
+                                    Image(uiImage: userPictureView.uiImageView.image!)
+                                        .resizable()
+                                        .clipShape(RoundedRectangle(cornerRadius: 25))
+                                        .frame(width: screenWidth * 0.48, height: screenHeight * 0.4)
+                                        .onLongPressGesture {
+                                            withAnimation {
+                                                self.selectedItem = userPictureView
+                                            }
+                                        }
+                                        .actionSheet(item: $selectedItem) { item in
+                                            ActionSheet(title: Text("Edit selected"), message: nil, buttons: [
+                                                .default(Text("Set as profile picture"), action: {
+                                                    withAnimation {
+                                                        self.profileViewModel.profilePictureChange(imageID: item.id, newProfilePicture: item) {}
+                                                    }
+                                                }),
+                                                .destructive(Text("Delete this photo"), action: {
+                                                    withAnimation {
+                                                        self.profileViewModel.deleteUserImage(imageID: item.id) {}
+                                                        if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
+                                                            if (self.profileViewModel.profile?.photosURLs!.count)! >= 1 && self.profileViewModel.userPicturesView.count >= 1 {
+                                                                self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
+                                                            } else {
+                                                                self.profileViewModel.profilePictureChange(imageID: "nil", newProfilePicture: PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))) {}
+                                                            }
+                                                        }
+                                                        if (self.profileViewModel.profile?.photosURLs!.count)! <= 1 {
+                                                            self.profileViewModel.profilePictureChange(imageID: "nil", newProfilePicture: PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))) {}
+                                                        } else {
+                                                            if self.profileViewModel.getImageIndexFromImageID(imageID: item.id) == self.profileViewModel.getProfilePictureIndex() {
+                                                                self.profileViewModel.profilePictureChange(imageID: (self.profileViewModel.profile?.photosURLs!.first)!, newProfilePicture: self.profileViewModel.userPicturesView[0]) {}
+                                                            }
+                                                        }
+                                                    }
+                                                }),
+                                                .cancel()
+                                            ])
+                                        }
                                 }
                             }
                         }
+                        .padding(.horizontal, screenWidth * 0.005)
                     }
                     .navigationBarHidden(true)
                 }
+                .ignoresSafeArea()
             }
         }
     }

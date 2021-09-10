@@ -137,7 +137,7 @@ struct ProfileLookupView: View {
             .rotationEffect(.init(degrees: self.deegres))
             .zIndex(1.0)
             .sheet(isPresented: $showProfileDetails) {
-                ProfileLookupDetailsView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: profileLookup, isEditable: false, showProfileDetails: $showProfileDetails)
+                ProfileLookupDetailsView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: profileLookup, isEditable: false)
             }
             .gesture(
                 DragGesture()
@@ -177,14 +177,13 @@ struct ProfileLookupDetailsView: View {
     
     private var isEditable: Bool
     
-    @Binding var showProfileDetails: Bool
+    @State var showImageViewer = false
     
-    init(homeViewModel: HomeViewModel, profile: ProfileViewModel, profileLookup: ProfileLookup, isEditable: Bool = false, showProfileDetails: Binding<Bool>) {
+    init(homeViewModel: HomeViewModel, profile: ProfileViewModel, profileLookup: ProfileLookup, isEditable: Bool = false) {
         self.homeViewModel = homeViewModel
         self.profileViewModel = profile
         self.profileLookup = profileLookup
         self.isEditable = isEditable
-        self._showProfileDetails = showProfileDetails
     }
     
     var body: some View {
@@ -206,18 +205,6 @@ struct ProfileLookupDetailsView: View {
                                                         
                             Text(String(self.profileLookup.profile.age))
                                 .font(.system(size: screenHeight * 0.037, weight: .light))
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                withAnimation {
-                                    showProfileDetails = false
-                                }
-                            }, label: {
-                                Image(systemName: "multiply.circle")
-                            })
-                            .font(.system(size: screenHeight * 0.05))
-                            .foregroundColor(.red)
                             
                             Spacer()
                         }
@@ -255,10 +242,25 @@ struct ProfileLookupDetailsView: View {
                                     .resizable()
                                     .clipShape(RoundedRectangle(cornerRadius: 25))
                                     .frame(width: screenWidth * 0.48, height: screenHeight * 0.4)
+                                    .onTapGesture {
+                                        self.showImageViewer.toggle()
+                                    }
                             }
                         }
                     }
                     .padding(.horizontal, screenWidth * 0.005)
+                    .sheet(isPresented: $showImageViewer, content: {
+                        TabView {
+                            ForEach(self.profileLookup.profileImageViews) { (profileImageView) in
+                                if profileImageView.uiImageView.image != nil {
+                                    Image(uiImage: profileImageView.uiImageView.image!)
+                                        .resizable()
+                                        .frame(width: screenWidth, height: screenHeight)
+                                }
+                            }
+                        }
+                        .tabViewStyle(PageTabViewStyle())
+                    })
                     
                 }
             }
@@ -273,7 +275,7 @@ struct ProfileLookupView_Previews: PreviewProvider {
         let profileViewModel = ProfileViewModel(forPreviews: true)
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
-                ProfileLookupDetailsView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]), showProfileDetails: .constant(true))
+                ProfileLookupDetailsView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]))
                     .preferredColorScheme(colorScheme)
                     .previewDevice(PreviewDevice(rawValue: deviceName))
                     .previewDisplayName(deviceName)
