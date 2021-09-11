@@ -31,7 +31,7 @@ struct LoggedUserView: View {
                     }
                     .tag(0)
                 
-                ChatsView(profile: profileViewModel)
+                ChatsView(profile: profileViewModel, homeViewModel: homeViewModel)
                     .tabItem {
                         Image(systemName: "bubble.left.and.bubble.right.fill")
                     }

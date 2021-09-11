@@ -24,6 +24,8 @@
 		0A502E3A26EA4E0E00965369 /* nope.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A502E3826EA4E0E00965369 /* nope.png */; };
 		0A502E3B26EA4E0E00965369 /* like.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A502E3926EA4E0E00965369 /* like.png */; };
 		0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */; };
+		0A5E318226ED1A7700FE0208 /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E318126ED1A7700FE0208 /* ChatRoom.swift */; };
+		0A5E318426ED20C500FE0208 /* ChatRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E318326ED20C500FE0208 /* ChatRoomView.swift */; };
 		0A79765D26E3ED4F00691B35 /* PictureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A79765C26E3ED4F00691B35 /* PictureView.swift */; };
 		0A79765F26E4DBA200691B35 /* enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A79765E26E4DBA200691B35 /* enums.swift */; };
 		0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68DA26B8260400C4803A /* Date_UpApp.swift */; };
@@ -57,6 +59,8 @@
 		0A502E3826EA4E0E00965369 /* nope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nope.png; sourceTree = "<group>"; };
 		0A502E3926EA4E0E00965369 /* like.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = like.png; sourceTree = "<group>"; };
 		0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0A5E318126ED1A7700FE0208 /* ChatRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoom.swift; sourceTree = "<group>"; };
+		0A5E318326ED20C500FE0208 /* ChatRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomView.swift; sourceTree = "<group>"; };
 		0A79765C26E3ED4F00691B35 /* PictureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictureView.swift; sourceTree = "<group>"; };
 		0A79765E26E4DBA200691B35 /* enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = enums.swift; sourceTree = "<group>"; };
 		0A8E68D726B8260400C4803A /* Date-Up.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Date-Up.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -160,6 +164,7 @@
 				0A2C29CE26CADA840093A944 /* ProfileView.swift */,
 				0A42EB2726D91623000C8556 /* StartView.swift */,
 				0A502E3626EA310700965369 /* ProfileLookupView.swift */,
+				0A5E318326ED20C500FE0208 /* ChatRoomView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -171,6 +176,7 @@
 				0A79765C26E3ED4F00691B35 /* PictureView.swift */,
 				0A1E7F6D26E68311009C4DFA /* ProfileLookup.swift */,
 				0A3A5C2926C2D81E000CBA0A /* Profile.swift */,
+				0A5E318126ED1A7700FE0208 /* ChatRoom.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -325,6 +331,7 @@
 				0A1E7F6E26E68311009C4DFA /* ProfileLookup.swift in Sources */,
 				0A8E68EF26B82A8800C4803A /* RegisterView.swift in Sources */,
 				0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */,
+				0A5E318226ED1A7700FE0208 /* ChatRoom.swift in Sources */,
 				0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */,
 				0A79765F26E4DBA200691B35 /* enums.swift in Sources */,
 				0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */,
@@ -340,6 +347,7 @@
 				0A1E7F6C26E65C2D009C4DFA /* HomeViewModel.swift in Sources */,
 				0A8E68F626B82F7900C4803A /* ProfileViewModel.swift in Sources */,
 				0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */,
+				0A5E318426ED20C500FE0208 /* ChatRoomView.swift in Sources */,
 				0AB1FB0A26D7EEAF0017175C /* FirestoreManager.swift in Sources */,
 				0A31F19026D3BF5F00F34390 /* SwiftUIImagePicker.swift in Sources */,
 			);

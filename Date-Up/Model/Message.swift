@@ -7,8 +7,22 @@
 
 import Foundation
 
-//struct Message: Codable, Identifiable, Hashable {
-//    private var message: String
-//    private var user: User
-//    private var timeStamp: Date
-//}
+struct Message: Equatable, Identifiable, Hashable {
+    var id = UUID()
+    private(set) var message: String
+    private(set) var user: ProfileLookup
+    private(set) var timeStamp = Date()
+    
+    init(message: String, user: ProfileLookup) {
+        self.message = message
+        self.user = user
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.id)
+    }
+    
+    static func == (lhs: Message, rhs: Message) -> Bool {
+        lhs.id == rhs.id
+    }
+}
