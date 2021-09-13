@@ -31,10 +31,11 @@ struct ChatRoomView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            NavigationView {
+
                 VStack {
                     ScrollView(.vertical) {
                         ForEach(messages) { message in
+                            Spacer()
                             if message.user.id == profileViewModel.profile!.id {
                                 HStack {
                                     Spacer()
@@ -50,11 +51,21 @@ struct ChatRoomView: View {
                                 }
                             } else {
                                 HStack {
+                                    VStack {
+                                        Spacer()
+                                        Image(uiImage: self.users[1].profileImageViews[0].uiImageView.image!)
+                                            .resizable()
+                                            .clipShape(Circle())
+                                            .frame(width: screenWidth * 0.10, height: screenHeight * 0.05)
+                                    }
+                                    
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 23)
                                             .foregroundColor(.gray)
                                         Text(message.message)
                                             .foregroundColor(.white)
+                                            .background(RoundedRectangle(cornerRadius: 23)
+                                                            .foregroundColor(.gray))
                                     }
                                     .frame(minWidth: screenWidth * 0.50, idealWidth: screenWidth * 0.55, maxWidth: screenWidth * 0.6, minHeight: screenHeight * 0.08, idealHeight: screenHeight * 0.08, maxHeight: .infinity, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                                     
@@ -65,7 +76,7 @@ struct ChatRoomView: View {
                         .padding()
                     }
                 }
-                .navigationBarHidden(true)
+                .navigationBarTitle("XYZ", displayMode: .inline)
                 .toolbar {
                     ToolbarItem(placement: .bottomBar) {
                         HStack {
@@ -112,7 +123,6 @@ struct ChatRoomView: View {
                         }
                     }
                 }
-            }
         }
         .onAppear {
             self.messages = [Message(message: "Message1", user: self.users[0]), Message(message: "Message2", user: self.users[1])]

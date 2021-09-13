@@ -41,6 +41,20 @@ class FirestoreManager: ObservableObject {
         }
     }
     
+    func conversationDataCreation(usersUIDs: [String], messages: [String], completion: @escaping (() -> ())) {
+        let documentData: [String: Any] = [
+            "usersUIDs": usersUIDs,
+            "messages": messages,
+        ]
+        self.db.collection("conversations").document(UUID().uuidString).setData(documentData) { (error) in
+            if let error = error {
+                print(error)
+            } else {
+                completion()
+            }
+        }
+    }
+    
     func deleteUserData(userUID: String, completion: @escaping (() -> ())) {
         self.db.collection("profiles").document(userUID).delete() { (error) in
             if let error = error {
@@ -82,6 +96,15 @@ class FirestoreManager: ObservableObject {
         }
     }
     
+    func getLikedUsersUIDs(completion: @escaping ([String]?) -> ()) {
+        self.db.collection("profiles").document(user!.uid).getDocument { (document, error) in
+            if let document = document {
+                let likedUsersUIDs = document.get("likedUsersUIDs") as? [String] ?? nil
+                completion(likedUsersUIDs)
+            }
+        }
+    }
+    
     func fetchDataFromDatabase(userUID: String, completion: @escaping ((String, String, Date, Int, String, String, String, String, String, String, [String]?, String?) -> ())) {
         self.db.collection("profiles").document(userUID).getDocument { (document, error) in
             if let document = document {
@@ -98,6 +121,21 @@ class FirestoreManager: ObservableObject {
                 let photosURLs = document.get("userPhotosURLs") as? [String] ?? nil
                 let profilePictureURL = document.get("profilePictureURL") as? String ?? nil
                 completion(firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs, profilePictureURL)
+            }
+        }
+    }
+    
+    func fetchConversationsFromDatabase(completion: @escaping (([ChatRoom]) -> ())) {
+        var chatRooms = [ChatRoom]()
+        self.db.collection("conversations").getDocuments { (querySnapshot, error) in
+            if let error = error {
+                print("Error fetching conversations from database: ", error.localizedDescription)
+            } else {
+                for document in querySnapshot!.documents {
+                    let users = document.get("usersUIDs") as? [String] ?? nil
+                    let messages = document.get("messages") as? [String] ?? nil
+//                    chatRooms.append(ChatRoom(users: users, messages: [], photos: <#T##[PictureView]?#>))
+                }
             }
         }
     }
@@ -241,6 +279,28 @@ class FirestoreManager: ObservableObject {
         
         updateUserData(documentData: documentData) {
             print("Successfully removed all rejected users uids from user's document in database.")
+            completion()
+        }
+    }
+    
+    func addUserToLikedUsersList(likedUsers uids: [String], completion: @escaping (() -> ())) {
+        let documentData: [String: Any] = [
+            "likedUsersUIDs": uids
+        ]
+        
+        updateUserData(documentData: documentData) {
+            print("Successfully added liked users uids to user's document in database.")
+            completion()
+        }
+    }
+    
+    func removeAllLikedUsersUIDsFromUsersDocumentInDatabase(completion: @escaping (() -> ())) {
+        let documentData: [String: Any] = [
+            "likedUsersUIDs": [String]()
+        ]
+        
+        updateUserData(documentData: documentData) {
+            print("Successfully removed all liked users uids from user's document in database.")
             completion()
         }
     }

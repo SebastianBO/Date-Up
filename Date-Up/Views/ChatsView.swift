@@ -13,6 +13,8 @@ struct ChatsView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    @State var searchConversationPattern = ""
+    
     private var users = [ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]), ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])]
     
     private var messages: [Message]
@@ -31,43 +33,74 @@ struct ChatsView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            NavigationView {
+            VStack {
+                ZStack {
+                    RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                        .stroke()
+                        .foregroundColor(.gray)
+                    TextField("Search", text: $searchConversationPattern)
+                        .padding(.leading, screenWidth * 0.05)
+                }
+                .frame(width: screenWidth * 0.9, height: screenHeight * 0.05)
+                
+                HStack {
+                    Text("Chats").font(.largeTitle).fontWeight(.bold)
+                        .padding(.leading, screenWidth * 0.05)
+                    
+                    Spacer()
+                }
+                
                 List(chatRooms) { chatRoom in
-                    HStack {
-                        Image(uiImage: chatRoom.users[1].profileImageViews[0].uiImageView.image!)
-                            .resizable()
-                            .clipShape(Circle())
-                            .frame(width: screenWidth * 0.15, height: screenHeight * 0.075)
-                        
-                        NavigationLink(destination: ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel)) {
-                            VStack {
-                                HStack {
-                                    Text(chatRoom.users[1].profile.firstName.capitalized)
-                                        .foregroundColor(colorScheme == .dark ? .white : .black)
-                                        .fontWeight(.bold)
-                                    Spacer()
-                                }
-                                HStack {
-                                    Text(chatRoom.messages.last!.message)
-                                    Text("|")
-                                        .foregroundColor(.gray)
-                                    if String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)).count == 1 {
-                                        Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":0" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
-                                            .foregroundColor(.gray)
-                                    } else {
-                                        Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
-                                            .foregroundColor(.gray)
+                    if !searchConversationPattern.isEmpty ? checkIfPatternIsInMessages(firstName: chatRoom.users[1].profile.firstName, messages: chatRoom.messages) : (true) {
+                        HStack {
+                            Image(uiImage: chatRoom.users[1].profileImageViews[0].uiImageView.image!)
+                                .resizable()
+                                .clipShape(Circle())
+                                .frame(width: screenWidth * 0.15, height: screenHeight * 0.075)
+                            
+                            NavigationLink(destination: ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel)) {
+                                VStack {
+                                    HStack {
+                                        Text(chatRoom.users[1].profile.firstName.capitalized)
+                                            .foregroundColor(colorScheme == .dark ? .white : .black)
+                                            .fontWeight(.bold)
+                                        Spacer()
                                     }
-                                    Spacer()
+                                    HStack {
+                                        Text(chatRoom.messages.last!.message)
+                                        Text("|")
+                                            .foregroundColor(.gray)
+                                        if String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)).count == 1 {
+                                            Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":0" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
+                                                .foregroundColor(.gray)
+                                        } else {
+                                            Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
+                                                .foregroundColor(.gray)
+                                        }
+                                        Spacer()
+                                    }
                                 }
                             }
                         }
+                        .frame(width: screenWidth, height: screenHeight * 0.08)
                     }
-                    .frame(width: screenWidth, height: screenHeight * 0.08)
                 }
-                .navigationTitle("Chats")
+            }
+            .navigationBarHidden(true)
+        }
+    }
+    
+    func checkIfPatternIsInMessages(firstName: String, messages: [Message]) -> Bool {
+        if firstName.lowercased().contains(self.searchConversationPattern.lowercased()) {
+            return true
+        }
+        
+        for message in messages {
+            if message.message.lowercased().contains(self.searchConversationPattern.lowercased()) {
+                return true
             }
         }
+        return false
     }
 }
 

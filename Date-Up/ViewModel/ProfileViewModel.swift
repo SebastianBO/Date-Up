@@ -18,6 +18,7 @@ class ProfileViewModel: ObservableObject {
     public let firebaseStorageManager = FirebaseStorageManager()
     public let firestoreManager = FirestoreManager()
     @Published var session = SessionStore()
+    @Published var profileChatRooms: [ChatRoom]?
     
     init() {
         self.fetchData() {
@@ -259,6 +260,19 @@ class ProfileViewModel: ObservableObject {
             self.firebaseStorageManager.deleteAllImagesFromStorage(userID: self.session.currentUser!.uid, userPhotosURLs: self.profile?.photosURLs != nil ? (self.profile?.photosURLs)! : [String]()) {
                 print("Successfully deleted user images")
                 completion()
+            }
+        }
+    }
+    
+    func addProfileToLiked(userUID: String) {
+        self.firestoreManager.getLikedUsersUIDs() { likedUsersUIDs in
+            var tempLikedUsersUIDs = [String]()
+            if likedUsersUIDs != nil {
+                tempLikedUsersUIDs = likedUsersUIDs!
+            }
+            tempLikedUsersUIDs.append(userUID)
+            self.firestoreManager.addUserToLikedUsersList(likedUsers: tempLikedUsersUIDs) {
+                print("Successfully added user's to liked users in database")
             }
         }
     }

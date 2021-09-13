@@ -52,7 +52,9 @@ class SessionStore: ObservableObject {
             } else {
                 self.firestoreManager.signUpDataCreation(id: result!.user.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, country: country, city: city, language: language, email: email, preference: preference, gender: gender) {
                     print("Successfully created user's data in database")
-                    completion()
+                    self.firestoreManager.conversationDataCreation(usersUIDs: [String](), messages: [String]()) {
+                        completion()
+                    }
                 }
             }
         }

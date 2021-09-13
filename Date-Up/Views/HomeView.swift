@@ -24,65 +24,64 @@ struct HomeView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            NavigationView {
-                VStack(spacing: screenHeight * 0.001) {
-                    HStack {
-                        NavigationLink(destination: NotificationsView(profile: profileViewModel).navigationBarTitle("XYZ", displayMode: .inline), isActive: $showNotifications) {
-                            Button(action: {
-                                withAnimation {
-                                    showNotifications = true
-                                }
-                            }, label: {
-                                Image(systemName: "bell.fill")
-                            })
-                            .foregroundColor(.yellow)
-                            .font(.system(size: screenHeight * 0.025))
-                            .padding()
-                        }
-                        
-                        Spacer()
-                        
+            VStack(spacing: screenHeight * 0.001) {
+                HStack {
+                    NavigationLink(destination: NotificationsView(profile: profileViewModel), isActive: $showNotifications) {
                         Button(action: {
                             withAnimation {
-                                homeViewModel.fetchData {}
+                                showNotifications = true
                             }
                         }, label: {
-                            Image(systemName: "arrow.clockwise")
+                            Image(systemName: "bell.fill")
                         })
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundColor(.yellow)
                         .font(.system(size: screenHeight * 0.025))
                         .padding()
                     }
                     
-                    HStack {
-                        Text("Today's Picks").font(.largeTitle).fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
-                            .padding(.leading, screenWidth * 0.05)
-                        
-                        Spacer()
-                    }
+                    Spacer()
                     
-                    ZStack {
-                        if homeViewModel.allProfiles.count != 0 {
-                            ForEach(homeViewModel.allProfiles) { profile in
-                                ZStack() {
-                                    ProfileLookupView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: profile)
-                                        .navigationBarTitle("Today's picks")
-                                }
-                            }
-                        } else {
-                            Button(action: {
-                                self.homeViewModel.restoreAllRejectedUsers()
-                            }, label: {
-                                Image(systemName: "arrow.counterclockwise.circle.fill")
-                            })
-                            .frame(width: screenWidth, height: screenHeight * 0.88, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                            .font(.system(size: screenHeight * 0.09))
-                            .foregroundColor(.green)
+                    Button(action: {
+                        withAnimation {
+                            homeViewModel.fetchData {}
                         }
+                    }, label: {
+                        Image(systemName: "arrow.clockwise")
+                    })
+                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .font(.system(size: screenHeight * 0.025))
+                    .padding()
+                }
+                
+                HStack {
+                    Text("Today's Picks").font(.largeTitle).fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                        .padding(.leading, screenWidth * 0.05)
+                    
+                    Spacer()
+                }
+                
+                ZStack {
+                    if homeViewModel.allProfiles.count != 0 {
+                        ForEach(homeViewModel.allProfiles) { profile in
+                            ZStack() {
+                                ProfileLookupView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: profile)
+                                    .navigationBarTitle("Today's picks")
+                            }
+                        }
+                    } else {
+                        Button(action: {
+                            self.homeViewModel.restoreAllRejectedUsers()
+                        }, label: {
+                            Image(systemName: "arrow.counterclockwise.circle.fill")
+                        })
+                        .frame(width: screenWidth, height: screenHeight * 0.88, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        .font(.system(size: screenHeight * 0.09))
+                        .foregroundColor(.green)
                     }
                 }
-                .navigationBarHidden(true)
             }
+            .navigationBarHidden(true)
+            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }

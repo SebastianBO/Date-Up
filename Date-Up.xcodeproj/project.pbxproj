@@ -184,8 +184,8 @@
 		0A8E68F126B82CA700C4803A /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */,
 				0A1E7F6B26E65C2D009C4DFA /* HomeViewModel.swift */,
+				0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";

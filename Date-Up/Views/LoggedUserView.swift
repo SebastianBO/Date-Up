@@ -24,24 +24,28 @@ struct LoggedUserView: View {
             let screenWidth = geometry.size.width
             let screenHeight = geometry.size.height
             
-            TabView {
-                HomeView(homeViewModel: homeViewModel, profile: profileViewModel)
-                    .tabItem {
-                        Image(systemName: "house.fill")
-                    }
-                    .tag(0)
-                
-                ChatsView(profile: profileViewModel, homeViewModel: homeViewModel)
-                    .tabItem {
-                        Image(systemName: "bubble.left.and.bubble.right.fill")
-                    }
-                    .tag(1)
-                
-                ProfileView(profile: profileViewModel)
-                    .tabItem {
-                        Image(systemName: "person.fill")
-                    }
-                    .tag(2)
+            NavigationView {
+                TabView {
+                    HomeView(homeViewModel: homeViewModel, profile: profileViewModel)
+                        .tabItem {
+                            Image(systemName: "house.fill")
+                        }
+                        .tag(0)
+                    
+                    ChatsView(profile: profileViewModel, homeViewModel: homeViewModel)
+                        .ignoresSafeArea(.keyboard)
+                        .tabItem {
+                            Image(systemName: "bubble.left.and.bubble.right.fill")
+                        }
+                        .tag(1)
+                    
+                    ProfileView(profile: profileViewModel)
+                        .tabItem {
+                            Image(systemName: "person.fill")
+                        }
+                        .tag(2)
+                }
+                .navigationBarHidden(true)
             }
         }
     }
