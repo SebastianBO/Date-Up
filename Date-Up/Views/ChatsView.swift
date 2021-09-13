@@ -39,7 +39,7 @@ struct ChatsView: View {
                             .clipShape(Circle())
                             .frame(width: screenWidth * 0.15, height: screenHeight * 0.075)
                         
-                        NavigationLink(destination: ChatRoomView()) {
+                        NavigationLink(destination: ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel)) {
                             VStack {
                                 HStack {
                                     Text(chatRoom.users[1].profile.firstName.capitalized)

@@ -142,13 +142,6 @@ struct ProfileView: View {
                                     Spacer()
                                 }
                                 
-                                HStack {
-                                    
-                                    
-                                    Spacer()
-                                }
-                                
-                                
                                 NavigationLink(destination: EditView(profile: profileViewModel), isActive: $editMode) {
                                                                 Button(action: {
                                                                     withAnimation {

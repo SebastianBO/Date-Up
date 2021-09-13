@@ -27,7 +27,7 @@ struct HomeView: View {
             NavigationView {
                 VStack(spacing: screenHeight * 0.001) {
                     HStack {
-                        NavigationLink(destination: NotificationsView(profile: profileViewModel), isActive: $showNotifications) {
+                        NavigationLink(destination: NotificationsView(profile: profileViewModel).navigationBarTitle("XYZ", displayMode: .inline), isActive: $showNotifications) {
                             Button(action: {
                                 withAnimation {
                                     showNotifications = true
