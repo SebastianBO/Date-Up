@@ -75,54 +75,55 @@ struct ChatRoomView: View {
                         }
                         .padding()
                     }
-                }
-                .navigationBarTitle("XYZ", displayMode: .inline)
-                .toolbar {
-                    ToolbarItem(placement: .bottomBar) {
-                        HStack {
-                            Button(action: {
-                                withAnimation {
-                                    
-                                }
-                            }, label: {
-                                Image(systemName: "camera.fill")
-                                    .font(.system(size: screenHeight * 0.03))
-                            })
-                            
-                            Button(action: {
-                                withAnimation {
-                                    
-                                }
-                            }, label: {
-                                Image(systemName: "photo")
-                                    .font(.system(size: screenHeight * 0.03))
-                            })
-                            
-                            Spacer(minLength: screenWidth * 0.05)
-                            
-                            ZStack {
-                                RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
-                                    .stroke()
-                                    .foregroundColor(self.messageToBeSend.isEmpty == true ? .gray : .blue)
-                                TextField("Aa", text: $messageToBeSend)
-                                    .padding(.leading, screenWidth * 0.05)
+                    
+                    HStack {
+                        Spacer()
+                        
+                        Button(action: {
+                            withAnimation {
+                                
                             }
-                            .frame(width: screenWidth * 0.6, height: screenHeight * 0.05)
-                            
-                            Spacer(minLength: screenWidth * 0.03)
-                            
-                            Button(action: {
-                                withAnimation {
-                                    self.messages.append(Message(message: self.messageToBeSend, user: ProfileLookup(profile: self.profileViewModel.profile!, profileImageViews: self.profileViewModel.userPicturesView)))
-                                }
-                            }, label: {
-                                Image(systemName: "paperplane")
-                                    .font(.system(size: screenHeight * 0.035))
-                            })
-                            .disabled(self.messageToBeSend.isEmpty)
+                        }, label: {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: screenHeight * 0.03))
+                        })
+                        
+                        Button(action: {
+                            withAnimation {
+                                
+                            }
+                        }, label: {
+                            Image(systemName: "photo")
+                                .font(.system(size: screenHeight * 0.03))
+                        })
+                        
+                        Spacer()
+                        
+                        ZStack {
+                            RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
+                                .stroke()
+                                .foregroundColor(self.messageToBeSend.isEmpty == true ? .gray : .blue)
+                            TextField("Aa", text: $messageToBeSend)
+                                .padding(.leading, screenWidth * 0.05)
                         }
+                        .frame(width: screenWidth * 0.6, height: screenHeight * 0.05)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            withAnimation {
+                                self.messages.append(Message(message: self.messageToBeSend, user: ProfileLookup(profile: self.profileViewModel.profile!, profileImageViews: self.profileViewModel.userPicturesView)))
+                            }
+                        }, label: {
+                            Image(systemName: "paperplane")
+                                .font(.system(size: screenHeight * 0.035))
+                        })
+                        .disabled(self.messageToBeSend.isEmpty)
+                        
+                        Spacer()
                     }
                 }
+                .navigationBarTitle("XYZ", displayMode: .inline)
         }
         .onAppear {
             self.messages = [Message(message: "Message1", user: self.users[0]), Message(message: "Message2", user: self.users[1])]

@@ -34,6 +34,13 @@ struct ChatsView: View {
             let screenHeight = geometry.size.height
             
             VStack {
+                HStack {
+                    Text("Chats").font(.largeTitle).fontWeight(.bold)
+                        .padding(.leading, screenWidth * 0.05)
+                    
+                    Spacer()
+                }
+                
                 ZStack {
                     RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/)
                         .stroke()
@@ -42,13 +49,6 @@ struct ChatsView: View {
                         .padding(.leading, screenWidth * 0.05)
                 }
                 .frame(width: screenWidth * 0.9, height: screenHeight * 0.05)
-                
-                HStack {
-                    Text("Chats").font(.largeTitle).fontWeight(.bold)
-                        .padding(.leading, screenWidth * 0.05)
-                    
-                    Spacer()
-                }
                 
                 List(chatRooms) { chatRoom in
                     if !searchConversationPattern.isEmpty ? checkIfPatternIsInMessages(firstName: chatRoom.users[1].profile.firstName, messages: chatRoom.messages) : (true) {
