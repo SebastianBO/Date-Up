@@ -23,6 +23,9 @@
 		0A502E3726EA310700965369 /* ProfileLookupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A502E3626EA310700965369 /* ProfileLookupView.swift */; };
 		0A502E3A26EA4E0E00965369 /* nope.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A502E3826EA4E0E00965369 /* nope.png */; };
 		0A502E3B26EA4E0E00965369 /* like.png in Resources */ = {isa = PBXBuildFile; fileRef = 0A502E3926EA4E0E00965369 /* like.png */; };
+		0A51C61526F747B600C488F6 /* KeyboardAdaptive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51C61426F747B600C488F6 /* KeyboardAdaptive.swift */; };
+		0A51C61726F7481F00C488F6 /* KeyboardHeightPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51C61626F7481F00C488F6 /* KeyboardHeightPublisher.swift */; };
+		0A51C61926F748D000C488F6 /* UIResponder+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51C61826F748D000C488F6 /* UIResponder+Current.swift */; };
 		0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */; };
 		0A5E318226ED1A7700FE0208 /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E318126ED1A7700FE0208 /* ChatRoom.swift */; };
 		0A5E318426ED20C500FE0208 /* ChatRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E318326ED20C500FE0208 /* ChatRoomView.swift */; };
@@ -58,6 +61,9 @@
 		0A502E3626EA310700965369 /* ProfileLookupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLookupView.swift; sourceTree = "<group>"; };
 		0A502E3826EA4E0E00965369 /* nope.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nope.png; sourceTree = "<group>"; };
 		0A502E3926EA4E0E00965369 /* like.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = like.png; sourceTree = "<group>"; };
+		0A51C61426F747B600C488F6 /* KeyboardAdaptive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdaptive.swift; sourceTree = "<group>"; };
+		0A51C61626F7481F00C488F6 /* KeyboardHeightPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightPublisher.swift; sourceTree = "<group>"; };
+		0A51C61826F748D000C488F6 /* UIResponder+Current.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Current.swift"; sourceTree = "<group>"; };
 		0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0A5E318126ED1A7700FE0208 /* ChatRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoom.swift; sourceTree = "<group>"; };
 		0A5E318326ED20C500FE0208 /* ChatRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomView.swift; sourceTree = "<group>"; };
@@ -101,6 +107,9 @@
 				0AB1FB0726D7E9B70017175C /* FirebaseStorageManager.swift */,
 				0AB1FB0926D7EEAF0017175C /* FirestoreManager.swift */,
 				0A79765E26E4DBA200691B35 /* enums.swift */,
+				0A51C61426F747B600C488F6 /* KeyboardAdaptive.swift */,
+				0A51C61626F7481F00C488F6 /* KeyboardHeightPublisher.swift */,
+				0A51C61826F748D000C488F6 /* UIResponder+Current.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -331,6 +340,7 @@
 				0A1E7F6E26E68311009C4DFA /* ProfileLookup.swift in Sources */,
 				0A8E68EF26B82A8800C4803A /* RegisterView.swift in Sources */,
 				0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */,
+				0A51C61926F748D000C488F6 /* UIResponder+Current.swift in Sources */,
 				0A5E318226ED1A7700FE0208 /* ChatRoom.swift in Sources */,
 				0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */,
 				0A79765F26E4DBA200691B35 /* enums.swift in Sources */,
@@ -345,10 +355,12 @@
 				0A2C29C926CADA600093A944 /* NotificationsView.swift in Sources */,
 				0A2C29CD26CADA780093A944 /* ChatsView.swift in Sources */,
 				0A1E7F6C26E65C2D009C4DFA /* HomeViewModel.swift in Sources */,
+				0A51C61526F747B600C488F6 /* KeyboardAdaptive.swift in Sources */,
 				0A8E68F626B82F7900C4803A /* ProfileViewModel.swift in Sources */,
 				0A8E68DB26B8260400C4803A /* Date_UpApp.swift in Sources */,
 				0A5E318426ED20C500FE0208 /* ChatRoomView.swift in Sources */,
 				0AB1FB0A26D7EEAF0017175C /* FirestoreManager.swift in Sources */,
+				0A51C61726F7481F00C488F6 /* KeyboardHeightPublisher.swift in Sources */,
 				0A31F19026D3BF5F00F34390 /* SwiftUIImagePicker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

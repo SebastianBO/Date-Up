@@ -104,7 +104,7 @@ struct ChatRoomView: View {
                                 .stroke()
                                 .foregroundColor(self.messageToBeSend.isEmpty == true ? .gray : .blue)
                             TextField("Aa", text: $messageToBeSend)
-                                .padding(.leading, screenWidth * 0.05)
+                                .padding(.horizontal, screenWidth * 0.05)
                         }
                         .frame(width: screenWidth * 0.6, height: screenHeight * 0.05)
                         
@@ -124,6 +124,7 @@ struct ChatRoomView: View {
                     }
                 }
                 .navigationBarTitle("XYZ", displayMode: .inline)
+                .keyboardAdaptive()
         }
         .onAppear {
             self.messages = [Message(message: "Message1", user: self.users[0]), Message(message: "Message2", user: self.users[1])]
