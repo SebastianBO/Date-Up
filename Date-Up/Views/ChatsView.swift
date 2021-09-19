@@ -15,17 +15,9 @@ struct ChatsView: View {
     
     @State var searchConversationPattern = ""
     
-    private var users = [ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]), ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])]
-    
-    private var messages: [Message]
-    
-    private var chatRooms: [ChatRoom]
-    
     init(profile: ProfileViewModel, homeViewModel: HomeViewModel) {
         self.profileViewModel = profile
         self.homeViewModel = homeViewModel
-        self.messages = [Message(message: "Message1", user: self.users[0]), Message(message: "Message2", user: self.users[1])]
-        self.chatRooms = [ChatRoom(users: [users[0], users[1]], messages: [messages[0], messages[1]], photos: nil), ChatRoom(users: [users[0], users[1]], messages: [messages[0], messages[1]], photos: nil), ChatRoom(users: [users[0], users[1]], messages: [messages[0], messages[1]], photos: nil)]
     }
     
     var body: some View {
@@ -50,8 +42,8 @@ struct ChatsView: View {
                 }
                 .frame(width: screenWidth * 0.9, height: screenHeight * 0.05)
                 
-                List(chatRooms) { chatRoom in
-                    if !searchConversationPattern.isEmpty ? checkIfPatternIsInMessages(firstName: chatRoom.users[1].profile.firstName, messages: chatRoom.messages) : (true) {
+                List(profileViewModel.chatRooms) { chatRoom in
+                    if !searchConversationPattern.isEmpty ? checkIfPatternIsInMessages(firstName: homeViewModel.getProfileLookupForConversations(profileViewModel.chatRoom.users[1]).profile.firstName, messages: profileViewModel.chatRoom.messages) : (true) {
                         HStack {
                             Image(uiImage: chatRoom.users[1].profileImageViews[0].uiImageView.image!)
                                 .resizable()

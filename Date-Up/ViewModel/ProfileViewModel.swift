@@ -35,10 +35,16 @@ class ProfileViewModel: ObservableObject {
             firestoreManager.fetchDataFromDatabase(userUID: session.currentUser!.uid) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs, profilePictureURL in
                 if photosURLs != nil {
                     self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: profilePictureURL)
-                    completion()
+                    self.firestoreManager.fetchConversationsFromDatabase() { chatRooms in
+                        self.profileChatRooms = chatRooms
+                        completion()
+                    }
                 } else {
                     self.profile = Profile(id: self.session.currentUser!.uid, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil)
-                    completion()
+                    self.firestoreManager.fetchConversationsFromDatabase() { chatRooms in
+                        self.profileChatRooms = chatRooms
+                        completion()
+                    }
                 }
             }
         }

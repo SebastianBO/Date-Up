@@ -26,6 +26,7 @@
 		0A51C61526F747B600C488F6 /* KeyboardAdaptive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51C61426F747B600C488F6 /* KeyboardAdaptive.swift */; };
 		0A51C61726F7481F00C488F6 /* KeyboardHeightPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51C61626F7481F00C488F6 /* KeyboardHeightPublisher.swift */; };
 		0A51C61926F748D000C488F6 /* UIResponder+Current.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51C61826F748D000C488F6 /* UIResponder+Current.swift */; };
+		0A51C61B26F7D3AB00C488F6 /* ChatRoomsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A51C61A26F7D3AB00C488F6 /* ChatRoomsManager.swift */; };
 		0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */; };
 		0A5E318226ED1A7700FE0208 /* ChatRoom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E318126ED1A7700FE0208 /* ChatRoom.swift */; };
 		0A5E318426ED20C500FE0208 /* ChatRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A5E318326ED20C500FE0208 /* ChatRoomView.swift */; };
@@ -64,6 +65,7 @@
 		0A51C61426F747B600C488F6 /* KeyboardAdaptive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardAdaptive.swift; sourceTree = "<group>"; };
 		0A51C61626F7481F00C488F6 /* KeyboardHeightPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightPublisher.swift; sourceTree = "<group>"; };
 		0A51C61826F748D000C488F6 /* UIResponder+Current.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+Current.swift"; sourceTree = "<group>"; };
+		0A51C61A26F7D3AB00C488F6 /* ChatRoomsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomsManager.swift; sourceTree = "<group>"; };
 		0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0A5E318126ED1A7700FE0208 /* ChatRoom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoom.swift; sourceTree = "<group>"; };
 		0A5E318326ED20C500FE0208 /* ChatRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomView.swift; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 				0A51C61426F747B600C488F6 /* KeyboardAdaptive.swift */,
 				0A51C61626F7481F00C488F6 /* KeyboardHeightPublisher.swift */,
 				0A51C61826F748D000C488F6 /* UIResponder+Current.swift */,
+				0A51C61A26F7D3AB00C488F6 /* ChatRoomsManager.swift */,
 			);
 			path = utils;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				0A8E68DD26B8260400C4803A /* ContentView.swift in Sources */,
 				0A79765F26E4DBA200691B35 /* enums.swift in Sources */,
 				0A2302EE26C115E8000A7BC7 /* Message.swift in Sources */,
+				0A51C61B26F7D3AB00C488F6 /* ChatRoomsManager.swift in Sources */,
 				0A502E3726EA310700965369 /* ProfileLookupView.swift in Sources */,
 				0A2F5B8926BBF07300141D38 /* TopView.swift in Sources */,
 				0A2C29CF26CADA840093A944 /* ProfileView.swift in Sources */,

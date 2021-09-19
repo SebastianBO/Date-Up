@@ -112,7 +112,7 @@ struct ChatRoomView: View {
                         
                         Button(action: {
                             withAnimation {
-                                self.messages.append(Message(message: self.messageToBeSend, user: ProfileLookup(profile: self.profileViewModel.profile!, profileImageViews: self.profileViewModel.userPicturesView)))
+//                                self.messages.append(Message(message: self.messageToBeSend, user: ProfileLookup(profile: self.profileViewModel.profile!, profileImageViews: self.profileViewModel.userPicturesView)))
                             }
                         }, label: {
                             Image(systemName: "paperplane")
@@ -125,9 +125,6 @@ struct ChatRoomView: View {
                 }
                 .navigationBarTitle("XYZ", displayMode: .inline)
                 .keyboardAdaptive()
-        }
-        .onAppear {
-            self.messages = [Message(message: "Message1", user: self.users[0]), Message(message: "Message2", user: self.users[1])]
         }
     }
 }

@@ -9,12 +9,15 @@ import Foundation
 
 struct Message: Equatable, Identifiable, Hashable {
     var id = UUID()
-    private(set) var message: String
-    private(set) var user: ProfileLookup
-    private(set) var timeStamp = Date()
+    private(set) var message: String?
+    private(set) var picture: PictureView?
+    private(set) var user: String
+    private(set) var timeStamp: Date
     
-    init(message: String, user: ProfileLookup) {
+    init(message: String?, picture: PictureView?, timeStamp: Date, user: String) {
         self.message = message
+        self.picture = picture
+        self.timeStamp = timeStamp
         self.user = user
     }
     

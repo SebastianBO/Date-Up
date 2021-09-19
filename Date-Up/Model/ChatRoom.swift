@@ -9,11 +9,11 @@ import Foundation
 
 struct ChatRoom: Equatable, Identifiable, Hashable {
     var id = UUID()
-    private(set) var users: [ProfileLookup]
+    private(set) var users: [String]
     private(set) var messages: [Message]
     private(set) var photos: [PictureView]?
     
-    init(users: [ProfileLookup], messages: [Message], photos: [PictureView]?) {
+    init(users: [String], messages: [Message], photos: [PictureView]?) {
         self.users = users
         self.messages = messages
         self.photos = photos

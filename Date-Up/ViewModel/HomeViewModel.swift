@@ -13,6 +13,7 @@ import UIKit
 
 class HomeViewModel: ObservableObject {
     @Published var allProfiles = [ProfileLookup]()
+    @Published var profilesForConversations = [ProfileLookup]()
     private var allUsersUIDs = [String]()
     
     public let firebaseStorageManager = FirebaseStorageManager()
@@ -109,6 +110,20 @@ class HomeViewModel: ObservableObject {
                     }
                 }
                 
+            }
+        }
+    }
+    
+    func getProfileLookupForConversations(userUID: String, completion: @escaping (() -> ())) {
+        self.firestoreManager.fetchDataFromDatabase(userUID: userUID) { firstName, lastName, birthDate, age, country, city, language, preference, gender, bio, photosURLs, _ in
+            if photosURLs != nil {
+                self.fetchPhotos(userUID: userUID, photosURLs: photosURLs!) { fetchedPhotos in
+                    self.profilesForConversations.append(ProfileLookup(profile: Profile(id: userUID, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: photosURLs!, profilePictureURL: nil), profileImageViews: fetchedPhotos))
+                    completion()
+                }
+            } else {
+                self.profilesForConversations.append(ProfileLookup(profile: Profile(id: userUID, firstName: firstName, lastName: lastName, birthDate: birthDate, age: age, country: country, city: city, language: language, preference: preference, gender: gender, bio: bio, email: self.session.currentUser!.email!, photosURLs: nil, profilePictureURL: nil), profileImageViews: [PictureView(id: "nil", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]))
+                completion()
             }
         }
     }

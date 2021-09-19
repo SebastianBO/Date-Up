@@ -127,14 +127,36 @@ class FirestoreManager: ObservableObject {
     
     func fetchConversationsFromDatabase(completion: @escaping (([ChatRoom]) -> ())) {
         var chatRooms = [ChatRoom]()
-        self.db.collection("conversations").getDocuments { (querySnapshot, error) in
-            if let error = error {
-                print("Error fetching conversations from database: ", error.localizedDescription)
-            } else {
-                for document in querySnapshot!.documents {
-                    let users = document.get("usersUIDs") as? [String] ?? nil
-                    let messages = document.get("messages") as? [String] ?? nil
-//                    chatRooms.append(ChatRoom(users: users, messages: [], photos: <#T##[PictureView]?#>))
+        self.db.collection("profiles").document(user!.uid).getDocument { (document, error) in
+            if let document = document {
+                let userConversations = document.get("userConversations") as? [String] ?? nil
+                
+                self.db.collection("conversations").getDocuments { [self] (querySnapshot, error) in
+                    if let error = error {
+                        print("Error fetching conversations from database: ", error.localizedDescription)
+                    } else {
+                        for document in querySnapshot!.documents {
+                            if userConversations!.contains(document.documentID) {
+                                let users = document.get("usersUIDs") as? [String] ?? nil
+                                
+                                self.db.collection("conversations").document(document.documentID).collection("messages").getDocuments { (querySnapshot, error) in
+                                    if let error = error {
+                                        print("Error fetching messages from database: ", error.localizedDescription)
+                                    } else {
+                                        var messages = [Message]()
+                                        for document in querySnapshot!.documents {
+                                            let message = document.get("message") as? String ?? ""
+                                            let timeStamp = document.get("timeStamp") as? Date ?? Date()
+                                            let authorUserID = document.get("authorUserID") as? String ?? ""
+                                            messages.append(Message(message: message, picture: nil, timeStamp: timeStamp, user: authorUserID))
+                                        }
+                                        chatRooms.append(ChatRoom(users: users!, messages: messages, photos: nil))
+                                    }
+                                }
+                            }
+                        }
+                        completion(chatRooms)
+                    }
                 }
             }
         }
