@@ -10,12 +10,20 @@ import Foundation
 struct ChatRoom: Equatable, Identifiable, Hashable {
     var id = UUID()
     private(set) var users: [String]
+    private(set) var profileLookups: [ProfileLookup]?
     private(set) var messages: [Message]
     private(set) var photos: [PictureView]?
     
-    init(users: [String], messages: [Message], photos: [PictureView]?) {
+    init(users: [String], messages: [Message]) {
         self.users = users
         self.messages = messages
+    }
+    
+    mutating func setProfileLookups(profileLookups: [ProfileLookup]) {
+        self.profileLookups = profileLookups
+    }
+    
+    mutating func setPhotos(photos: [PictureView]) {
         self.photos = photos
     }
     

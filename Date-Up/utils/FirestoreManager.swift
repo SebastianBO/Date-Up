@@ -125,38 +125,53 @@ class FirestoreManager: ObservableObject {
         }
     }
     
-    func fetchConversationsFromDatabase(completion: @escaping (([ChatRoom]) -> ())) {
+    func fetchConversationsFromDatabase(completion: @escaping (([ChatRoom]?) -> ())) {
         var chatRooms = [ChatRoom]()
+        let g = DispatchGroup()
         self.db.collection("profiles").document(user!.uid).getDocument { (document, error) in
             if let document = document {
+                print("HERE 1")
                 let userConversations = document.get("userConversations") as? [String] ?? nil
                 
-                self.db.collection("conversations").getDocuments { [self] (querySnapshot, error) in
-                    if let error = error {
-                        print("Error fetching conversations from database: ", error.localizedDescription)
-                    } else {
-                        for document in querySnapshot!.documents {
-                            if userConversations!.contains(document.documentID) {
-                                let users = document.get("usersUIDs") as? [String] ?? nil
-                                
-                                self.db.collection("conversations").document(document.documentID).collection("messages").getDocuments { (querySnapshot, error) in
-                                    if let error = error {
-                                        print("Error fetching messages from database: ", error.localizedDescription)
-                                    } else {
-                                        var messages = [Message]()
-                                        for document in querySnapshot!.documents {
-                                            let message = document.get("message") as? String ?? ""
-                                            let timeStamp = document.get("timeStamp") as? Date ?? Date()
-                                            let authorUserID = document.get("authorUserID") as? String ?? ""
-                                            messages.append(Message(message: message, picture: nil, timeStamp: timeStamp, user: authorUserID))
+                if userConversations != nil {
+                    print("HERE 2")
+                    self.db.collection("conversations").getDocuments { [self] (querySnapshot, error) in
+                        if let error = error {
+                            print("Error fetching conversations from database: ", error.localizedDescription)
+                        } else {
+                            print("HERE 3")
+                            for document in querySnapshot!.documents {
+                                g.enter()
+                                if userConversations!.contains(document.documentID) {
+                                    print("HERE 4")
+                                    let users = document.get("users") as? [String] ?? nil
+                                    
+                                    self.db.collection("conversations").document(document.documentID).collection("messages").getDocuments { (querySnapshot, error) in
+                                        if let error = error {
+                                            print("Error fetching messages from database: ", error.localizedDescription)
+                                        } else {
+                                            print("HERE 5")
+                                            var messages = [Message]()
+                                            for document in querySnapshot!.documents {
+                                                let message = document.get("message") as? String ?? ""
+                                                let timeStamp = document.get("timeStamp") as? Date ?? Date()
+                                                let authorUserID = document.get("authorUserID") as? String ?? ""
+                                                messages.append(Message(message: message, picture: nil, timeStamp: timeStamp, user: authorUserID))
+                                            }
+                                            chatRooms.append(ChatRoom(users: users!, messages: messages))
+                                            g.leave()
                                         }
-                                        chatRooms.append(ChatRoom(users: users!, messages: messages, photos: nil))
                                     }
                                 }
                             }
+                            print("HERE 6 | chatRooms count: \(chatRooms.count)")
+                            g.notify(queue:.main) {
+                                completion(chatRooms)
+                            }
                         }
-                        completion(chatRooms)
                     }
+                } else {
+                    completion(nil)
                 }
             }
         }
@@ -330,7 +345,60 @@ class FirestoreManager: ObservableObject {
     private func updateUserData(documentData: [String: Any], completion: @escaping (() -> ())) {
         self.db.collection("profiles").document(user!.uid).updateData(documentData) { (error) in
             if let error = error {
-                print(error)
+                print("Error updating user's data: \(error.localizedDescription)")
+            } else {
+                completion()
+            }
+        }
+    }
+    
+    func addConversationToDatabase(conversationUID: String, usersUIDs: [String], completion: @escaping (() -> ())) {
+        var userConversations = [String]()
+        self.db.collection("profiles").document(user!.uid).getDocument { [self] (document, error) in
+            if let document = document {
+                let newUserConversations = document.get("userConversations") as? [String] ?? nil
+                if newUserConversations != nil {
+                    userConversations = newUserConversations!
+                }
+                userConversations.append(conversationUID)
+                
+                let documentData: [String: Any] = [
+                    "userConversations": userConversations
+                ]
+                
+                self.db.collection("profiles").document(user!.uid).updateData(documentData) { (error) in
+                    let documentData: [String: Any] = [
+                        "id": conversationUID,
+                        "users": usersUIDs
+                    ]
+                    
+                    if let error = error {
+                        print("Error updating user's conversation data: \(error.localizedDescription)")
+                    } else {
+                        self.db.collection("conversations").document(conversationUID).setData(documentData) { (error) in
+                            if let error = error {
+                                print("Error adding conversation: \(error.localizedDescription)")
+                            } else {
+                                completion()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    func addMessageToDatabase(conversationUID: String, message: String, completion: @escaping (() -> ())) {
+        let documentData: [String: Any] = [
+            "authorUserID": user!.uid,
+            "message": message,
+            "timeStamp": Date()
+        ]
+        
+        self.db.collection("conversations").document(conversationUID).collection("messages").addDocument(data: documentData) { (error) in
+            if let error = error {
+                print("Error adding message to conversation: \(error.localizedDescription)")
             } else {
                 completion()
             }

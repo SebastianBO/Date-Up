@@ -10,20 +10,17 @@ import SwiftUI
 struct ChatRoomView: View {
     @ObservedObject private var profileViewModel: ProfileViewModel
     @ObservedObject private var homeViewModel: HomeViewModel
+    private var chatRoom: ChatRoom
     
     @Environment(\.colorScheme) var colorScheme
     
     @State var messageToBeSend = ""
     @State var sendDisabled = true
     
-    private var users = [ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]), ProfileLookup(profile: Profile(id: "70", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])]
-    
-    @State private var messages = [Message]()
-    
-    init(profile: ProfileViewModel, homeViewModel: HomeViewModel) {
+    init(profile: ProfileViewModel, homeViewModel: HomeViewModel, chatRoom: ChatRoom) {
         self.profileViewModel = profile
         self.homeViewModel = homeViewModel
-        self.messages = [Message(message: "Message1", user: self.users[0]), Message(message: "Message2", user: self.users[1])]
+        self.chatRoom = chatRoom
     }
     
     var body: some View {
@@ -33,47 +30,49 @@ struct ChatRoomView: View {
             
 
                 VStack {
-                    ScrollView(.vertical) {
-                        ForEach(messages) { message in
-                            Spacer()
-                            if message.user.id == profileViewModel.profile!.id {
-                                HStack {
-                                    Spacer()
-                                    
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 23)
-                                            .foregroundColor(.blue)
-                                        Text(message.message)
-                                            .foregroundColor(.white)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                    }
-                                    .frame(minWidth: screenWidth * 0.50, idealWidth: screenWidth * 0.55, maxWidth: screenWidth * 0.6, minHeight: screenHeight * 0.08, idealHeight: screenHeight * 0.08, maxHeight: .infinity, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                                }
-                            } else {
-                                HStack {
-                                    VStack {
+                    if self.chatRoom.messages.count != 0 {
+                        ScrollView(.vertical) {
+                            ForEach(self.chatRoom.messages) { message in
+                                Spacer()
+                                if message.user == profileViewModel.profile!.id {
+                                    HStack {
                                         Spacer()
-                                        Image(uiImage: self.users[1].profileImageViews[0].uiImageView.image!)
-                                            .resizable()
-                                            .clipShape(Circle())
-                                            .frame(width: screenWidth * 0.10, height: screenHeight * 0.05)
+                                        
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 23)
+                                                .foregroundColor(.blue)
+                                            Text(message.message!)
+                                                .foregroundColor(.white)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                        }
+                                        .frame(minWidth: screenWidth * 0.50, idealWidth: screenWidth * 0.55, maxWidth: screenWidth * 0.6, minHeight: screenHeight * 0.08, idealHeight: screenHeight * 0.08, maxHeight: .infinity, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                                     }
-                                    
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 23)
-                                            .foregroundColor(.gray)
-                                        Text(message.message)
-                                            .foregroundColor(.white)
-                                            .background(RoundedRectangle(cornerRadius: 23)
-                                                            .foregroundColor(.gray))
+                                } else {
+                                    HStack {
+                                        VStack {
+                                            Spacer()
+                                            Image(uiImage: self.chatRoom.profileLookups![1].profileImageViews[0].uiImageView.image!)
+                                                .resizable()
+                                                .clipShape(Circle())
+                                                .frame(width: screenWidth * 0.10, height: screenHeight * 0.05)
+                                        }
+                                        
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 23)
+                                                .foregroundColor(.gray)
+                                            Text(message.message!)
+                                                .foregroundColor(.white)
+                                                .background(RoundedRectangle(cornerRadius: 23)
+                                                                .foregroundColor(.gray))
+                                        }
+                                        .frame(minWidth: screenWidth * 0.50, idealWidth: screenWidth * 0.55, maxWidth: screenWidth * 0.6, minHeight: screenHeight * 0.08, idealHeight: screenHeight * 0.08, maxHeight: .infinity, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                        
+                                        Spacer()
                                     }
-                                    .frame(minWidth: screenWidth * 0.50, idealWidth: screenWidth * 0.55, maxWidth: screenWidth * 0.6, minHeight: screenHeight * 0.08, idealHeight: screenHeight * 0.08, maxHeight: .infinity, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                                    
-                                    Spacer()
                                 }
                             }
+                            .padding()
                         }
-                        .padding()
                     }
                     
                     HStack {
@@ -112,7 +111,11 @@ struct ChatRoomView: View {
                         
                         Button(action: {
                             withAnimation {
-//                                self.messages.append(Message(message: self.messageToBeSend, user: ProfileLookup(profile: self.profileViewModel.profile!, profileImageViews: self.profileViewModel.userPicturesView)))
+                                self.profileViewModel.sendMessageToDatabase(chatID: chatRoom.id.uuidString, message: messageToBeSend) {
+                                    self.profileViewModel.fetchData {
+                                        print("Fetching Data")
+                                    }
+                                }
                             }
                         }, label: {
                             Image(systemName: "paperplane")
@@ -135,7 +138,7 @@ struct ChatRoomView_Previews: PreviewProvider {
         let homeViewModel = HomeViewModel(forPreviews: true)
         ForEach(ColorScheme.allCases, id: \.self) { colorScheme in
             ForEach(["iPhone XS MAX", "iPhone 8"], id: \.self) { deviceName in
-                ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel)
+                ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel, chatRoom: ChatRoom(users: ["69", "96"], messages: [Message(message: "message1", picture: nil, timeStamp: Date(), user: "69"), Message(message: "message2", picture: nil, timeStamp: Date(), user: "69"), Message(message: "message3", picture: nil, timeStamp: Date(), user: "96")]))
                     .preferredColorScheme(colorScheme)
                     .previewDevice(PreviewDevice(rawValue: deviceName))
                     .previewDisplayName(deviceName)

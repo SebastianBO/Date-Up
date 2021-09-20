@@ -106,7 +106,11 @@ struct ProfileLookupView: View {
                         Spacer()
                         
                         Button(action: {
-                            
+                            profileViewModel.addConversationToDatabase(usersUIDs: [self.profileViewModel.session.currentUser!.uid, profileLookup.id]) {
+                                profileViewModel.fetchData {
+                                    print("Fetching Data")
+                                }
+                            }
                         }, label: {
                             Image(systemName: "message.circle")
                         })
@@ -117,6 +121,11 @@ struct ProfileLookupView: View {
                         
                         Button(action: {
                             profileViewModel.addProfileToLiked(userUID: profileLookup.id)
+                            profileViewModel.addConversationToDatabase(usersUIDs: [self.profileViewModel.session.currentUser!.uid, profileLookup.id]) {
+                                profileViewModel.fetchData {
+                                    print("Fetching Data")
+                                }
+                            }
                         }, label: {
                             Image(systemName: "heart.circle")
                         })
@@ -156,6 +165,11 @@ struct ProfileLookupView: View {
                             case let x where x > 100:
                                 self.x = 500; self.deegres = 12
                                 profileViewModel.addProfileToLiked(userUID: profileLookup.id)
+                                profileViewModel.addConversationToDatabase(usersUIDs: [self.profileViewModel.session.currentUser!.uid, profileLookup.id]) {
+                                    profileViewModel.fetchData {
+                                        print("Fetching Data")
+                                    }
+                                }
                             case (-100)...(-1):
                                 self.x = 0; self.y = 0; self.deegres = 0
                             case let x where x < -100:

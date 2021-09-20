@@ -42,44 +42,70 @@ struct ChatsView: View {
                 }
                 .frame(width: screenWidth * 0.9, height: screenHeight * 0.05)
                 
-                List(profileViewModel.chatRooms) { chatRoom in
-                    if !searchConversationPattern.isEmpty ? checkIfPatternIsInMessages(firstName: homeViewModel.getProfileLookupForConversations(profileViewModel.chatRoom.users[1]).profile.firstName, messages: profileViewModel.chatRoom.messages) : (true) {
-                        HStack {
-                            Image(uiImage: chatRoom.users[1].profileImageViews[0].uiImageView.image!)
-                                .resizable()
-                                .clipShape(Circle())
-                                .frame(width: screenWidth * 0.15, height: screenHeight * 0.075)
-                            
-                            NavigationLink(destination: ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel)
-                                            .ignoresSafeArea(.keyboard)) {
-                                VStack {
-                                    HStack {
-                                        Text(chatRoom.users[1].profile.firstName.capitalized)
-                                            .foregroundColor(colorScheme == .dark ? .white : .black)
-                                            .fontWeight(.bold)
-                                        Spacer()
-                                    }
-                                    HStack {
-                                        Text(chatRoom.messages.last!.message)
-                                        Text("|")
-                                            .foregroundColor(.gray)
-                                        if String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)).count == 1 {
-                                            Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":0" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
-                                                .foregroundColor(.gray)
-                                        } else {
-                                            Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
-                                                .foregroundColor(.gray)
+                if profileViewModel.profileChatRooms != nil {
+                    if profileViewModel.profileChatRooms!.count != 0 {
+                        List(profileViewModel.profileChatRooms!) { chatRoom in
+                            if !searchConversationPattern.isEmpty ? checkIfPatternIsInMessages(firstName: chatRoom.profileLookups![1].profile.firstName, messages: chatRoom.messages) : (true) {
+                                HStack {
+    //                                Image(uiImage: chatRoom.profileLookups![1].profileImageViews[0].uiImageView.image!)
+    //                                    .resizable()
+    //                                    .clipShape(Circle())
+    //                                    .frame(width: screenWidth * 0.15, height: screenHeight * 0.075)
+                                    
+                                    NavigationLink(destination: ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel, chatRoom: chatRoom)
+                                                    .ignoresSafeArea(.keyboard)) {
+                                        VStack {
+                                            HStack {
+                                                Text(chatRoom.profileLookups![1].profile.firstName.capitalized)
+                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                    .fontWeight(.bold)
+                                                Spacer()
+                                            }
+                                            
+                                            if chatRoom.messages.count != 0 {
+                                                HStack {
+                                                    Text(chatRoom.messages.last!.message!)
+                                                    Text("|")
+                                                        .foregroundColor(.gray)
+                                                    if String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)).count == 1 {
+                                                        Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":0" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
+                                                            .foregroundColor(.gray)
+                                                    } else {
+                                                        Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
+                                                            .foregroundColor(.gray)
+                                                    }
+                                                    Spacer()
+                                                }
+                                            }
                                         }
-                                        Spacer()
                                     }
                                 }
+                                .frame(width: screenWidth, height: screenHeight * 0.08)
                             }
                         }
-                        .frame(width: screenWidth, height: screenHeight * 0.08)
+                    } else {
+                        Text("Empty conversations")
                     }
+                } else {
+                    Text("No conversations")
                 }
             }
             .navigationBarHidden(true)
+        }
+        .onAppear {
+            if profileViewModel.profileChatRooms != nil {
+                if profileViewModel.profileChatRooms!.count != 0 {
+                    for i in 0..<profileViewModel.profileChatRooms!.count {
+                        var profileLookups = [ProfileLookup]()
+                        for user in profileViewModel.profileChatRooms![i].users {
+                            homeViewModel.getProfileLookupForConversations(userUID: user) { newProfileLookup in
+                                profileLookups.append(newProfileLookup)
+                            }
+                        }
+                        profileViewModel.profileChatRooms![i].setProfileLookups(profileLookups: profileLookups)
+                    }
+                }
+            }
         }
     }
     
@@ -89,7 +115,7 @@ struct ChatsView: View {
         }
         
         for message in messages {
-            if message.message.lowercased().contains(self.searchConversationPattern.lowercased()) {
+            if message.message!.lowercased().contains(self.searchConversationPattern.lowercased()) {
                 return true
             }
         }

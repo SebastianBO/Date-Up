@@ -28,6 +28,10 @@ class ProfileViewModel: ObservableObject {
     
     init(forPreviews: Bool) {
         self.profile = Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil)
+        self.profileChatRooms = [ChatRoom(users: ["69", "96"], messages: [Message(message: "LOL1", picture: nil, timeStamp: Date(), user: "69"), Message(message: "LOL2", picture: nil, timeStamp: Date(), user: "96"), Message(message: "LOL3", picture: nil, timeStamp: Date(), user: "69")]), ChatRoom(users: ["69", "96"], messages: [Message(message: "LOL1", picture: nil, timeStamp: Date(), user: "69"), Message(message: "LOL2", picture: nil, timeStamp: Date(), user: "96"), Message(message: "LOL3", picture: nil, timeStamp: Date(), user: "69")]), ChatRoom(users: ["69", "96"], messages: [Message(message: "LOL1", picture: nil, timeStamp: Date(), user: "69"), Message(message: "LOL2", picture: nil, timeStamp: Date(), user: "96"), Message(message: "LOL3", picture: nil, timeStamp: Date(), user: "69")])]
+        for i in 0...self.profileChatRooms!.count {
+            self.profileChatRooms![i].setProfileLookups(profileLookups: [ProfileLookup(profile: Profile(id: "69", firstName: "firstName", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))]), ProfileLookup(profile: Profile(id: "96", firstName: "firstName2", lastName: "lastName", birthDate: Date(), age: 18, country: "country", city: "city", language: "language", preference: "preference", gender: "gender", bio: "bio", email: "email", photosURLs: [], profilePictureURL: nil), profileImageViews: [PictureView(id: "1", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "2", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi"))), PictureView(id: "3", uiImageView: UIImageView(image: UIImage(named: "blank-profile-hi")))])])
+        }
     }
     
     func fetchData(completion: @escaping (() -> ())) {
@@ -90,6 +94,20 @@ class ProfileViewModel: ObservableObject {
             g.notify(queue:.main) {
                 completion(userImages)
             }
+        }
+    }
+    
+    func addConversationToDatabase(usersUIDs: [String], completion: @escaping (() -> ())) {
+        self.firestoreManager.addConversationToDatabase(conversationUID: UUID().uuidString, usersUIDs: usersUIDs) {
+            print("Successfully added conversation to database.")
+            completion()
+        }
+    }
+    
+    func sendMessageToDatabase(chatID: String, message: String, completion: @escaping (() -> ())) {
+        self.firestoreManager.addMessageToDatabase(conversationUID: chatID, message: message) {
+            print("Successfully added message to database.")
+            completion()
         }
     }
     
