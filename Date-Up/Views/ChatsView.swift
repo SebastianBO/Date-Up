@@ -47,34 +47,36 @@ struct ChatsView: View {
                         List(profileViewModel.profileChatRooms!) { chatRoom in
                             if !searchConversationPattern.isEmpty ? checkIfPatternIsInMessages(firstName: chatRoom.profileLookups![1].profile.firstName, messages: chatRoom.messages) : (true) {
                                 HStack {
-    //                                Image(uiImage: chatRoom.profileLookups![1].profileImageViews[0].uiImageView.image!)
-    //                                    .resizable()
-    //                                    .clipShape(Circle())
-    //                                    .frame(width: screenWidth * 0.15, height: screenHeight * 0.075)
-                                    
-                                    NavigationLink(destination: ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel, chatRoom: chatRoom)
-                                                    .ignoresSafeArea(.keyboard)) {
-                                        VStack {
-                                            HStack {
-                                                Text(chatRoom.profileLookups![1].profile.firstName.capitalized)
-                                                    .foregroundColor(colorScheme == .dark ? .white : .black)
-                                                    .fontWeight(.bold)
-                                                Spacer()
-                                            }
-                                            
-                                            if chatRoom.messages.count != 0 {
+                                    if chatRoom.profileLookups != nil {
+                                        Image(uiImage: chatRoom.profileLookups![0].profileImageViews[0].uiImageView.image!)
+                                            .resizable()
+                                            .clipShape(Circle())
+                                            .frame(width: screenWidth * 0.15, height: screenHeight * 0.075)
+                                        
+                                        NavigationLink(destination: ChatRoomView(profile: profileViewModel, homeViewModel: homeViewModel, chatRoom: chatRoom)
+                                                        .ignoresSafeArea(.keyboard)) {
+                                            VStack {
                                                 HStack {
-                                                    Text(chatRoom.messages.last!.message!)
-                                                    Text("|")
-                                                        .foregroundColor(.gray)
-                                                    if String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)).count == 1 {
-                                                        Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":0" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
-                                                            .foregroundColor(.gray)
-                                                    } else {
-                                                        Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
-                                                            .foregroundColor(.gray)
-                                                    }
+                                                    Text(chatRoom.profileLookups![0].profile.firstName.capitalized)
+                                                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                                                        .fontWeight(.bold)
                                                     Spacer()
+                                                }
+                                                
+                                                if chatRoom.messages.count != 0 {
+                                                    HStack {
+                                                        Text(chatRoom.messages.last!.message!)
+                                                        Text("|")
+                                                            .foregroundColor(.gray)
+                                                        if String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)).count == 1 {
+                                                            Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":0" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
+                                                                .foregroundColor(.gray)
+                                                        } else {
+                                                            Text(String(Calendar.current.component(.hour, from: chatRoom.messages.last!.timeStamp)) + ":" + String(Calendar.current.component(.minute, from: chatRoom.messages.last!.timeStamp)))
+                                                                .foregroundColor(.gray)
+                                                        }
+                                                        Spacer()
+                                                    }
                                                 }
                                             }
                                         }
@@ -90,14 +92,34 @@ struct ChatsView: View {
                     Text("No conversations")
                 }
             }
-            .task {
+            .refreshable {
+                Task {
+                    profileViewModel.fetchData {}
+                    let g = DispatchGroup()
+                    if profileViewModel.profileChatRooms != nil {
+                        if profileViewModel.profileChatRooms!.count != 0 {
+                            for i in 0..<profileViewModel.profileChatRooms!.count {
+                                var profileLookups = [ProfileLookup]()
+                                for user in profileViewModel.profileChatRooms![i].users {
+                                    g.enter()
+                                    homeViewModel.getProfileLookupForConversations(userUID: user) { newProfileLookup in
+                                        profileLookups.append(newProfileLookup)
+                                        g.leave()
+                                    }
+                                }
+                                g.notify(queue:.main) {
+                                    profileViewModel.profileChatRooms![i].setProfileLookups(profileLookups: profileLookups)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .onAppear {
                 let g = DispatchGroup()
-                print("HERE 0")
                 if profileViewModel.profileChatRooms != nil {
                     if profileViewModel.profileChatRooms!.count != 0 {
-                        print("HERE 1")
                         for i in 0..<profileViewModel.profileChatRooms!.count {
-                            print("HERE \(i)")
                             var profileLookups = [ProfileLookup]()
                             for user in profileViewModel.profileChatRooms![i].users {
                                 g.enter()

@@ -8,13 +8,14 @@
 import Foundation
 
 struct ChatRoom: Equatable, Identifiable, Hashable {
-    var id = UUID()
+    var id: String
     private(set) var users: [String]
     private(set) var profileLookups: [ProfileLookup]?
     private(set) var messages: [Message]
     private(set) var photos: [PictureView]?
     
-    init(users: [String], messages: [Message]) {
+    init(id: String, users: [String], messages: [Message]) {
+        self.id = id
         self.users = users
         self.messages = messages
     }

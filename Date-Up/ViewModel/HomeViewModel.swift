@@ -11,6 +11,7 @@ import FirebaseStorage
 import SwiftUI
 import UIKit
 
+@MainActor
 class HomeViewModel: ObservableObject {
     @Published var allProfiles = [ProfileLookup]()
     @Published var profilesForConversations = [ProfileLookup]()

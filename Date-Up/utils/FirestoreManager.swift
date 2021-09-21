@@ -140,6 +140,7 @@ class FirestoreManager: ObservableObject {
                             for document in querySnapshot!.documents {
                                 g.enter()
                                 if userConversations!.contains(document.documentID) {
+                                    let id = document.get("id") as? String ?? ""
                                     let users = document.get("users") as? [String] ?? nil
                                     
                                     self.db.collection("conversations").document(document.documentID).collection("messages").getDocuments { (querySnapshot, error) in
@@ -153,7 +154,7 @@ class FirestoreManager: ObservableObject {
                                                 let authorUserID = document.get("authorUserID") as? String ?? ""
                                                 messages.append(Message(message: message, picture: nil, timeStamp: timeStamp, user: authorUserID))
                                             }
-                                            chatRooms.append(ChatRoom(users: users!, messages: messages))
+                                            chatRooms.append(ChatRoom(id: id, users: users!, messages: messages))
                                             g.leave()
                                         }
                                     }
@@ -390,7 +391,7 @@ class FirestoreManager: ObservableObject {
             "message": message,
             "timeStamp": Date()
         ]
-        
+        print("FirestoreManager: \(conversationUID)")
         self.db.collection("conversations").document(conversationUID).collection("messages").addDocument(data: documentData) { (error) in
             if let error = error {
                 print("Error adding message to conversation: \(error.localizedDescription)")
