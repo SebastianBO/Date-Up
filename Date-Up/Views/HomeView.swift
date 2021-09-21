@@ -65,7 +65,6 @@ struct HomeView: View {
                         ForEach(homeViewModel.allProfiles) { profile in
                             ZStack() {
                                 ProfileLookupView(homeViewModel: homeViewModel, profile: profileViewModel, profileLookup: profile)
-                                    .navigationBarTitle("Today's picks")
                             }
                         }
                     } else {
@@ -80,8 +79,6 @@ struct HomeView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
-            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }

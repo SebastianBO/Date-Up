@@ -27,12 +27,16 @@ struct LoggedUserView: View {
             NavigationView {
                 TabView {
                     HomeView(homeViewModel: homeViewModel, profile: profileViewModel)
+                        .navigationTitle("")
+                        .navigationBarHidden(true)
                         .tabItem {
                             Image(systemName: "house.fill")
                         }
                         .tag(0)
                     
                     ChatsView(profile: profileViewModel, homeViewModel: homeViewModel)
+                        .navigationTitle("")
+                        .navigationBarHidden(true)
                         .ignoresSafeArea(.keyboard)
                         .tabItem {
                             Image(systemName: "bubble.left.and.bubble.right.fill")
@@ -40,12 +44,13 @@ struct LoggedUserView: View {
                         .tag(1)
                     
                     ProfileView(profile: profileViewModel)
+                        .navigationTitle("")
+                        .navigationBarHidden(true)
                         .tabItem {
                             Image(systemName: "person.fill")
                         }
                         .tag(2)
                 }
-                .navigationBarHidden(true)
             }
         }
     }

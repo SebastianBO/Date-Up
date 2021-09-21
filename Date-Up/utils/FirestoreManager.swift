@@ -130,27 +130,22 @@ class FirestoreManager: ObservableObject {
         let g = DispatchGroup()
         self.db.collection("profiles").document(user!.uid).getDocument { (document, error) in
             if let document = document {
-                print("HERE 1")
                 let userConversations = document.get("userConversations") as? [String] ?? nil
                 
                 if userConversations != nil {
-                    print("HERE 2")
                     self.db.collection("conversations").getDocuments { [self] (querySnapshot, error) in
                         if let error = error {
                             print("Error fetching conversations from database: ", error.localizedDescription)
                         } else {
-                            print("HERE 3")
                             for document in querySnapshot!.documents {
                                 g.enter()
                                 if userConversations!.contains(document.documentID) {
-                                    print("HERE 4")
                                     let users = document.get("users") as? [String] ?? nil
                                     
                                     self.db.collection("conversations").document(document.documentID).collection("messages").getDocuments { (querySnapshot, error) in
                                         if let error = error {
                                             print("Error fetching messages from database: ", error.localizedDescription)
                                         } else {
-                                            print("HERE 5")
                                             var messages = [Message]()
                                             for document in querySnapshot!.documents {
                                                 let message = document.get("message") as? String ?? ""
@@ -164,8 +159,8 @@ class FirestoreManager: ObservableObject {
                                     }
                                 }
                             }
-                            print("HERE 6 | chatRooms count: \(chatRooms.count)")
                             g.notify(queue:.main) {
+                                print("chatRooms count: \(chatRooms.count)")
                                 completion(chatRooms)
                             }
                         }

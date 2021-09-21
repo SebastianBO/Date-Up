@@ -207,7 +207,6 @@ struct ProfileView: View {
                     }
                     .padding(.horizontal, screenWidth * 0.005)
                 }
-                .navigationBarHidden(true)
             }
             .ignoresSafeArea()
         }

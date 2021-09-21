@@ -90,19 +90,26 @@ struct ChatsView: View {
                     Text("No conversations")
                 }
             }
-            .navigationBarHidden(true)
-        }
-        .onAppear {
-            if profileViewModel.profileChatRooms != nil {
-                if profileViewModel.profileChatRooms!.count != 0 {
-                    for i in 0..<profileViewModel.profileChatRooms!.count {
-                        var profileLookups = [ProfileLookup]()
-                        for user in profileViewModel.profileChatRooms![i].users {
-                            homeViewModel.getProfileLookupForConversations(userUID: user) { newProfileLookup in
-                                profileLookups.append(newProfileLookup)
+            .task {
+                let g = DispatchGroup()
+                print("HERE 0")
+                if profileViewModel.profileChatRooms != nil {
+                    if profileViewModel.profileChatRooms!.count != 0 {
+                        print("HERE 1")
+                        for i in 0..<profileViewModel.profileChatRooms!.count {
+                            print("HERE \(i)")
+                            var profileLookups = [ProfileLookup]()
+                            for user in profileViewModel.profileChatRooms![i].users {
+                                g.enter()
+                                homeViewModel.getProfileLookupForConversations(userUID: user) { newProfileLookup in
+                                    profileLookups.append(newProfileLookup)
+                                    g.leave()
+                                }
+                            }
+                            g.notify(queue:.main) {
+                                profileViewModel.profileChatRooms![i].setProfileLookups(profileLookups: profileLookups)
                             }
                         }
-                        profileViewModel.profileChatRooms![i].setProfileLookups(profileLookups: profileLookups)
                     }
                 }
             }
