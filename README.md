@@ -50,13 +50,13 @@ NOT IMPLEMENTED FULLY YET:
 
 ------------------------------------------------
 
-![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/ProfileTab.png?raw=true =250x250)
+<img src="https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/ProfileTab.png?raw=true" width="370" height="790">
 
 ------------------------------------------------
 
-![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/LoginTab.png?raw=true =250x250)
+<img src="https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/LoginTab.png?raw=true" width="370" height="790">
 
 ------------------------------------------------
 
-![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/RegisterTab.png?raw=true =250x250)
+<img src="https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/RegisterTab.png?raw=true" width="370" height="790">
 
