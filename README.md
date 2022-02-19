@@ -46,7 +46,7 @@ NOT IMPLEMENTED FULLY YET:
 
 ## Screenshots
 
-<img src="https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/HomeTab.png?raw=true" width="642" height="1389">
+<img src="https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/HomeTab.png?raw=true" width="321" height="699">
 
 ------------------------------------------------
 
