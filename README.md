@@ -46,17 +46,17 @@ NOT IMPLEMENTED FULLY YET:
 
 ## Screenshots
 
-![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/HomeTab.png?raw=true)
+![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/HomeTab.png?raw=true =250x250)
 
 ------------------------------------------------
 
-![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/ProfileTab.png?raw=true)
+![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/ProfileTab.png?raw=true =250x250)
 
 ------------------------------------------------
 
-![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/LoginTab.png?raw=true)
+![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/LoginTab.png?raw=true =250x250)
 
 ------------------------------------------------
 
-![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/RegisterTab.png?raw=true)
+![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/RegisterTab.png?raw=true =250x250)
 
