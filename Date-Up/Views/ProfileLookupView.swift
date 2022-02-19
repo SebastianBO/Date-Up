@@ -33,6 +33,8 @@ struct ProfileLookupView: View {
             ZStack(alignment: .topLeading) {
                 Image(uiImage: self.profileLookup.profileImageViews[0].uiImageView.image!)
                     .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: screenWidth * 0.9)
                 
                 HStack {
                     Image(uiImage: UIImage(named: "like")!)

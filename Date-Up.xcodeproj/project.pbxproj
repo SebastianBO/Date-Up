@@ -41,6 +41,10 @@
 		0A8E68F826B830B100C4803A /* LoggedUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8E68F726B830B100C4803A /* LoggedUserView.swift */; };
 		0AB1FB0826D7E9B70017175C /* FirebaseStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB1FB0726D7E9B70017175C /* FirebaseStorageManager.swift */; };
 		0AB1FB0A26D7EEAF0017175C /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB1FB0926D7EEAF0017175C /* FirestoreManager.swift */; };
+		0ABE46FB27C1002400A68223 /* LoginTab.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABE46F727C1002400A68223 /* LoginTab.png */; };
+		0ABE46FC27C1002400A68223 /* ProfileTab.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABE46F827C1002400A68223 /* ProfileTab.png */; };
+		0ABE46FD27C1002400A68223 /* HomeTab.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABE46F927C1002400A68223 /* HomeTab.png */; };
+		0ABE46FE27C1002400A68223 /* RegisterTab.png in Resources */ = {isa = PBXBuildFile; fileRef = 0ABE46FA27C1002400A68223 /* RegisterTab.png */; };
 		9CEBF832BB7F7ED6D2C5AB67 /* Pods_Date_Up.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39D68BDCE35DD26E70D85A47 /* Pods_Date_Up.framework */; };
 /* End PBXBuildFile section */
 
@@ -81,6 +85,10 @@
 		0A8E68F726B830B100C4803A /* LoggedUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggedUserView.swift; sourceTree = "<group>"; };
 		0AB1FB0726D7E9B70017175C /* FirebaseStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseStorageManager.swift; sourceTree = "<group>"; };
 		0AB1FB0926D7EEAF0017175C /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
+		0ABE46F727C1002400A68223 /* LoginTab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LoginTab.png; sourceTree = "<group>"; };
+		0ABE46F827C1002400A68223 /* ProfileTab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ProfileTab.png; sourceTree = "<group>"; };
+		0ABE46F927C1002400A68223 /* HomeTab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = HomeTab.png; sourceTree = "<group>"; };
+		0ABE46FA27C1002400A68223 /* RegisterTab.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RegisterTab.png; sourceTree = "<group>"; };
 		0F0C9E5C3EB59950CE88938C /* Pods-Date-Up.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Date-Up.debug.xcconfig"; path = "Target Support Files/Pods-Date-Up/Pods-Date-Up.debug.xcconfig"; sourceTree = "<group>"; };
 		39D68BDCE35DD26E70D85A47 /* Pods_Date_Up.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Date_Up.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8971C7F2E78491ACF202167E /* Pods-Date-Up.debug (development).xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Date-Up.debug (development).xcconfig"; path = "Target Support Files/Pods-Date-Up/Pods-Date-Up.debug (development).xcconfig"; sourceTree = "<group>"; };
@@ -135,6 +143,7 @@
 		0A8E68D926B8260400C4803A /* Date-Up */ = {
 			isa = PBXGroup;
 			children = (
+				0ABE46F627C0E93400A68223 /* Screenshots */,
 				0A523E9026C1224C00FC88C0 /* GoogleService-Info.plist */,
 				0A2302EF26C11816000A7BC7 /* utils */,
 				0A8E68F126B82CA700C4803A /* ViewModel */,
@@ -197,6 +206,17 @@
 				0A8E68F526B82F7900C4803A /* ProfileViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		0ABE46F627C0E93400A68223 /* Screenshots */ = {
+			isa = PBXGroup;
+			children = (
+				0ABE46F927C1002400A68223 /* HomeTab.png */,
+				0ABE46F727C1002400A68223 /* LoginTab.png */,
+				0ABE46F827C1002400A68223 /* ProfileTab.png */,
+				0ABE46FA27C1002400A68223 /* RegisterTab.png */,
+			);
+			path = Screenshots;
 			sourceTree = "<group>";
 		};
 		2971FAE1B211D34CDB8B172D /* Frameworks */ = {
@@ -276,8 +296,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0ABE46FB27C1002400A68223 /* LoginTab.png in Resources */,
+				0ABE46FC27C1002400A68223 /* ProfileTab.png in Resources */,
 				0A8E68E226B8260500C4803A /* Preview Assets.xcassets in Resources */,
 				0A502E3A26EA4E0E00965369 /* nope.png in Resources */,
+				0ABE46FE27C1002400A68223 /* RegisterTab.png in Resources */,
+				0ABE46FD27C1002400A68223 /* HomeTab.png in Resources */,
 				0A502E3B26EA4E0E00965369 /* like.png in Resources */,
 				0A8E68DF26B8260500C4803A /* Assets.xcassets in Resources */,
 				0A523E9126C1224C00FC88C0 /* GoogleService-Info.plist in Resources */,
