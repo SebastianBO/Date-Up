@@ -29,11 +29,13 @@ Apple iPhone device
 
 
 ## Functionalities
+
 ALREADY IMPLEMENTED:
 * Explore different users profiles, like or reject them by swiping their profile lookup
 * Match people by your prefered gender
 * The possibility of changing user's data including e-mail address, password, signing out and deleting user's account
 * Light and dark color themes
+
 NOT IMPLEMENTED FULLY YET:
 * Chat with users with in real time
 * Full English and Polish localization
@@ -45,7 +47,16 @@ NOT IMPLEMENTED FULLY YET:
 ## Screenshots
 
 ![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/HomeTab.png?raw=true)
+
+------------------------------------------------
+
 ![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/ProfileTab.png?raw=true)
+
+------------------------------------------------
+
 ![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/LoginTab.png?raw=true)
+
+------------------------------------------------
+
 ![alt text](https://github.com/ljaniszewski00/Date-Up/blob/main/Date-Up/Screenshots/RegisterTab.png?raw=true)
 
